@@ -4,6 +4,7 @@ import com.cosmeticsellingwebsite.payload.request.AddAddressRequest;
 import com.cosmeticsellingwebsite.payload.request.UserRequest;
 import com.cosmeticsellingwebsite.payload.response.ApiResponse;
 import com.cosmeticsellingwebsite.service.impl.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +16,12 @@ public class UserRC {
     private UserService userService;
     //    add address
     @PostMapping("/address/add")
-    public ResponseEntity<?> addAddress(@RequestBody AddAddressRequest addAddressRequest) {
+    public ResponseEntity<?> addAddress(@RequestBody @Valid AddAddressRequest addAddressRequest) {
         userService.addAddress(addAddressRequest);
         return ResponseEntity.ok(new ApiResponse<>(true, "Add address successfully",null));
     }
     @GetMapping("/addresses")
-    public ResponseEntity<?> getAddresses(@RequestParam Long userId) {
+    public ResponseEntity<?> getAddresses(@RequestParam @Valid Long userId) {
         return ResponseEntity.ok(new ApiResponse<>(true, "Get addresses successfully", userService.getAddresses(userId)));
     }
     @GetMapping("/list")
@@ -28,16 +29,16 @@ public class UserRC {
         return ResponseEntity.ok(new ApiResponse<>(true, "List users successfully", userService.list()));
     }
     @GetMapping("/find")
-    public ResponseEntity<?> findById(@RequestParam Long id) {
+    public ResponseEntity<?> findById(@RequestParam @Valid Long id) {
         return ResponseEntity.ok(new ApiResponse<>(true, "Find user successfully", userService.findById(id)));
     }
     @PostMapping("/delete")
-    public ResponseEntity<?> delete(@RequestParam Long id) {
+    public ResponseEntity<?> delete(@RequestParam @Valid Long id) {
         userService.delete(id);
         return ResponseEntity.ok(new ApiResponse<>(true, "Delete user successfully", null));
     }
     @PostMapping("/update")
-    public ResponseEntity<?> update(@RequestBody UserRequest userRequest) {
+    public ResponseEntity<?> update(@RequestBody @Valid UserRequest userRequest) {
         return ResponseEntity.ok(new ApiResponse<>(true, "Update user successfully", userService.update(userRequest)));
     }
 

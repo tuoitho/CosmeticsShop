@@ -18,12 +18,12 @@ import java.util.Set;
 public class CreateOrderRequest {
     @NotNull(message = "User ID is required")
     private Long userId; // ID khách hàng (có thể sử dụng trong việc lấy thông tin khách hàng từ DB)
-
+    @NotNull(message = "Address ID is required")
     private AddressForOrderDTO addressForOrderDTO; // Địa chỉ giao hàng
-
+    @NotNull(message = "Payment method is required")
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod; // Phương thức thanh toán (có thể là enum hoặc một đối tượng khác)
-
+    @NotNull(message = "Cart item list is required")
     private Set<CartItemForOrderDTO> cartItemForOrderDTOS; // Danh sách sản phẩm và số lượng sản phẩm mà khách hàng muốn mua
 
 

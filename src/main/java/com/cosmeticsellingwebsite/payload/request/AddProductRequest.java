@@ -20,7 +20,9 @@ public class AddProductRequest {
     private Double cost;
     private String description;
     private String brand;
+    @NotNull
     private LocalDate manufactureDate;
+    @NotNull
     private LocalDate expirationDate;
     private String ingredient;
     private String how_to_use;
