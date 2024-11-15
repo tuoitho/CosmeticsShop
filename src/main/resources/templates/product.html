@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý danh sách sản phẩm</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<!--    ajax-->
+
+</head>
+<body>
+<div class="container">
+    <h1>Quản lý danh sách sản phẩm</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Mã sản phẩm</th>
+            <th>Tên sản phẩm</th>
+            <th>Giá</th>
+            <th>Thương hiệu</th>
+            <th>Ngày sản xuất</th>
+            <th>Ngày hết hạn</th>
+            <th>Trạng thái</th>
+        </tr>
+        </thead>
+        <tbody id="product-list">
+        </tbody>
+    </table>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "product/list",
+            dataType: "json",
+            success: function(data) {
+
+                $.each(data, function(index, product) {
+                    $("#product-list").append("<tr>" +
+                        "<td>" + product.productCode + "</td>" +
+                        "<td>" + product.productName + "</td>" +
+                        "<td>" + product.cost + "</td>" +
+                        "<td>" + product.brand + "</td>" +
+                        "<td>" + product.manufactureDate + "</td>" +
+                        "<td>" + product.expirationDate + "</td>" +
+                        "<td>" + (product.active ? "Đang hoạt động" : "Không hoạt động") + "</td>" +
+                        "</tr>");
+                });
+            }
+        });
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="/notification.js"></script>
+
+</body>
+</html>

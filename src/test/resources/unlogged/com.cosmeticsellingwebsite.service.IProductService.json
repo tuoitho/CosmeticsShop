@@ -1,0 +1,7 @@
+{
+  "classname" : "com.cosmeticsellingwebsite.service.IProductService",
+  "storedCandidateMap" : { },
+  "declaredMockMap" : {
+    "com.cosmeticsellingwebsite.service.IProductService#addProduct#(Lcom/cosmeticsellingwebsite/payload/request/AddProductRequest;)Ljava/lang/Boolean;" : [ ]
+  }
+}
