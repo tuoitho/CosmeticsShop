@@ -21,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/product")
 public class ProductRC {
+    // TODO: bị nhầm productCode vs productId, sẽ sửa sau
     @Autowired
     IProductService productService;
     @Autowired
