@@ -59,8 +59,8 @@ public class UserService {
         }
         return addressRepository.findAllByUser_UserId(userId);
     }
-    public List<Customer> list() {
-        return customerRepository.findAll();
+    public List<User> list() {
+        return userRepository.findAll();
     }
     public User findById(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
