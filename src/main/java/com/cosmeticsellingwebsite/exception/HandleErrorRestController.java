@@ -50,6 +50,9 @@ public class HandleErrorRestController
 //        ApiResponse<?> response = new ApiResponse<>(false, error, errorDetails);
 //        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 //    }
+
+    //TODO: tuỳ chỉnh CustomException và throw ra CustomException thay vì RuntimeException ở các service, để tránh phần data của resp quá dài, nếu có thời gian
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleGenericException(Exception ex) {
         String error=ex.getMessage();
