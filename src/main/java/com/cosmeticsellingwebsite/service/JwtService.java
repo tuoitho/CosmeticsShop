@@ -1,6 +1,5 @@
 package com.cosmeticsellingwebsite.service;
 
-import com.cosmeticsellingwebsite.util.Logger;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
