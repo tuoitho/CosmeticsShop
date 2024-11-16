@@ -25,6 +25,4 @@ public class CreateOrderRequest {
     private PaymentMethod paymentMethod; // Phương thức thanh toán (có thể là enum hoặc một đối tượng khác)
     @NotNull(message = "Cart item list is required")
     private Set<CartItemForOrderDTO> cartItemForOrderDTOS; // Danh sách sản phẩm và số lượng sản phẩm mà khách hàng muốn mua
-
-
 }

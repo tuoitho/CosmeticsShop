@@ -13,7 +13,7 @@ import java.util.Set;
 @Entity
 @Table(name = "[User]")
 //@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class User implements Serializable {
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long userId;

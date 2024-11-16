@@ -8,7 +8,7 @@ import com.cosmeticsellingwebsite.payload.request.AddProductToCartRequest;
 import com.cosmeticsellingwebsite.repository.CartRepository;
 import com.cosmeticsellingwebsite.repository.ProductRepository;
 import com.cosmeticsellingwebsite.repository.UserRepository;
-import com.cosmeticsellingwebsite.service.ICartService;
+import com.cosmeticsellingwebsite.service.interfaces.ICartService;
 import com.cosmeticsellingwebsite.util.Logger;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

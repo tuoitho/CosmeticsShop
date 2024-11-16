@@ -5,7 +5,7 @@ import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.payload.request.AddProductRequest;
 import com.cosmeticsellingwebsite.payload.response.ProductResponse;
 import com.cosmeticsellingwebsite.repository.*;
-import com.cosmeticsellingwebsite.service.IProductService;
+import com.cosmeticsellingwebsite.service.interfaces.IProductService;
 import com.cosmeticsellingwebsite.service.ImageService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;

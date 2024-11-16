@@ -4,7 +4,7 @@ import com.cosmeticsellingwebsite.payload.request.AddProductRequest;
 import com.cosmeticsellingwebsite.payload.response.ApiResponse;
 import com.cosmeticsellingwebsite.payload.response.ProductPagingResponse;
 import com.cosmeticsellingwebsite.payload.response.ProductResponse;
-import com.cosmeticsellingwebsite.service.IProductService;
+import com.cosmeticsellingwebsite.service.interfaces.IProductService;
 import com.cosmeticsellingwebsite.service.ImageService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
