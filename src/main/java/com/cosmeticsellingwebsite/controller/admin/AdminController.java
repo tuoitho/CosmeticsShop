@@ -15,18 +15,12 @@ import java.security.Principal;
 public class AdminController {
 
     @GetMapping("/products")
-    public String index(Principal principal) {
-        Logger.log("Admin page");
-        Logger.log("Admin page");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Logger.log("Principal: " + principal.getName());
-        Logger.log("Authorities: " + authentication.getAuthorities());
+    public String manageProducts() {
+//        Logger.log("Admin page");
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        Logger.log("Principal: " + principal.getName());
+//        Logger.log("Authorities: " + authentication.getAuthorities());
         return "admin/products";
-    }
-    @ResponseBody
-    @GetMapping("")
-    public String admin() {
-        return "Admin page";
     }
 
 }
