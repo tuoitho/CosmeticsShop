@@ -22,7 +22,7 @@ public class UserPrincipal implements UserDetails {
         userName = user.getUsername();
         password = user.getPassword();
         role = user.getRole().getRoleName();
-        authorities = Collections.singleton(new SimpleGrantedAuthority(role));
+        authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_"+role));
     }
 
 

@@ -150,12 +150,13 @@
 
     </script><!--AJAX-->
     <script>
+        const contextPath = window.location.origin+'/';
         $(document).ready(function () {
             // Hàm gọi API và đổ dữ liệu vào bảng
             function loadProducts(page = 0) {
                 // alert('Load sản phẩm ở trang: ' + page);
                 $.ajax({
-                    url: 'api/v1/product/list',  // Đường dẫn API của bạn
+                    url: contextPath+'api/v1/product/list',  // Đường dẫn API của bạn
                     method: 'GET',
                     data: {page: page},  // Thêm page vào tham số gửi lên server
                     success: function (resp) {
@@ -174,9 +175,7 @@
                             let productRow = `
                         <tr>
 <!--                        gọi api lấy ảnh-->
-
-<!--                          GET http://localhost:8081/api/images?imageName=product.image-->
-                            <td><img src="api/images?imageName=${product.image}" alt="${product.productName}" class="img-thumbnail" width="80"></td>
+                            <td><img src=${contextPath}api/images?imageName=${product.image} alt="${product.productName}" class="img-thumbnail" width="80"></td>
                             <td>${product.productCode}</td>
                             <td>${product.productName}</td>
                             <td>${product.category}</td>

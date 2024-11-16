@@ -1,4 +1,4 @@
-package com.cosmeticsellingwebsite.controller;
+package com.cosmeticsellingwebsite.controller.admin;
 
 
 import org.springframework.stereotype.Controller;
@@ -12,6 +12,5 @@ public class ProductController {
     public String index() {
         return "admin/products";
     }
-
 
 }

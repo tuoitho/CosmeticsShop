@@ -1,5 +1,6 @@
 package com.cosmeticsellingwebsite.service;
 
+import com.cosmeticsellingwebsite.util.Logger;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -31,6 +32,9 @@ public class JwtService {
     public String generateToken(String userName) {
 //        Logger.log(SECRET);
 //        Logger.log(EXPIRATION + "");
+//        Logger.log(Date.from(new Date().toInstant()).toString());
+//        Logger.log(Date.from(new Date().toInstant().plusMillis(EXPIRATION)).toString());
+//        Logger.log(new Date(System.currentTimeMillis() + EXPIRATION).toString());
         // Prepare claims for the token
         Map<String, Object> claims = new HashMap<>();
 

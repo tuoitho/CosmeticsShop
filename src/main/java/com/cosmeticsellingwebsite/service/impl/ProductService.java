@@ -40,6 +40,7 @@ public class ProductService implements IProductService {
                     ProductResponse productResponse = new ProductResponse();
                     BeanUtils.copyProperties(product, productResponse);
                     productResponse.setStock(getStockByProductCode(product.getProductCode()));
+                    productResponse.setCategory(product.getCategory().getCategoryName());
                     return productResponse;
                 })
                 .collect(Collectors.toList());
