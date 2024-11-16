@@ -9,7 +9,7 @@ import com.cosmeticsellingwebsite.payload.request.CreateOrderRequest;
 import com.cosmeticsellingwebsite.payload.request.UpdateOrderRequest;
 import com.cosmeticsellingwebsite.payload.response.OrderResponse;
 import com.cosmeticsellingwebsite.repository.*;
-import com.cosmeticsellingwebsite.service.IOrderService;
+import com.cosmeticsellingwebsite.service.interfaces.IOrderService;
 import com.cosmeticsellingwebsite.util.Logger;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

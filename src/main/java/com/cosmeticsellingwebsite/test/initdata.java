@@ -22,8 +22,6 @@ public class initdata {
     @Autowired
     private  ProductRepository productRepository;
     @Autowired
-    private CustomerRepository customerRepository;
-    @Autowired
     private OrderRepository orderRepository;
     @Autowired
     private CategoryRepository categoryRepository;

@@ -1,6 +1,6 @@
 package com.cosmeticsellingwebsite.service.impl;
 
-import com.cosmeticsellingwebsite.service.ICustomerSerivce;
+import com.cosmeticsellingwebsite.service.interfaces.ICustomerSerivce;
 import org.springframework.stereotype.Service;
 
 @Service
