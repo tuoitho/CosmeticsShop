@@ -3,6 +3,7 @@ package com.cosmeticsellingwebsite.service.impl;
 import com.cosmeticsellingwebsite.dto.ProductSummaryDTO;
 import com.cosmeticsellingwebsite.entity.Category;
 import com.cosmeticsellingwebsite.entity.ProductFeedback;
+import com.cosmeticsellingwebsite.payload.response.CategoryProductPagingResponse;
 import com.cosmeticsellingwebsite.payload.response.CategoryProductResponse;
 import com.cosmeticsellingwebsite.payload.response.CategoryResponse;
 import com.cosmeticsellingwebsite.repository.CategoryRepository;
@@ -11,6 +12,7 @@ import com.cosmeticsellingwebsite.repository.ProductFeedbackRepository;
 import com.cosmeticsellingwebsite.repository.ProductRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,5 +48,31 @@ public class CategoryService {
             return productSummaryDTO;
         }).toList());
         return categoryWithProducts;
+    }
+
+    public CategoryProductPagingResponse getCategoryWithProductsPaging(Long categoryId, Pageable pageable) {
+        CategoryProductPagingResponse categoryWithProductsPaging = new CategoryProductPagingResponse();
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category not found"));
+        categoryWithProductsPaging.setCategoryId(category.getCategoryId());
+        categoryWithProductsPaging.setCategoryName(category.getCategoryName());
+        categoryWithProductsPaging.setProducts(productRepository.findByCategory_CategoryId(categoryId,pageable).stream().map(product -> {
+            ProductSummaryDTO productSummaryDTO = new ProductSummaryDTO();
+            BeanUtils.copyProperties(product, productSummaryDTO);
+            List<ProductFeedback> feedbacks = productFeedbackRepository.findByProduct(product);
+            Double rating = feedbacks.stream().mapToDouble(ProductFeedback::getRating).average().orElse(0);
+            productSummaryDTO.setRatingAverage(rating);
+            Long numOfSold = orderLineRepository.sumQuantityByProduct(product);
+            productSummaryDTO.setSellCount(numOfSold);
+            return productSummaryDTO;
+        }).toList());
+        categoryWithProductsPaging.setTotalProducts(productRepository.countByCategory_CategoryId(categoryId));
+        categoryWithProductsPaging.setPageNumber(pageable.getPageNumber());
+        categoryWithProductsPaging.setPageSize(pageable.getPageSize());
+        categoryWithProductsPaging.setTotalPages((int) Math.ceil((double) categoryWithProductsPaging.getTotalProducts() / pageable.getPageSize()));
+        return categoryWithProductsPaging;
+    }
+
+    public Integer countProducts(Long categoryId) {
+        return productRepository.countByCategory_CategoryId(categoryId);
     }
 }

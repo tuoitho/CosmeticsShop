@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class ProductSummaryDTO {
     private String productCode;
     private String productName;
+    private Double cost;
     private Double ratingAverage;
     private Long sellCount;
     private String image;

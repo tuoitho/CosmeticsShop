@@ -1,12 +1,12 @@
-const $$ = document.querySelectorAll.bind(document)
-const $ = document.querySelector.bind(document)
+const $2 = document.querySelectorAll.bind(document)
+const $1 = document.querySelector.bind(document)
 
 //modal show hide search
-const iconSearch = $('.search-link')
-const modal =  $('.modal')
-const iconClose = $('.modal__icon-close')
-const inputSearch = $('.modal__input')
-const searchHistory = $('.modal__history')
+const iconSearch = $1('.search-link')
+const modal =  $1('.modal')
+const iconClose = $1('.modal__icon-close')
+const inputSearch = $1('.modal__input')
+const searchHistory = $1('.modal__history')
 
 function showSearch () {
     modal.classList.add('modal__open')
@@ -28,18 +28,18 @@ searchHistory.addEventListener('click',function(event){
 })
 
 //Modal show hide account
-const modalAccount = $('.modal-account')
-const iconUsers = $$('.login-link')
-const authForms = $$('.auth-form')
-const registerForm = $('.register-form')
-const  loginForm = $('.login-form')
-const loginFormBtn = $('.login-from__btn')
-const registerFormBtn = $('.register-from__btn')
-const backBtn= $$('.auth-form__controls-back')
-const navMobile = $('.nav-mobile')
-const navBtnMobile = $('.nav-link')
-const forgotBtn = $('.auth-form__help-link')
-const forgotForm = $('.forgot-pass-form')
+const modalAccount = $1('.modal-account')
+const iconUsers = $2('.login-link')
+const authForms = $2('.auth-form')
+const registerForm = $1('.register-form')
+const  loginForm = $1('.login-form')
+const loginFormBtn = $1('.login-from__btn')
+const registerFormBtn = $1('.register-from__btn')
+const backBtn= $2('.auth-form__controls-back')
+const navMobile = $1('.nav-mobile')
+const navBtnMobile = $1('.nav-link')
+const forgotBtn = $1('.auth-form__help-link')
+const forgotForm = $1('.forgot-pass-form')
 
 
 
@@ -80,9 +80,9 @@ for(const authForm of authForms) {
 }
 
 
-const close = $('.close');
-const overlay = $('.popup-overlay');
-const popup = $('.popup');
+const close = $1('.close');
+const overlay = $1('.popup-overlay');
+const popup = $1('.popup');
 
 popup.onclick = function (e) {
     e.stopPropagation();
@@ -96,19 +96,19 @@ overlay.onclick = function (){
     overlay.style.display = 'none';
 }
 
-const submitLink = $(".auth-form__controls a");
+const submitLink = $1(".auth-form__controls a");
     submitLink.onclick = function (){
         submitLink.setAttribute("href", "./personalInformation.html");
 }
 
-const navMobileOverlay = $('.nav-mobile__overlay');
+const navMobileOverlay = $1('.nav-mobile__overlay');
 
 navBtnMobile.onclick = function() {
     navMobile.style.display = "block";
     navMobileOverlay.style.display = "block";
 }
 
-const iconExit = $('.icon-exit');
+const iconExit = $1('.icon-exit');
 
 iconExit.onclick = function () {
     navMobile.style.display = "none";
