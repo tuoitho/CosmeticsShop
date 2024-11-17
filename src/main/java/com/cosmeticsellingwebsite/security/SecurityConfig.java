@@ -42,8 +42,9 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // Apply CORS
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**","/assets/**","/notification.js","/error","/error/**"," /login").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/api/**","/assets/**","/notification.js","/error","/error/**"," /login","/**").permitAll()
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()) // Require authentication for all other requests
                 .formLogin(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
