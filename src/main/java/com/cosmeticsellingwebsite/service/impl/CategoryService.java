@@ -43,7 +43,7 @@ public class CategoryService {
             List<ProductFeedback> feedbacks = productFeedbackRepository.findByProduct(product);
             Double rating = feedbacks.stream().mapToDouble(ProductFeedback::getRating).average().orElse(0);
             productSummaryDTO.setRatingAverage(rating);
-            Long numOfSold = orderLineRepository.sumQuantityByProduct(product);
+            Long numOfSold = orderLineRepository.sumQuantityByProduct(product).orElse(0L);
             productSummaryDTO.setSellCount(numOfSold);
             return productSummaryDTO;
         }).toList());
@@ -61,7 +61,7 @@ public class CategoryService {
             List<ProductFeedback> feedbacks = productFeedbackRepository.findByProduct(product);
             Double rating = feedbacks.stream().mapToDouble(ProductFeedback::getRating).average().orElse(0);
             productSummaryDTO.setRatingAverage(rating);
-            Long numOfSold = orderLineRepository.sumQuantityByProduct(product);
+            Long numOfSold = orderLineRepository.sumQuantityByProduct(product).orElse(0L);
             productSummaryDTO.setSellCount(numOfSold);
             return productSummaryDTO;
         }).toList());

@@ -17,4 +17,6 @@ public interface ProductFeedbackRepository extends JpaRepository<ProductFeedback
     Set<ProductFeedback> findAllByProduct(Product product);
 
     List<ProductFeedback> findByProduct(Product product);
+
+    Long countByProduct(Product product);
 }

@@ -3,6 +3,7 @@ package com.cosmeticsellingwebsite.service.impl;
 
 import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.payload.request.AddProductRequest;
+import com.cosmeticsellingwebsite.payload.response.ProductDetailResponse;
 import com.cosmeticsellingwebsite.payload.response.ProductResponse;
 import com.cosmeticsellingwebsite.repository.*;
 import com.cosmeticsellingwebsite.service.interfaces.IProductService;
@@ -22,6 +23,8 @@ public class ProductService implements IProductService {
     @Autowired
     ImageService imageService;
 
+    @Autowired
+    private ProductFeedbackRepository productFeedbackRepository;
     @Autowired
     private ProductRepository productRepository;
     @Autowired
@@ -121,5 +124,27 @@ public class ProductService implements IProductService {
         productResponse.setStock(quantity);
         productResponse.setCategory(categoryRepository.findById(addProductRequest.getCategoryId()).get().getCategoryName());
         return productResponse;
+    }
+
+    @Override
+    public ProductDetailResponse getProductDetail(String productCdoe) {
+        Product product = productRepository.findByProductCode(productCdoe)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        ProductDetailResponse productDetailResponse = new ProductDetailResponse();
+        BeanUtils.copyProperties(product, productDetailResponse);
+        productDetailResponse.setStock(getStockByProductCode(productCdoe));
+        String category = categoryRepository.findCategoryByProductCode(productCdoe).getCategoryName();
+        productDetailResponse.setCategory(category);
+
+        productDetailResponse.setTotalFeedback(productFeedbackRepository.countByProduct(product));
+        productDetailResponse.setAverageRating(productFeedbackRepository.findByProduct(product).stream()
+                .mapToDouble(ProductFeedback::getRating)
+                .average()
+                .orElse(0.0));
+//        TODO: cần check order đã xong hay bị hủy
+        Long totalSold = orderLineRepository.sumQuantityByProduct(product).orElse(0L);
+        productDetailResponse.setTotalSold(totalSold);
+        return productDetailResponse;
     }
 }

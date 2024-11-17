@@ -28,19 +28,19 @@ document.querySelector('.quantity-buttons--plus').onclick = function() {
     document.querySelector('.quantity-buttons--number').innerText = quantityWantToBuy;
 }
 
-const $ = document.querySelector.bind(document)
+const $1 = document.querySelector.bind(document)
 const $$ = document.querySelectorAll.bind(document)
 
 const tabs = $$('.product-content__tabs-item')
 const panes = $$('.product-content__tabs-content > div')
 
-const tabActive = $('.product-content__tabs-item.tabs-active')
+const tabActive = $1('.product-content__tabs-item.tabs-active')
 
 tabs.forEach((tab, index) => {
     const pane = panes[index]
     tab.onclick = function() {
-        $('.product-content__tabs-item.tabs-active').classList.remove('tabs-active')
-        $('.tabs-content__item.tabs-active').classList.remove('tabs-active')
+        $1('.product-content__tabs-item.tabs-active').classList.remove('tabs-active')
+        $1('.tabs-content__item.tabs-active').classList.remove('tabs-active')
 
         this.classList.add('tabs-active')
         pane.classList.add('tabs-active')

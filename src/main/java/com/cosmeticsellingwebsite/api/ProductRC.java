@@ -2,6 +2,7 @@ package com.cosmeticsellingwebsite.api;
 
 import com.cosmeticsellingwebsite.payload.request.AddProductRequest;
 import com.cosmeticsellingwebsite.payload.response.ApiResponse;
+import com.cosmeticsellingwebsite.payload.response.ProductDetailResponse;
 import com.cosmeticsellingwebsite.payload.response.ProductPagingResponse;
 import com.cosmeticsellingwebsite.payload.response.ProductResponse;
 import com.cosmeticsellingwebsite.service.interfaces.IProductService;
@@ -78,4 +79,11 @@ public class ProductRC {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/detail")
+    public ResponseEntity<?> detail(@RequestParam @Valid String productCode) {
+        ProductDetailResponse productResponse=productService.getProductDetail(productCode);
+        // Trả về response
+        ApiResponse<?> response = new ApiResponse<>( true, "Get product detail successfully", productResponse);
+        return ResponseEntity.ok(response);
+    }
 }
