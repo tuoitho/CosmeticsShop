@@ -228,15 +228,20 @@
                     $.each(products, function (index, product) {
                         html += '<a href="./product.html?productCode=' + product.productCode + '" class="col l-2-4 m-4 c-6">'; // Thêm productCode vào link
                         html += '<div class="product__item">';
-                        html += '<img class="product__item-img" src="' + product.image + '">';
+                        html += '<img class="product__item-img" src="' +contextPath+"api/images?imageName="+ product.image + '">';
                         html += '<h5 class="product__item-name">' + product.productName + '</h5>';
                         html += '<div class="product__item-price-wrapper">';
                         // Thêm logic hiển thị giá cũ nếu cần
-                        html += '<h3 class="product__item-price">$' + product.price + '</h3>'; // Thay thế product.price bằng giá thực tế
+
+                        html += '<h3 class="product__item-price">' + product.cost + ' VND</h3>'; // Thay thế bằng giá thực tế
                         html += '</div>';
                         html += '<div class="star-link-sold-wrapper">';
                         html += '<div class="star-link">';
                         // Thêm logic hiển thị số sao dựa trên product.ratingAverage
+                        // for (let i = 0; i < product.ratingAverage; i++) {
+                        //     html += '<i class="fa fa-star star--fill" aria-hidden="true"></i>';
+                        // }
+                        html += '<i class="fa fa-star star--fill" aria-hidden="true">'+product.ratingAverage+'</i>';
                         html += '</div>';
                         html += '<div class="product__sold-number">' + product.sellCount + ' sold</div>';
                         html += '</div>';
