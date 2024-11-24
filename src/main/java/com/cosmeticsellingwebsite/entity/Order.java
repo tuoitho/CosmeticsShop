@@ -32,12 +32,10 @@ public class Order implements Serializable {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<OrderLine> orderLines;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     @JsonManagedReference
     private ShippingAddress shippingAddress;

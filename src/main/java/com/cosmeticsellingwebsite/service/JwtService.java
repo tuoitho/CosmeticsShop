@@ -115,8 +115,7 @@ public class JwtService {
         String token = generateToken(userName);
         Date expiration = extractExpiration(token);
         boolean isActive = true; // hoặc sử dụng một thuộc tính khác để kiểm tra trạng thái hoạt động
-        String message = "JWT token generated successfully";
-
-        return new JwtResponse(token, expiration, isActive);
+        String username = extractUserName(token);
+        return new JwtResponse(username,token, expiration, isActive);
     }
 }

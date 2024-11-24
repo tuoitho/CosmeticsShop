@@ -7,6 +7,7 @@ import com.cosmeticsellingwebsite.payload.request.UserRequest;
 import com.cosmeticsellingwebsite.payload.response.ApiResponse;
 import com.cosmeticsellingwebsite.service.JwtService;
 import com.cosmeticsellingwebsite.service.impl.UserService;
+import com.cosmeticsellingwebsite.util.Logger;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ public class AuthRC {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid  LoginRequest user) {
         try {
+            Logger.log("Login request: " + user);
             // Attempt authentication
             Authentication authenticate = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())

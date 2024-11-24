@@ -1,5 +1,6 @@
 package com.cosmeticsellingwebsite.entity;
 
+import com.cosmeticsellingwebsite.enums.Gender;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,6 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "[User]")
 //@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,17 +24,13 @@ public class User implements Serializable {
     protected String password;
     @Column(unique = true)
     protected String email;
+    private String fullName;
+    private String phone;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @ManyToOne
     @JoinColumn(name = "roleId", referencedColumnName = "roleId")
     protected Role role;
-
-    //    muốn mqh 2 chiều nên vầy có lẽ đc
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private Set<Address> addresses;
-
 
 }

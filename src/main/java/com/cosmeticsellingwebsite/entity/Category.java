@@ -17,8 +17,6 @@ public class Category {
     private Long categoryId;
     private String categoryName;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<Product> products;

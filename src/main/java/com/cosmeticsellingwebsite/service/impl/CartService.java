@@ -1,9 +1,6 @@
 package com.cosmeticsellingwebsite.service.impl;
 
-import com.cosmeticsellingwebsite.entity.Cart;
-import com.cosmeticsellingwebsite.entity.CartItem;
-import com.cosmeticsellingwebsite.entity.Product;
-import com.cosmeticsellingwebsite.entity.User;
+import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.payload.request.AddProductToCartRequest;
 import com.cosmeticsellingwebsite.repository.CartRepository;
 import com.cosmeticsellingwebsite.repository.ProductRepository;
@@ -39,11 +36,11 @@ public class CartService implements ICartService {
             throw new RuntimeException("Product not found");
         }
         //neu chua co cart thi tao moi
-        Cart cart = cartRepository.findByUser(user.get());
+        Cart cart = cartRepository.findByCustomer(user.get());
         if (cart == null) {
 //            Logger.log("Cart not found, create new cart");
             cart = new Cart();
-            cart.setUser(user.get());
+            cart.setCustomer((Customer) user.get());
         }
         //add product to cart
         Set<CartItem> cartItems = cart.getCartItems();
@@ -86,7 +83,7 @@ public class CartService implements ICartService {
         if (product.isEmpty()) {
             throw new RuntimeException("Product not found");
         }
-        Optional<Cart> cartOpt = Optional.ofNullable(cartRepository.findByUser(user.get()));
+        Optional<Cart> cartOpt = Optional.ofNullable(cartRepository.findByCustomer(user.get()));
         if (cartOpt.isEmpty()) {
             throw new RuntimeException("Cart not found");
         }
@@ -119,7 +116,7 @@ public class CartService implements ICartService {
         if (product.isEmpty()) {
             throw new RuntimeException("Product not found");
         }
-        Optional<Cart> cartOpt = Optional.ofNullable(cartRepository.findByUser(user.get()));
+        Optional<Cart> cartOpt = Optional.ofNullable(cartRepository.findByCustomer(user.get()));
         if (cartOpt.isEmpty()) {
             throw new RuntimeException("Cart not found");
         }
@@ -136,6 +133,6 @@ public class CartService implements ICartService {
         cart.setCartItems(cartItems);
 //        cartRepository.save(cart);
         Logger.log( cartRepository.save(cart).toString());
-        Logger.log(cartRepository.findByUser(userRepository.findById(userId).get()).toString());
+        Logger.log(cartRepository.findByCustomer(userRepository.findById(userId).get()).toString());
     }
 }

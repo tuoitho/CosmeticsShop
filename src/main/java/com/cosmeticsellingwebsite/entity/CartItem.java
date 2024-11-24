@@ -16,8 +16,7 @@ public class CartItem implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cartItemId;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+
     @ManyToOne
     @JsonManagedReference
     @JoinColumn(name = "productId", referencedColumnName = "productId")

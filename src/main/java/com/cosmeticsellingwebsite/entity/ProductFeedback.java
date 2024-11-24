@@ -24,8 +24,8 @@ public class ProductFeedback implements Serializable {
     private Long customerId;
     private Double rating;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+//    @ToString.Exclude
+//    @EqualsAndHashCode.Exclude
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "productId", referencedColumnName = "productId")

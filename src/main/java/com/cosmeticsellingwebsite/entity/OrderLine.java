@@ -32,7 +32,6 @@ public class OrderLine implements Serializable {
 
     private Long quantity;
 
-    @EqualsAndHashCode.Exclude
     @ManyToOne
     @JoinColumn(name = "orderId", referencedColumnName = "orderId")
     @JsonBackReference

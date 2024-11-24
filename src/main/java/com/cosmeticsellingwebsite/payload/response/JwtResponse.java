@@ -10,6 +10,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 public class JwtResponse {
+    private String username;
     private String token;
     private Date expiration;
     private boolean isActive;

@@ -24,6 +24,6 @@ public class Cart implements Serializable {
 
 
     @OneToOne
-    @JoinColumn(name = "userId", referencedColumnName = "userId")
-    private User user;
+    @JoinColumn(name = "customerId", referencedColumnName = "userId")
+    private Customer customer;
 }
