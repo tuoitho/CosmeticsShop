@@ -2,10 +2,13 @@ package com.cosmeticsellingwebsite.security;
 
 
 //import com.cosmeticsellingwebsite.filter.JwtFilter;
+import com.cosmeticsellingwebsite.security.oauth.CustomOAuth2UserService;
+import com.cosmeticsellingwebsite.security.oauth.OAuth2LoginSuccessHandler;
 import com.cosmeticsellingwebsite.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -36,6 +39,26 @@ public class SecurityConfig {
     @Autowired
     private    CustomOAuth2UserService oauth2UserService; // Inject CustomOAuth2UserService
 
+//    @Autowired
+//    @Lazy
+    private final OAuth2LoginSuccessHandler oauth2LoginSuccessHandler;
+
+    public SecurityConfig(@Lazy OAuth2LoginSuccessHandler oauth2LoginSuccessHandler) {
+        this.oauth2LoginSuccessHandler = oauth2LoginSuccessHandler;
+    }
+
+    @Bean
+    public OAuth2LoginSuccessHandler oauth2LoginSuccessHandler(PasswordEncoder passwordEncoder) {
+        return new OAuth2LoginSuccessHandler(passwordEncoder);
+    }
+
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
     // Defines a UserDetailsService bean for user authentication
     @Bean
     public UserDetailsService userDetailsService() {
@@ -76,18 +99,24 @@ public class SecurityConfig {
                                 .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/")
                         .failureUrl("/auth/login")
-//                        .usernameParameter("username")
-//                        .passwordParameter("password")
                 )
                 .authenticationProvider(authenticationProvider()) // Register the authentication provider
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/auth/login") // Custom login page
+
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService) // Custom OAuth2 user service
+                        )
+                        .successHandler(oauth2LoginSuccessHandler) // Handle success
+                )
 //                k có add fiter vào đây, vì project này không chuyên làm về api, nên không cần jwt, project này chủ yếu làm về view,
-//                role shipper mới cần jwt
+//                role SHIPPER mới cần jwt
 //                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Add the JWT filter before processing the request
 //                .oauth2Login(Customizer.withDefaults())
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(oauth2UserService)) // Set the custom OAuth2UserService
-                )
+//                .oauth2Login(oauth2 -> oauth2
+//                        .userInfoEndpoint(userInfo -> userInfo
+//                                .userService(oauth2UserService)) // Set the custom OAuth2UserService
+//                )
                 .build();
     }
 
@@ -103,11 +132,7 @@ public class SecurityConfig {
 
 
     // Defines a PasswordEncoder bean that uses bcrypt hashing by default for password encoding
-    @Bean
-    PasswordEncoder passwordEncoder() {
-//        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        return new BCryptPasswordEncoder();
-    }
+
 
 
     // Defines an AuthenticationManager bean to manage authentication processes

@@ -10,6 +10,8 @@
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <title>Đăng Nhập và Đăng Ký</title>
     <style>
         button {
@@ -76,11 +78,19 @@
             <button type="submit"  id="loginBtn">Login</button>
             <p><a href="#">Quên mật khẩu?</a></p>
         </form>
-        <button type="button"
-                onclick="window.location.href='https://accounts.google.com/o/oauth2/auth?scope=email%20profile%20&redirect_uri=http://localhost:8081/auth/loginGG&response_type=code&client_id=952720183712-u92u5gcsbg3d0pisepieabe03pt53qtf.apps.googleusercontent.com&approval_prompt=force'"
-                class="btn-social google">
-            <i class="fab fa-google"></i> Login with Google
-        </button>
+<!--        <button type="button"-->
+<!--                onclick="window.location.href='https://accounts.google.com/o/oauth2/auth?scope=email%20profile%20&redirect_uri=http://localhost:8081/auth/loginGG&response_type=code&client_id=952720183712-u92u5gcsbg3d0pisepieabe03pt53qtf.apps.googleusercontent.com&approval_prompt=force'"-->
+<!--                class="btn-social google">-->
+<!--            <i class="fab fa-google"></i> Login with Google-->
+<!--        </button>-->
+        <div class="text-center mt-3">
+            <a class="btn btn-danger google-btn" th:href="@{/oauth2/authorization/google}"
+               style="color: white; cursor: pointer; padding: 12px 20px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.3s ease;">
+                <i class="fab fa-google" style="font-size: 20px; margin-right: 10px;"></i>
+                <span style="font-size: 20px;">Sign in with Google</span>
+            </a>
+        </div>
+
     </div><!-- Phần Đăng Ký -->
     <div class="form-section">
         <h2>Đăng Ký</h2>

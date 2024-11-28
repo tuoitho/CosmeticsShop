@@ -1,18 +1,21 @@
-package com.cosmeticsellingwebsite.oauth;
+package com.cosmeticsellingwebsite.security.oauth;
+
+import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
 import java.util.Map;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-
+@Data
 public class CustomOAuth2User implements OAuth2User {
 
-	private final OAuth2User oauth2User;
-
-	public CustomOAuth2User(OAuth2User oauth2User) {
-		super();
+	private OAuth2User oauth2User;
+	private Long userId;
+	public CustomOAuth2User(OAuth2User oauth2User, Long userId) {
+//		super();
 		this.oauth2User = oauth2User;
+		this.userId = userId;
 	}
 
 	@Override
@@ -29,12 +32,8 @@ public class CustomOAuth2User implements OAuth2User {
 	public String getName() {
 		return oauth2User.getAttribute("email");
 	}
-	
 	public String getNameReal() {
 		return oauth2User.getAttribute("name");
 	}
-//
-//	public String getEmail() {
-//		return oauth2User.getAttribute("email");
-//	}
+
 }

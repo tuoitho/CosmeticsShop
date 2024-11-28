@@ -4,7 +4,7 @@ import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.enums.RoleEnum;
 import com.cosmeticsellingwebsite.exception.CustomException;
 import com.cosmeticsellingwebsite.payload.request.RegisterReq;
-import com.c    osmeticsellingwebsite.repository.*;
+import com.cosmeticsellingwebsite.repository.*;
 import com.cosmeticsellingwebsite.security.UserPrincipal;
 import com.cosmeticsellingwebsite.service.interfaces.IUserService;
 import com.cosmeticsellingwebsite.util.Logger;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,7 @@ public class UserService implements IUserService, UserDetailsService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private AddressRepository addressRepository;
 
