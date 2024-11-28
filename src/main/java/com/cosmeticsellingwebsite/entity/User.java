@@ -24,7 +24,7 @@ public class User implements Serializable {
     protected String password;
     @Column(unique = true)
     protected String email;
-    private String fullName;
+    private String fullname;
     private String phone;
     @Enumerated(EnumType.STRING)
     private Gender gender;
