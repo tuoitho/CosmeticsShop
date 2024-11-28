@@ -4,16 +4,17 @@ import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.enums.RoleEnum;
 import com.cosmeticsellingwebsite.exception.CustomException;
 import com.cosmeticsellingwebsite.payload.request.RegisterReq;
-import com.cosmeticsellingwebsite.payload.response.UserResponse;
 import com.cosmeticsellingwebsite.repository.*;
 import com.cosmeticsellingwebsite.security.UserPrincipal;
 import com.cosmeticsellingwebsite.service.interfaces.IUserService;
+import com.cosmeticsellingwebsite.util.Logger;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,7 @@ public class UserService implements IUserService, UserDetailsService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private AddressRepository addressRepository;
 
@@ -79,23 +80,27 @@ public class UserService implements IUserService, UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("UserName not found: " + username));
     }
 
-    public void register(@Valid RegisterReq registerRequest) {
+    public void registerUser(@Valid RegisterReq registerRequest) {
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
             throw new CustomException("Username already exists");
         }
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
             throw new CustomException("Email already exists");
         }
-        User user = new User();
-        user.setUsername(registerRequest.getUsername());
-        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setEmail(registerRequest.getEmail());
+        Customer customer = new Customer();
+        BeanUtils.copyProperties(registerRequest, customer);
+        customer.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         Role role = roleRepository.findByRoleName(RoleEnum.CUSTOMER).orElseGet(() -> {
             Role newRole = new Role();
             newRole.setRoleName(RoleEnum.CUSTOMER);
             return roleRepository.save(newRole); // Lưu vào database
         });
-        user.setRole(role);
-        userRepository.save(user);
+        customer.setRole(role);
+        Logger.log("Register: " + customer);
+        userRepository.save(customer);
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
     }
 }

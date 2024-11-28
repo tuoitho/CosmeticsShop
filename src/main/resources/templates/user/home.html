@@ -15,7 +15,10 @@
 <div id="app">
     <header th:replace="~{user/fragments/header::header}"></header>
 
-   <h1 style="font-size: 133px" >Daay la trang home cua user</h1>
+   <h1 style="font-size: 133px" >Daay la trang home cua user, xin chao
+       <h1 style="font-size: 133px" th:text="${user}"></h1>
+   </h1>
+
     <div class="footer" th:replace="~{user/fragments/footer::footer}">
     </div>
 </div>
