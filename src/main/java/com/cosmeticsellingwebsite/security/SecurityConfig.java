@@ -33,6 +33,8 @@ import java.util.Arrays;
 public class SecurityConfig {
 //    @Autowired
 //    private JwtFilter jwtFilter;
+    @Autowired
+    private    CustomOAuth2UserService oauth2UserService; // Inject CustomOAuth2UserService
 
     // Defines a UserDetailsService bean for user authentication
     @Bean
@@ -81,6 +83,11 @@ public class SecurityConfig {
 //                k có add fiter vào đây, vì project này không chuyên làm về api, nên không cần jwt, project này chủ yếu làm về view,
 //                role shipper mới cần jwt
 //                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Add the JWT filter before processing the request
+//                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(oauth2UserService)) // Set the custom OAuth2UserService
+                )
                 .build();
     }
 
@@ -108,5 +115,7 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
+
 
 }
