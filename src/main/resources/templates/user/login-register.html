@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css" />
+    <title>Đăng Nhập và Đăng Ký</title>
+    <style>
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+        }
+
+        .form-section {
+            width: 45%;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Phần Đăng Nhập -->
+    <div class="form-section">
+        <h2>Đăng Nhập</h2>
+        <form id="loginForm" th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username">Tên người dùng:</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Mật khẩu:</label> <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                <label class="form-check-label"for="rememberMe">Nhớ đăng
+                nhập</label>
+            </div>
+
+
+
+
+
+<!--            <button type="submit" class="btn btn-primary">Đăng Nhập</button>-->
+            <button type="submit"  id="loginBtn">Login</button>
+            <p><a href="#">Quên mật khẩu?</a></p>
+        </form>
+    </div><!-- Phần Đăng Ký -->
+    <div class="form-section">
+        <h2>Đăng Ký</h2>
+        <form id="registerForm">
+<!--            fullname-->
+            <div class="form-group">
+                <label for="regFullname">Fullname:</label> <input type="text" class="form-control"
+                                                                        id="regFullname" required>
+            </div>
+            <div class="form-group">
+                <label for="regEmail">Email:</label> <input type="email" class="form-control" id="regEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="regUsername">Username:</label> <input type="text" class="form-control"
+                                                                        id="regUsername" required>
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Mật khẩu:</label> <input type="password" class="form-control" id="regPassword"
+                                                                  required>
+            </div>
+
+            <div class="g-recaptcha" data-sitekey="6LfhgooqAAAAACfj2CyCG45KmQmX7zXUI9cDMXmg" data-callback="enableBtn"></div>
+            <span id="captchaError" class="alert alert-danger" style="display: none;">Please complete the CAPTCHA</span>
+
+
+            <button type="submit" id="registerBtn" disabled="disabled">Đăng Ký</button>
+        </form>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="customModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customModalLabel">Dynamic Modal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Message content -->
+                <div id="message">Default message</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="okButton">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/showMsg.js"></script>
+<script>
+    // Function to show modal with a custom message
+    const contextPath = window.location.origin + '/';
+    // AJAX cho đăng nhập
+    // $("#loginForm").on("submit", function (event) {
+    //     event.preventDefault();
+    //     const username = $("#username").val();
+    //     const password = $("#password").val();
+    //
+    //     $.ajax({
+    //         url: contextPath + 'api/v1/auth/login', // Đường dẫn đến file xử lý đăng nhập
+    //         type: 'POST',
+    //         contentType: 'application/json',
+    //         data: JSON.stringify({username: username, password: password}),
+    //         success: function (response) {
+    //             try {
+    //                 localStorage.setItem('token', JSON.stringify(response));
+    //                 showModalWithMessage("Đăng nhập thành công!");
+    //                 document.getElementById('okButton').addEventListener('click', function () {
+    //                     window.location.href = '/'; // Redirect to the home page
+    //                 });
+    //                 // const token = JSON.parse(localStorage.getItem('token'));
+    //                 // console.log(token);
+    //                 // const expirationTime = new Date(token.expiration).getTime();
+    //                 // console.log('Current time:', Date.now());
+    //                 // if (expirationTime < Date.now()) {
+    //                 //     localStorage.removeItem('token');
+    //                 // } else {
+    //                 //     showModalWithMessage("Th24eter!");
+    //                 // }
+    //             } catch (e) {
+    //                 // Xử lý lỗi nếu không thể phân tích JSON
+    //                 // console.error("Lỗi khi phân tích JSON:", e);
+    //                 console.log(response); // Hiển thị toàn bộ phản hồi lỗi (sử dụng response ban đầu)
+    //             }
+    //         },
+    //         error: function (xhr, status, error) {
+    //             try {
+    //                 showModalWithMessage(xhr.responseText);
+    //                 document.getElementById('okButton').addEventListener('click', function () {
+    //                     $('#customModal').modal('hide');
+    //                 });
+    //             } catch (e) {
+    //                 console.log(xhr.responseText);
+    //             }
+    //         }
+    //     });
+    // });
+
+    // AJAX cho đăng ký
+    $("#registerForm").on("submit", function (event) {
+        event.preventDefault();
+        const regFullname = $("#regFullname").val();
+        const regUsername = $("#regUsername").val();
+        const regEmail = $("#regEmail").val();
+        const regPassword = $("#regPassword").val();
+
+        $.ajax({
+            url: contextPath+'auth/register', // Đường dẫn đến file xử lý đăng ký
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                fullname: regFullname,
+                email: regEmail,
+                username: regUsername,
+                password: regPassword
+            }),
+            success: function (response) {
+                showModalWithMessage(response); // Hiển thị phản hồi từ server
+            },
+            error: function (xhr, status, error) {
+                showModalWithMessage(xhr.responseText); // Hiển thị phản hồi lỗi từ server
+            }
+        });
+    });
+</script>
+
+
+<script>
+    function enableBtn(){
+        document.getElementById("registerBtn").disabled = false;
+    }
+    function registerFormCheck() {
+        // Kiểm tra reCAPTCHA
+        const captchaResponse = grecaptcha.getResponse();
+        if (!captchaResponse) {
+            document.getElementById("captchaError").style.display = "block";
+            document.getElementById("captchaError").innerText = "Please complete the CAPTCHA.";
+            return false; // Ngăn form gửi đi nếu reCAPTCHA chưa hoàn thành
+        }
+
+        // Ẩn thông báo lỗi CAPTCHA nếu đã hoàn thành
+        document.getElementById("captchaError").style.display = "none";
+
+        // Tất cả kiểm tra đều thành công, cho phép form gửi đi
+        return true;
+    }
+</script>
+
+<script src="https://www.google.com/recaptcha/api.js?onload=enableRegisterButton&render=explicit" async defer></script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+</head>
+<body>
+<div id="app">
+    <header th:replace="~{user/fragments/header::header}"></header>
+    <div class="container my-5">
+        <div class="row">
+            <!-- Cột Danh Mục -->
+            <div class="col-md-3 mb-4">
+                <div class="product__items">
+                    <h3 class="product_item-title">CATEGORIES</h3>
+                    <ul class="product__items-list">
+                    </ul>
+                </div>
+            </div>
+            <!-- Cột Sản Phẩm -->
+
+            <div class="col-md-9">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Search products" aria-label="Search products" aria-describedby="button-addon2">
+                    <button class="btn btn-primary" type="button" id="button-addon2"><i class="fas fa-search"></i></button>
+                </div>
+                <h2 class="mb-4">Our Products</h2>
+                <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4" id="products-container">
+                    <!-- Sản phẩm sẽ được thêm vào đây -->
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <!--ajax-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>-->
+
+    <script>
+        //mac dinh
+        let currentCategoryId = 1;
+        const contextPath = window.location.origin + '/';
+        $(document).ready(function () {
+                // lay danh sach category
+                $.ajax({
+                    url: contextPath + 'browser/categories', // Thay thế bằng URL của API endpoint @GetMapping("")
+                    type: 'GET',
+                    success: function (response) {
+                        var categories = response
+                        var html = '';
+                        $.each(categories, function (index, category) {
+                            html += '<a href="" class="product__item-link" data-category-id="' + category.categoryId + '">'; // Thêm data-category-id
+                            html += '<li class="product__items-item">' + category.categoryName + '</li>';
+                            html += '</a>';
+                        });
+                        $('.product__items-list').html(html);
+                    },
+                    error: function (error) {
+                        console.error('Lỗi khi gọi API:', error);
+                    }
+                });
+
+
+                // Xử lý sự kiện click vào category
+                $('.product__items-list').on('click', '.product__item-link', function (event) {
+                    event.preventDefault(); // Ngăn chặn chuyển hướng mặc định của thẻ <a>
+                    var categoryId = $(this).data('category-id'); // Lấy category id từ data attribute
+                    // alert(categoryId);
+                    console.log('Category ID:', categoryId); // In ra categoryId để kiểm tra
+                    currentCategoryId = categoryId;
+                    getProductByCategory(categoryId, 0);
+
+                });
+
+                function getProductByCategory(categoryId, page) {
+                    $.ajax({
+                        url: contextPath + 'browser/category/products', // Thay thế bằng URL của API endpoint
+                        type: 'GET',
+                        data: {
+                            page: page,
+                            categoryId: categoryId,
+                        },
+                        success: function (response) {
+                            var products = response.products; // Lấy danh sách products từ response
+                            let html = '';
+                            console.log("day là product")
+                            console.log(products);
+                            products.forEach(product => {
+                                html += `
+                            <div class="col">
+                                <div class="card h-100">
+                                    <!-- Hình ảnh sản phẩm -->
+                                    <img src="${contextPath}api/images?imageName=${product.image}" class="card-img-top" alt="${product.productName}" style="height: 200px; object-fit: cover;">
+
+                                    <div class="card-body">
+                                        <!-- Tên sản phẩm -->
+                                        <h5 class="card-title">${product.productName}</h5>
+
+                                        <!-- Giá sản phẩm -->
+                                        <p class="card-text">
+                                            <strong>${product.cost} VND</strong>
+                                        </p>
+
+                                        <!-- Đánh giá sao -->
+                                        <div class="mb-2">
+                                            <span class="star-rating">
+                                                ${generateStars(product.ratingAverage)}
+                                            </span>
+                                            <small class="text-muted">(${product.ratingAverage})</small>
+                                        </div>
+
+                                        <!-- Số lượng đã bán -->
+                                        <p class="card-text">
+                                            <small class="text-muted">${product.sellCount} sold</small>
+                                        </p>
+                                        <!-- Nút thêm vào giỏ hàng -->
+                                        <button class="btn btn-primary" onclick="addToCart(${product.productCode})">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                            });
+
+// Hàm tạo sao từ ratingAverage
+                            function generateStars(rating) {
+                                let stars = '';
+                                for (let i = 0; i < 5; i++) {
+                                    if (i < rating) {
+                                        stars += '<i class="fa fa-star star--fill" aria-hidden="true"></i>';
+                                    } else {
+                                        stars += '<i class="fa fa-star" aria-hidden="true"></i>';
+                                    }
+                                }
+                                return stars;
+                            }
+
+                            // Gắn nội dung HTML vào phần tử trên trang
+                            $('#products-container').html(html); // Giả sử bạn có một phần tử với id "products-container"
+                            loadPagination(response.data.totalPages, response.data.pageNumber);
+                        },
+                        error: function (error) {
+                            console.error('Lỗi khi gọi API:', error);
+                        }
+                    });
+                };
+                getProductByCategory(1, 0);
+
+
+                function loadPagination(totalPages, currentPage) {
+                    $('#pagination').empty();  // Xóa phân trang cũ
+
+                    const maxVisiblePages = 5;  // Số trang tối đa được hiển thị
+
+                    // Hàm để thêm trang vào pagination
+                    function addPage(page, isActive = false) {
+                        const activeClass = isActive ? 'active' : '';
+                        $('#pagination').append(`
+                    <li class="page-item ${activeClass}">
+                        <a class="page-link" href="javascript:void(0)" data-page="${page}">${page + 1}</a>
+                    </li>
+                `);
+                    }
+
+                    // Nếu có nhiều trang hơn giới hạn hiển thị
+                    if (totalPages > maxVisiblePages) {
+                        // Trang đầu tiên
+                        addPage(0, currentPage === 0);
+
+                        // Nếu trang hiện tại lớn hơn giới hạn giữa, thêm dấu ba chấm
+                        if (currentPage > 2) {
+                            $('#pagination').append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                        }
+
+                        // Hiển thị các trang xung quanh trang hiện tại
+                        const startPage = Math.max(1, currentPage - 1);
+                        const endPage = Math.min(totalPages - 2, currentPage + 1);
+
+                        for (let i = startPage; i <= endPage; i++) {
+                            addPage(i, currentPage === i);
+                        }
+
+                        // Nếu còn nhiều trang sau trang hiện tại, thêm dấu ba chấm
+                        if (currentPage < totalPages - 3) {
+                            $('#pagination').append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                        }
+
+                        // Trang cuối cùng
+                        addPage(totalPages - 1, currentPage === totalPages - 1);
+                    } else {
+                        // Nếu tổng số trang nhỏ hơn giới hạn hiển thị, hiển thị tất cả các trang
+                        for (let i = 0; i < totalPages; i++) {
+                            addPage(i, currentPage === i);
+                        }
+                    }
+
+                    // Gán sự kiện click cho các trang
+                    $('#pagination .page-link').on('click', function () {
+                        const page = $(this).data('page');
+                        const categoryId = currentCategoryId;
+                        getProductByCategory(categoryId, page);
+                    });
+                }
+
+            }
+        )
+        ;
+
+    </script>
+</div>
+</body>
+</html>

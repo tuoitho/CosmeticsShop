@@ -1,0 +1,291 @@
+<!doctype html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8"><!--====== Google Font ======-->
+    <title>Admin Dashboard</title>
+    <link rel="shortcut icon" href="#">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        .content {
+            margin-left: 250px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class="bi bi-house-door"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-file-earmark"></i> Orders
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-cart"></i> Products
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-people"></i> Customers
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-bar-chart"></i> Reports
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <!-- Header -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Dashboard</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                        <i class="bi bi-calendar"></i> This week
+                    </button>
+                </div>
+            </div>
+
+<div layout:fragment="app-content">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <div class="grid wide">
+        <div class="row">
+            <div class="col l-9 m-10 c-12">
+                <div class="direct">
+                    <span><i class="direct-icon fas fa-home"></i>Trang chủ</span> &nbsp; &gt; &nbsp; Tất cả sản phẩm
+                </div>
+                <div class="action">
+                    <a title="Thêm sản phẩm" href="./insert-product.html" class="action__add"> <i
+                            class="action-icon fas fa-plus"></i> </a> <a title="Xóa sản phẩm" href=""
+                        class="action__delete"> <i
+                        class="action-icon far fa-trash-alt"></i> </a>
+                </div>
+                <div id="product-management">
+                    <div class="products">
+                        <div class="products__header">
+                            <table class="table table-hover table-bordered text-center">
+                                <thead class="thead-dark">
+                                <tr>
+                                    <th>Hình ảnh</th>
+                                    <th>Mã sản phẩm</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Danh mục</th>
+                                    <th>Giá</th>
+                                    <th>Số lượng</th>
+                                    <th>Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody id="productTableBody">
+                                <!-- Dữ liệu sản phẩm sẽ được thêm vào đây -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="products__body-wrap">
+                            <!-- Phần body của bảng -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pagination -->
+    <!-- Pagination Links -->
+    <ul id="pagination" class="pagination justify-content-center">
+        <!-- Pagination links will be dynamically added here -->
+    </ul>
+    <script>
+        const btnDelete = document.querySelector('.action__delete');
+        const checkDeletes = document.querySelectorAll('.check-delete');
+
+        checkDeletes.forEach(check => {
+            check.onclick = e => {
+                const checkEl = [...checkDeletes].find(item => {
+                    return item.matches('.check-delete:checked');
+                })
+                if (checkEl) {
+                    btnDelete.style = `opacity: 1; pointer-events: all`;
+                } else {
+                    btnDelete.style = `opacity: 0.5; pointer-events: none`;
+                }
+            }
+        })
+
+    </script><!--AJAX-->
+    <script>
+        const contextPath = window.location.origin+'/';
+        $(document).ready(function () {
+            // Hàm gọi API và đổ dữ liệu vào bảng
+            function loadProducts(page = 0) {
+                // alert('Load sản phẩm ở trang: ' + page);
+                $.ajax({
+                    url: contextPath+'api/v1/product/list',  // Đường dẫn API của bạn
+                    method: 'GET',
+                    data: {page: page},  // Thêm page vào tham số gửi lên server
+                    success: function (resp) {
+
+                        showNotification(resp.message);
+
+                        // Xóa nội dung cũ trong bảng
+                        $('#productTableBody').empty();
+
+                        // Duyệt qua từng sản phẩm và tạo HTML cho từng hàng
+                        resp.data.productPage.forEach(function (product) {
+                            // console.log("đây");
+
+                            // console.log(product);
+
+                            let productRow = `
+                        <tr>
+<!--                        gọi api lấy ảnh-->
+                            <td><img src=${contextPath}api/images?imageName=${product.image} alt="${product.productName}" class="img-thumbnail" width="80"></td>
+                            <td>${product.productCode}</td>
+                            <td>${product.productName}</td>
+                            <td>${product.category}</td>
+                            <td>${product.cost.toLocaleString()} VND</td>
+                            <td>${product.stock}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="editProduct('${product.productCode}')">Sửa</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteProduct('${product.productCode}')">Xóa</button>
+                            </td>
+                        </tr>
+                    `;
+                            $('#productTableBody').append(productRow);  // Thêm hàng vào bảng
+                        });
+                        loadPagination(resp.data.totalPages, resp.data.pageNumber);
+                    },complete: function() {
+                        $("#yourButton").prop("disabled", false);
+                    },
+                    error: function (err) {
+                        console.error("Lỗi khi tải sản phẩm:", err);
+                    }
+                });
+            }
+
+            // Hàm chỉnh sửa sản phẩm
+            function editProduct(productCode) {
+                alert(`Chỉnh sửa sản phẩm: ${productCode}`);
+                // Thực hiện hành động chỉnh sửa ở đây
+            }
+
+            // Hàm xóa sản phẩm
+            function deleteProduct(productCode) {
+                alert(`Xóa sản phẩm: ${productCode}`);
+                // Thực hiện hành động xóa ở đây
+            }
+
+
+            function loadPagination(totalPages, currentPage) {
+                $('#pagination').empty();  // Xóa phân trang cũ
+
+                const maxVisiblePages = 5;  // Số trang tối đa được hiển thị
+
+                // Hàm để thêm trang vào pagination
+                function addPage(page, isActive = false) {
+                    const activeClass = isActive ? 'active' : '';
+                    $('#pagination').append(`
+            <li class="page-item ${activeClass}">
+                <a class="page-link" href="javascript:void(0)" data-page="${page}">${page + 1}</a>
+            </li>
+        `);
+                }
+
+                // Nếu có nhiều trang hơn giới hạn hiển thị
+                if (totalPages > maxVisiblePages) {
+                    // Trang đầu tiên
+                    addPage(0, currentPage === 0);
+
+                    // Nếu trang hiện tại lớn hơn giới hạn giữa, thêm dấu ba chấm
+                    if (currentPage > 2) {
+                        $('#pagination').append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                    }
+
+                    // Hiển thị các trang xung quanh trang hiện tại
+                    const startPage = Math.max(1, currentPage - 1);
+                    const endPage = Math.min(totalPages - 2, currentPage + 1);
+
+                    for (let i = startPage; i <= endPage; i++) {
+                        addPage(i, currentPage === i);
+                    }
+
+                    // Nếu còn nhiều trang sau trang hiện tại, thêm dấu ba chấm
+                    if (currentPage < totalPages - 3) {
+                        $('#pagination').append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                    }
+
+                    // Trang cuối cùng
+                    addPage(totalPages - 1, currentPage === totalPages - 1);
+                } else {
+                    // Nếu tổng số trang nhỏ hơn giới hạn hiển thị, hiển thị tất cả các trang
+                    for (let i = 0; i < totalPages; i++) {
+                        addPage(i, currentPage === i);
+                    }
+                }
+
+                // Gán sự kiện click cho các trang
+                $('#pagination .page-link').on('click', function () {
+                    const page = $(this).data('page');
+                    loadProducts(page);
+                });
+            }
+
+
+            // Initial load when the page loads (first page)
+            loadProducts(0);  // Load first page by default
+        });
+    </script>
+
+</div>
+        </main>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="/notification.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // alert(1);
+        // showNotification("Load sản phẩm thành công");
+    });
+
+</script>
+</body>
+</html>
