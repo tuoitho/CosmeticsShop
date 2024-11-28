@@ -23,7 +23,7 @@ public class ProductBrowerController {
 
 
     @GetMapping("/category/products")
-    public Object getCategoryWithProducts(@RequestParam Long categoryId, @RequestParam(required = false) Integer page) {
+    public ResponseEntity<?> getCategoryWithProducts(@RequestParam Long categoryId, @RequestParam(required = false) Integer page) {
         if (page == null) {
             return ResponseEntity.ok(categoryService.getCategoryWithProducts(categoryId));
         }
