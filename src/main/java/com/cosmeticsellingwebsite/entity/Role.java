@@ -1,5 +1,6 @@
 package com.cosmeticsellingwebsite.entity;
 
+import com.cosmeticsellingwebsite.enums.RoleEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,5 +15,6 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roleId;
     @Column(columnDefinition = "text")
-    private String roleName;
+    @Enumerated(EnumType.STRING)
+    private RoleEnum roleName;
 }

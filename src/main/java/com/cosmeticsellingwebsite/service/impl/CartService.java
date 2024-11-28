@@ -1,25 +1,25 @@
-package com.cosmeticsellingwebsite.service.impl;
+//package com.cosmeticsellingwebsite.service.impl;
+//
+//import com.cosmeticsellingwebsite.payload.requestdabo.AddProductToCartRequest;
+//import com.cosmeticsellingwebsite.repository.CartRepository;
+//import com.cosmeticsellingwebsite.repository.ProductRepository;
+//import com.cosmeticsellingwebsite.repository.UserRepository;
+//import com.cosmeticsellingwebsite.service.interfaces.ICartService;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Service;
+//
+//@Service
+//public class CartService implements ICartService {
+//    @Autowired
+//    CartRepository cartRepository;
+//    @Autowired
+//    UserRepository userRepository;
+//    @Autowired
+//    ProductRepository productRepository;
+//    @Autowired
+//    private ProductService productService;
 
-import com.cosmeticsellingwebsite.payload.requestdabo.AddProductToCartRequest;
-import com.cosmeticsellingwebsite.repository.CartRepository;
-import com.cosmeticsellingwebsite.repository.ProductRepository;
-import com.cosmeticsellingwebsite.repository.UserRepository;
-import com.cosmeticsellingwebsite.service.interfaces.ICartService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-@Service
-public class CartService implements ICartService {
-    @Autowired
-    CartRepository cartRepository;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    ProductRepository productRepository;
-    @Autowired
-    private ProductService productService;
-
-    public void addProductToCart(AddProductToCartRequest addProductToCartRequest) {
+//    public void addProductToCart(AddProductToCartRequest addProductToCartRequest) {
 //        Optional<User> user = userRepository.findById(addProductToCartRequest.getUserId());
 //        if (user.isEmpty()) {
 //            throw new RuntimeException("User not found");
@@ -65,7 +65,7 @@ public class CartService implements ICartService {
 //        }
 //        cart.setCartItems(cartItems);
 //        cartRepository.save(cart);
-    }
+//    }
 
 //    public void updateProductQuantityInCart(@Valid AddProductToCartRequest addProductToCartRequest) {
 //        Optional<User> user = userRepository.findById(addProductToCartRequest.getUserId());
@@ -128,4 +128,4 @@ public class CartService implements ICartService {
 //        Logger.log( cartRepository.save(cart).toString());
 //        Logger.log(cartRepository.findByCustomer(userRepository.findById(userId).get()).toString());
 //    }
-}
+//}

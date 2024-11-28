@@ -15,6 +15,7 @@ import java.util.Set;
 public class UserPrincipal implements UserDetails {
     @Serial
     private static final long serialVersionUID = 1L;
+//    Long userId;
     String userName;
     String password = null;
     String role = null;
@@ -23,7 +24,7 @@ public class UserPrincipal implements UserDetails {
     public UserPrincipal(User user) {
         userName = user.getUsername();
         password = user.getPassword();
-        role = user.getRole().getRoleName();
+        role = user.getRole().getRoleName().toString();
         authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_"+role));
     }
 

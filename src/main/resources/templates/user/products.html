@@ -53,10 +53,10 @@
         $(document).ready(function () {
                 // lay danh sach category
                 $.ajax({
-                    url: contextPath + 'api/v1/categories', // Thay thế bằng URL của API endpoint @GetMapping("")
+                    url: contextPath + 'browser/categories', // Thay thế bằng URL của API endpoint @GetMapping("")
                     type: 'GET',
                     success: function (response) {
-                        var categories = response.data; // Lấy danh sách categories từ response
+                        var categories = response
                         var html = '';
                         $.each(categories, function (index, category) {
                             html += '<a href="" class="product__item-link" data-category-id="' + category.categoryId + '">'; // Thêm data-category-id
@@ -66,9 +66,7 @@
                         $('.product__items-list').html(html);
                     },
                     error: function (error) {
-                        // console.error('Lỗi khi gọi API:', error);
-                        showNotification(url);
-
+                        console.error('Lỗi khi gọi API:', error);
                     }
                 });
 
@@ -86,17 +84,14 @@
 
                 function getProductByCategory(categoryId, page) {
                     $.ajax({
-                        url: contextPath + 'api/v1/categories/products', // Thay thế bằng URL của API endpoint
+                        url: contextPath + 'browser/category/products', // Thay thế bằng URL của API endpoint
                         type: 'GET',
                         data: {
                             page: page,
                             categoryId: categoryId,
                         },
                         success: function (response) {
-                            if (response.sussess === false) {
-                                alert(response.message);
-                            }
-                            var products = response.data.products; // Lấy danh sách products từ response
+                            var products = response.products; // Lấy danh sách products từ response
                             let html = '';
                             console.log("day là product")
                             console.log(products);
@@ -128,7 +123,6 @@
                                         <p class="card-text">
                                             <small class="text-muted">${product.sellCount} sold</small>
                                         </p>
-
                                         <!-- Nút thêm vào giỏ hàng -->
                                         <button class="btn btn-primary" onclick="addToCart(${product.productCode})">Add to Cart</button>
                                     </div>

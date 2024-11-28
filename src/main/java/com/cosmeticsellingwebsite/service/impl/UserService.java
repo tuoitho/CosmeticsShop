@@ -1,14 +1,14 @@
 package com.cosmeticsellingwebsite.service.impl;
 
 import com.cosmeticsellingwebsite.entity.*;
+import com.cosmeticsellingwebsite.enums.RoleEnum;
 import com.cosmeticsellingwebsite.exception.CustomException;
-import com.cosmeticsellingwebsite.payload.requestdabo.AddAddressRequest;
-import com.cosmeticsellingwebsite.payload.requestdabo.RegisterRequest;
-import com.cosmeticsellingwebsite.payload.requestdabo.UserRequest;
+import com.cosmeticsellingwebsite.payload.request.RegisterReq;
 import com.cosmeticsellingwebsite.payload.response.UserResponse;
 import com.cosmeticsellingwebsite.repository.*;
 import com.cosmeticsellingwebsite.security.UserPrincipal;
 import com.cosmeticsellingwebsite.service.interfaces.IUserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,18 +32,18 @@ public class UserService implements IUserService, UserDetailsService {
     private AddressRepository addressRepository;
 
     //    add address
-    public void addAddress(AddAddressRequest addAddressRequest) {
-        Optional<User> userOptional = userRepository.findById(addAddressRequest.getUserId());
-        if (userOptional.isEmpty()) {
-            throw new RuntimeException("User not found");
-        }
-
-        Address address = new Address();
-        BeanUtils.copyProperties(addAddressRequest, address);
-        address.setUser(userOptional.get());
-
-        addressRepository.save(address);
-    }
+//    public void addAddress(AddAddressRequest addAddressRequest) {
+//        Optional<User> userOptional = userRepository.findById(addAddressRequest.getUserId());
+//        if (userOptional.isEmpty()) {
+//            throw new RuntimeException("User not found");
+//        }
+//
+//        Address address = new Address();
+//        BeanUtils.copyProperties(addAddressRequest, address);
+//        address.setUser(userOptional.get());
+//
+//        addressRepository.save(address);
+//    }
 
     public List<Address> getAddresses(Long userId) {
         if (!userRepository.existsById(userId)) {
@@ -67,39 +67,35 @@ public class UserService implements IUserService, UserDetailsService {
     public void delete(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
-            throw new RuntimeException("User not found");
+            throw new CustomException("User " + id + " not found");
         }
         userRepository.deleteById(id);
     }
 
-    public UserResponse update(UserRequest userRequest) {
-        Optional<User> userOptional = userRepository.findById(userRequest.getUserId());
-        if (userOptional.isEmpty()) {
-            throw new RuntimeException("User not found");
-        }
-        User user = userOptional.get();
-        UserResponse userResponse = new UserResponse();
-        BeanUtils.copyProperties(user, userResponse);
-        return userResponse;
-    }
-
-    public void registerUser(RegisterRequest user) {
-//        check unique username
-        if (userRepository.existsByUsername(user.getUsername())) {
-            throw new RuntimeException("Username already exists");
-        }
-        Role roleEntity = roleRepository.findByRoleName(user.getRole());
-        User userEntity = new User();
-        userEntity.setUsername(user.getUsername());
-        userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
-        userEntity.setRole(roleEntity);
-        userRepository.save(userEntity);
-    }
-
-
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByUsername(username);
         return user.map(UserPrincipal::new)
                 .orElseThrow(() -> new UsernameNotFoundException("UserName not found: " + username));
+    }
+
+    public void register(@Valid RegisterReq registerRequest) {
+        if (userRepository.existsByUsername(registerRequest.getUsername())) {
+            throw new CustomException("Username already exists");
+        }
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            throw new CustomException("Email already exists");
+        }
+        User user = new User();
+        user.setUsername(registerRequest.getUsername());
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setEmail(registerRequest.getEmail());
+        Role role = roleRepository.findByRoleName(RoleEnum.CUSTOMER).orElseGet(() -> {
+            Role newRole = new Role();
+            newRole.setRoleName(RoleEnum.CUSTOMER);
+            return roleRepository.save(newRole); // Lưu vào database
+        });
+        user.setRole(role);
+        userRepository.save(user);
     }
 }

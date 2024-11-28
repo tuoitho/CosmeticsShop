@@ -1,5 +1,5 @@
 package com.cosmeticsellingwebsite.enums;
 
-public enum Role {
+public enum RoleEnum {
     ADMIN, MANAGER, EMPLOYEE, CUSTOMER, SHIPPER
 }

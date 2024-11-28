@@ -19,7 +19,7 @@ public class HandleErrorRestController
 {
     // Xử lý lỗi từ `@Valid` khi binding không thành công
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationExceptions(
+    public ResponseEntity<?> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         BindingResult bindingResult = ex.getBindingResult();
@@ -28,8 +28,7 @@ public class HandleErrorRestController
             errors.put(error.getField(), error.getDefaultMessage());
         }
 
-        ApiResponse<Map<String, String>> apiResponse = new ApiResponse<>(false, "Validation failed", errors);
-        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
 //    @ExceptionHandler(Exception.class)
@@ -52,29 +51,19 @@ public class HandleErrorRestController
 //        ApiResponse<?> response = new ApiResponse<>(false, error, errorDetails);
 //        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 //    }
-
-    //TODO: tuỳ chỉnh CustomException và throw ra CustomException thay vì RuntimeException ở các service, để tránh phần data của resp quá dài, nếu có thời gian
-
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleGenericException(Exception ex) {
         String error=ex.getMessage();
         ex.printStackTrace();
         StackTraceElement[] lst= ex.getStackTrace();
-//        StringBuilder errorDetails= new StringBuilder();
-//        for (StackTraceElement element: lst) {
-//            errorDetails.append(String.format("Error in %s at line %d: %s",
-//                    element.getFileName(), element.getLineNumber(), ex.getMessage()));
-//        }
         String message = ex.getMessage();
-        // Tạo response với chi tiết lỗi
-//        ApiResponse<?> response = new ApiResponse<>(false, error, errorDetails);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
     }
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<?> handleCustomException(Exception e){
+
         e.printStackTrace();
-        ApiResponse<?> response = new ApiResponse<>(false, e.getMessage(), null);
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

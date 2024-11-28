@@ -1,6 +1,7 @@
 package com.cosmeticsellingwebsite.controller;
 
 import com.cosmeticsellingwebsite.payload.request.RegisterReq;
+import com.cosmeticsellingwebsite.service.capcha.CaptchaService;
 import com.cosmeticsellingwebsite.service.impl.UserService;
 import com.cosmeticsellingwebsite.util.Logger;
 import jakarta.validation.Valid;
@@ -17,6 +18,8 @@ import java.security.Principal;
 public class AuthController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private CaptchaService captchaService;
     @GetMapping({"/login", "/register"})
     public String login() {
         return "user/login-register";
@@ -28,11 +31,12 @@ public class AuthController {
         Logger.log("Principal: " +principal.getName());
         return ("Xem thông tin user thành công: "+principal.getName());
     }
-
     @PostMapping("/register")
     @ResponseBody
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterReq registerRequest) {
-        Logger.log("Register: " + username + " - " + password);
+    public ResponseEntity<?> register(@RequestParam("g-recaptcha-response") String response, @RequestBody @Valid RegisterReq registerRequest) {
+        captchaService.processResponse(response);
+        Logger.log("Register: " + registerRequest);
+        userService.register(registerRequest);
         return ResponseEntity.ok("Đăng ký thành công");
     }
 }

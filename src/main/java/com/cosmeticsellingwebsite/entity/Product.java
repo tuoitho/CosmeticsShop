@@ -44,5 +44,4 @@ public class Product implements Serializable {
     @JsonBackReference
     @JoinColumn(name = "categoryId", referencedColumnName = "categoryId")
     private Category category;
-
 }
