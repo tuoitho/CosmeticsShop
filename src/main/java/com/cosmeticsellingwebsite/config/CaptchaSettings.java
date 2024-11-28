@@ -1,4 +1,4 @@
-package com.cosmeticsellingwebsite.setting;
+package com.cosmeticsellingwebsite.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

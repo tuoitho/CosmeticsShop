@@ -2,7 +2,7 @@ package com.cosmeticsellingwebsite.service.capcha;
 
 
 import com.cosmeticsellingwebsite.dto.gooogle.GoogleResponse;
-import com.cosmeticsellingwebsite.setting.CaptchaSettings;
+import com.cosmeticsellingwebsite.config.CaptchaSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
