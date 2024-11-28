@@ -2,7 +2,7 @@ package com.cosmeticsellingwebsite.service.impl;
 
 
 import com.cosmeticsellingwebsite.entity.*;
-import com.cosmeticsellingwebsite.payload.request.AddProductRequest;
+import com.cosmeticsellingwebsite.payload.requestdabo.AddProductRequest;
 import com.cosmeticsellingwebsite.payload.response.ProductDetailResponse;
 import com.cosmeticsellingwebsite.payload.response.ProductResponse;
 import com.cosmeticsellingwebsite.repository.*;
@@ -35,7 +35,6 @@ public class ProductService implements IProductService {
     private OrderLineRepository orderLineRepository;
     @Autowired
     private CartItemRepository cartItemRepository;
-    @Override
     public List<ProductResponse> findAllProduct(Pageable page) {
         List<Product> products = productRepository.findAll(page).getContent();
         return products.stream()
@@ -50,19 +49,16 @@ public class ProductService implements IProductService {
 
     }
 
-    @Override
     public Long getStockByProductCode(String productCode) {
         Optional<ProductStock> pro = productStockRepository.findByProduct_ProductCode(productCode);
         return pro.map(productStock -> Long.parseLong(String.valueOf(productStock.getQuantity()))).orElse(0L);
     }
 
-    @Override
     public Long count() {
         return productRepository.count();
     }
 
 
-    @Override
     public ProductResponse addProduct(AddProductRequest createProductRequest) {
         if (productRepository.existsByProductCode(createProductRequest.getProductCode())) {
             throw new RuntimeException("Product code already exists");
@@ -87,7 +83,6 @@ public class ProductService implements IProductService {
         return productResponse;
     }
     @Transactional
-    @Override
     public void deleteProduct(Long id) {
         Optional<Product> productOptional = productRepository.findById(id);
         if (productOptional.isEmpty()) {
@@ -105,7 +100,6 @@ public class ProductService implements IProductService {
         productRepository.delete(product);
     }
 
-    @Override
     public ProductResponse updateProduct(AddProductRequest addProductRequest) {
         Product product = productRepository.findByProductCode(addProductRequest.getProductCode())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -126,7 +120,6 @@ public class ProductService implements IProductService {
         return productResponse;
     }
 
-    @Override
     public ProductDetailResponse getProductDetail(String productCdoe) {
         Product product = productRepository.findByProductCode(productCdoe)
                 .orElseThrow(() -> new RuntimeException("Product not found"));

@@ -1,7 +1,7 @@
 package com.cosmeticsellingwebsite.security;
 
 
-import com.cosmeticsellingwebsite.filter.JwtFilter;
+//import com.cosmeticsellingwebsite.filter.JwtFilter;
 import com.cosmeticsellingwebsite.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,15 +31,14 @@ import java.util.Arrays;
 @EnableWebSecurity
 @CrossOrigin
 public class SecurityConfig {
-    @Autowired
-    private JwtFilter jwtFilter;
+//    @Autowired
+//    private JwtFilter jwtFilter;
 
     // Defines a UserDetailsService bean for user authentication
     @Bean
     public UserDetailsService userDetailsService() {
         return new UserService();
     }
-
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -48,7 +47,6 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", configuration);
         return source;
@@ -58,18 +56,31 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/**","/assets/**","/notification.js","/error","/error/**"," /login","/**").permitAll()
+                        .requestMatchers("/assets/**","/notification.js","/error","/error/**"," /login","/**").permitAll()
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/**").permitAll()
+//                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/api/v1/auth/login","/api/v1/auth/logout").permitAll()
+                        .requestMatchers("/user/**").permitAll()
+                        .requestMatchers("/user").permitAll()
+                        .requestMatchers("/").permitAll()
                         .anyRequest().authenticated()) // Require authentication for all other requests
-                .formLogin(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Set session management to stateless
+                .formLogin(f->f.loginPage("/auth/login").permitAll()
+                                .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/")
+                        .failureUrl("/auth/login")
+//                        .usernameParameter("username")
+//                        .passwordParameter("password")
+                )
                 .authenticationProvider(authenticationProvider()) // Register the authentication provider
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Add the JWT filter before processing the request
+//                k có add fiter vào đây, vì project này không chuyên làm về api, nên không cần jwt, project này chủ yếu làm về view,
+//                role shipper mới cần jwt
+//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Add the JWT filter before processing the request
                 .build();
     }
 

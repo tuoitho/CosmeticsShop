@@ -1,9 +1,10 @@
 package com.cosmeticsellingwebsite.service.impl;
 
 import com.cosmeticsellingwebsite.entity.*;
-import com.cosmeticsellingwebsite.payload.request.AddAddressRequest;
-import com.cosmeticsellingwebsite.payload.request.RegisterRequest;
-import com.cosmeticsellingwebsite.payload.request.UserRequest;
+import com.cosmeticsellingwebsite.exception.CustomException;
+import com.cosmeticsellingwebsite.payload.requestdabo.AddAddressRequest;
+import com.cosmeticsellingwebsite.payload.requestdabo.RegisterRequest;
+import com.cosmeticsellingwebsite.payload.requestdabo.UserRequest;
 import com.cosmeticsellingwebsite.payload.response.UserResponse;
 import com.cosmeticsellingwebsite.repository.*;
 import com.cosmeticsellingwebsite.security.UserPrincipal;
@@ -31,7 +32,6 @@ public class UserService implements IUserService, UserDetailsService {
     private AddressRepository addressRepository;
 
     //    add address
-    @Override
     public void addAddress(AddAddressRequest addAddressRequest) {
         Optional<User> userOptional = userRepository.findById(addAddressRequest.getUserId());
         if (userOptional.isEmpty()) {
@@ -45,7 +45,6 @@ public class UserService implements IUserService, UserDetailsService {
         addressRepository.save(address);
     }
 
-    @Override
     public List<Address> getAddresses(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new RuntimeException("User not found");
@@ -53,21 +52,18 @@ public class UserService implements IUserService, UserDetailsService {
         return addressRepository.findAllByUser_UserId(userId);
     }
 
-    @Override
     public List<User> list() {
         return userRepository.findAll();
     }
 
-    @Override
     public User findById(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
-            throw new RuntimeException("User not found");
+            throw new CustomException("User " + id + " not found");
         }
         return userOptional.get();
     }
 
-    @Override
     public void delete(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
@@ -76,7 +72,6 @@ public class UserService implements IUserService, UserDetailsService {
         userRepository.deleteById(id);
     }
 
-    @Override
     public UserResponse update(UserRequest userRequest) {
         Optional<User> userOptional = userRepository.findById(userRequest.getUserId());
         if (userOptional.isEmpty()) {
@@ -88,7 +83,6 @@ public class UserService implements IUserService, UserDetailsService {
         return userResponse;
     }
 
-    @Override
     public void registerUser(RegisterRequest user) {
 //        check unique username
         if (userRepository.existsByUsername(user.getUsername())) {
@@ -103,7 +97,6 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
 
-    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByUsername(username);
         return user.map(UserPrincipal::new)

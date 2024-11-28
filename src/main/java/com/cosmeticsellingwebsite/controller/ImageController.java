@@ -1,4 +1,4 @@
-package com.cosmeticsellingwebsite.api;
+package com.cosmeticsellingwebsite.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -39,7 +39,7 @@ public class ImageController {
         try {
             // Tạo file từ tên ảnh
             File imageFile = new File(uploadDir + File.separator + imageName);
-            
+
             // Kiểm tra file có tồn tại không
             if (imageFile.exists()) {
                 // Trả về file ảnh

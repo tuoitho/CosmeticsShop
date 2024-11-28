@@ -16,10 +16,6 @@ public class AdminController {
 
     @GetMapping("/products")
     public String manageProducts() {
-//        Logger.log("Admin page");
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        Logger.log("Principal: " + principal.getName());
-//        Logger.log("Authorities: " + authentication.getAuthorities());
         return "admin/products";
     }
 

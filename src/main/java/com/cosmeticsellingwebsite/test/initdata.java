@@ -51,7 +51,7 @@
 //        role4.setRoleName("CUSTOMER");
 //        roleRepository.save(role4);
 //
-//        User user1 = new User();
+//        User user1 = new Admin();
 //        user1.setUsername("a");
 //        user1.setPassword("a");
 //        User user2 = new Manager();
@@ -68,24 +68,28 @@
 //        user3.setRole(roleRepository.findByRoleName("EMPLOYEE"));
 //        user4.setRole(roleRepository.findByRoleName("CUSTOMER"));
 //        userRepository.save(user1);
-////        Category category=new Category();
-////        category.setCategoryName("Body");
-////        categoryRepository.save(category);
-////        Category category1=new Category();
-////        category1.setCategoryName("Fragrance");
-////        categoryRepository.save(category1);
-////        Category category2=new Category();
-////        category2.setCategoryName("Wellness");
-////        categoryRepository.save(category2);
-////        Category category3=new Category();
-////        category3.setCategoryName("Skin");
-////        categoryRepository.save(category3);
-////        Category category4=new Category();
-////        category4.setCategoryName("MakeUp");
-////        categoryRepository.save(category4);
-////        Category category5=new Category();
-////        category5.setCategoryName("Hair");
-////        categoryRepository.save(category5);
+//        userRepository.save(user2);
+//        userRepository.save(user3);
+//        userRepository.save(user4);
+//
+//        Category category=new Category();
+//        category.setCategoryName("Body");
+//        categoryRepository.save(category);
+//        Category category1=new Category();
+//        category1.setCategoryName("Fragrance");
+//        categoryRepository.save(category1);
+//        Category category2=new Category();
+//        category2.setCategoryName("Wellness");
+//        categoryRepository.save(category2);
+//        Category category3=new Category();
+//        category3.setCategoryName("Skin");
+//        categoryRepository.save(category3);
+//        Category category4=new Category();
+//        category4.setCategoryName("MakeUp");
+//        categoryRepository.save(category4);
+//        Category category5=new Category();
+//        category5.setCategoryName("Hair");
+//        categoryRepository.save(category5);
 //
 //
 //        try {

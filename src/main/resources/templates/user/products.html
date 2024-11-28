@@ -1,322 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
-<head  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products</title>
-    <link rel="stylesheet" href="/assets/css/base.css">
-    <link rel="stylesheet" href="/assets/css/grid.css">
-    <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="stylesheet" href="/assets/css/responsive.css">
-    <link rel="stylesheet" href="/assets/font/fontawesome-free-5.15.3-web/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Comforter+Brush&family=Estonia&family=Kaushan+Script&family=Marck+Script&family=Nothing+You+Could+Do&family=Patrick+Hand&family=Roboto&family=Satisfy&family=Sawarabi+Gothic&family=Tangerine:wght@700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
-    <style>
-        .sidebar {
-            height: 100vh;
-            background-color: #f8f9fa;
-        }
-
-        .content {
-            margin-left: 250px;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-            }
-
-            .content {
-                margin-left: 0;
-            }
-        }
-    </style>
 </head>
 <body>
 <div id="app">
-    <!--Header: begin-->
     <header th:replace="~{user/fragments/header::header}"></header>
-    <!--Header: end-->
-
-    <!--Content: begin-->
-    <div class="content-products">
-        <div class="grid wide">
-            <div class="row">
-                <div class="col-3">
-                    <div class="product__items">
-                        <h3 class="product_item-title">
-                           CATEGORIES
-                        </h3>
-                        <ul class="product__items-list">
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-9">
-                    <div class="home-filter hide-on-mobile-tablet">
-                        <span class="home-filter__lable">Sort by</span>
-                        <button class="home-filter__btn btn">Common</button>
-                        <button class="home-filter__btn btn btn--primary">New</button>
-                        <div class="select-input">
-                            <span class="select-input__lable">Price</span>
-                            <i class="select-input__icon fas fa-angle-down "></i>
-                            <ul class="select-input__list">
-                                <li class="select-input__item">
-                                    <a href="" class="select-input__link">Lowest first</a>
-                                </li>
-                                <li class="select-input__item">
-                                    <a href="" class="select-input__link">Highest first</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <nav class="mobile-category">
-                        <ul class="mobile-category__list">
-                            <li class="mobile-category__item">
-                                <a href="" class="mobile-category__link active-border">The Ordinary</a></a>
-                            </li>
-                            <li class="mobile-category__item">
-                                <a href="" class="mobile-category__link">Body Oil</a></a>
-                            </li>
-                            <li class="mobile-category__item">
-                                <a href="" class="mobile-category__link">Face Masks</a></a>
-                            </li>
-                            <li class="mobile-category__item">
-                                <a href="" class="mobile-category__link">Make Up</a></a>
-                            </li>
-                            <li class="mobile-category__item">
-                                <a href="" class="mobile-category__link">Hair Care</a></a>
-                            </li> <li class="mobile-category__item">
-                            <a href="" class="mobile-category__link">Skincare</a></a>
-                            </li>
-                            </li> <li class="mobile-category__item">
-                            <a href="" class="mobile-category__link">Tool</a></a>
-                        </li>
-                        </ul>
-                    </nav>
-                    <br>
-                    <div class="row products">
-                        <a href="./product.html" class="col l-2-4 m-4 c-6">
-                            <div class="product__item">
-                                <img class="product__item-img" src="/assets/img/ordinary/rdn-serum-foundation-31-y-30ml-1.png">
-                                <h5 class="product__item-name">
-                                    Serum Foundation
-                                </h5>
-                                <div class="product__item-price-wrapper">
-                                    <h3 class="product__item-price product__item-price--old">
-                                        $6.7
-                                    </h3>
-                                    <h3 class="product__item-price">
-                                        $5.5
-                                    </h3>
-                                </div>
-                                <div class="star-link-sold-wrapper">
-                                    <div class="star-link">
-                                        <i class="fa fa-star star--fill" aria-hidden="true"></i>
-                                        <i class="fa fa-star star--fill" aria-hidden="true"></i>
-                                        <i class="fa fa-star star--fill" aria-hidden="true"></i>
-                                        <i class="fa fa-star star--fill" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="product__sold-number">203 sold</div>
-                                </div>
-                                <div class="product__item-company-wrapper">
-                                    <span class="product__item-company">Ordinary</span>
-                                    <span class="product__item-origin-name">USA</span>
-                                </div>
-
-
-                            </div>
-                        </a>
-                    </div>
-                    <button class="buttons" style="margin: 20px auto; display: block">
-                        LOAD MORE
-                    </button>
-                    <ul id="pagination" class="pagination justify-content-center">
-                        <!-- Pagination links will be dynamically added here -->
+    <div class="container my-5">
+        <div class="row">
+            <!-- Cột Danh Mục -->
+            <div class="col-md-3 mb-4">
+                <div class="product__items">
+                    <h3 class="product_item-title">CATEGORIES</h3>
+                    <ul class="product__items-list">
                     </ul>
                 </div>
             </div>
+            <!-- Cột Sản Phẩm -->
+
+            <div class="col-md-9">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Search products" aria-label="Search products" aria-describedby="button-addon2">
+                    <button class="btn btn-primary" type="button" id="button-addon2"><i class="fas fa-search"></i></button>
+                </div>
+                <h2 class="mb-4">Our Products</h2>
+                <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4" id="products-container">
+                    <!-- Sản phẩm sẽ được thêm vào đây -->
+                </div>
+
+            </div>
+
         </div>
-
     </div>
-    <!--Footer: begin-->
-    <!--Footer: end-->
-    <!--Search mobile-->
-    <div class="search-mobile">
-        <div class="search-mobile__input">
-            <input class="search-mobile__input-text" placeholder="Search..." >
-            <i class="icon-search fas fa-search"></i>
-        </div>
+    <!--ajax-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>-->
 
-        <a href="cart.html" class="cart-link">
-            <i class="fa fa-cart-plus"></i>
-        </a>
-        <a class="login-link " style="padding-right: 10px">
-            <i class="fa fa-user"></i>
-        </a>
-    </div>
-</div>
+    <script>
+        //mac dinh
+        let currentCategoryId = 1;
+        const contextPath = window.location.origin + '/';
+        $(document).ready(function () {
+                // lay danh sach category
+                $.ajax({
+                    url: contextPath + 'api/v1/categories', // Thay thế bằng URL của API endpoint @GetMapping("")
+                    type: 'GET',
+                    success: function (response) {
+                        var categories = response.data; // Lấy danh sách categories từ response
+                        var html = '';
+                        $.each(categories, function (index, category) {
+                            html += '<a href="" class="product__item-link" data-category-id="' + category.categoryId + '">'; // Thêm data-category-id
+                            html += '<li class="product__items-item">' + category.categoryName + '</li>';
+                            html += '</a>';
+                        });
+                        $('.product__items-list').html(html);
+                    },
+                    error: function (error) {
+                        // console.error('Lỗi khi gọi API:', error);
+                        showNotification(url);
 
-<div th:replace="~{user/fragments/modal::modal}"> </div>
-
-
-<!--<script src="/assets/js/showHide.js"></script>-->
-<!--ajax-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
-<script>
-    //mac dinh
-    let currentCategoryId = 1;
-    const contextPath = window.location.origin+'/';
-    $(document).ready(function() {
-        // lay danh sach category
-        $.ajax({
-            url: contextPath+'api/v1/categories', // Thay thế bằng URL của API endpoint @GetMapping("")
-            type: 'GET',
-            success: function(response) {
-                var categories = response.data; // Lấy danh sách categories từ response
-                var html = '';
-                $.each(categories, function(index, category) {
-                    html += '<a href="" class="product__item-link" data-category-id="' + category.categoryId + '">'; // Thêm data-category-id
-                    html += '<li class="product__items-item">' + category.categoryName + '</li>';
-                    html += '</a>';
-                });
-                $('.product__items-list').html(html);
-            },
-            error: function(error) {
-                // console.error('Lỗi khi gọi API:', error);
-                showNotification(url);
-
-            }
-        });
-
-
-
-        // Xử lý sự kiện click vào category
-        $('.product__items-list').on('click', '.product__item-link', function(event) {
-            event.preventDefault(); // Ngăn chặn chuyển hướng mặc định của thẻ <a>
-            var categoryId = $(this).data('category-id'); // Lấy category id từ data attribute
-            // alert(categoryId);
-            console.log('Category ID:', categoryId); // In ra categoryId để kiểm tra
-            currentCategoryId = categoryId;
-            getProductByCategory(categoryId,0);
-
-        });
-        // ham lay danh sach san pham theo category
-        function getProductByCategory(categoryId,page) {
-            $.ajax({
-                url: contextPath + 'api/v1/categories/products', // Thay thế bằng URL của API endpoint
-                type: 'GET',
-                data: {
-                    page: page,
-                    categoryId: categoryId,
-                },
-                success: function (response) {
-                    if (response.sussess === false) {
-                        alert(response.message);
                     }
-                    var products = response.data.products; // Lấy danh sách products từ response
-                    var html = '';
-                    $.each(products, function (index, product) {
-                        html += '<a href='+contextPath+'user/product/' + product.productCode + ' class="col l-2-4 m-4 c-6">'; // Thêm productCode vào link
-                        html += '<div class="product__item">';
-                        html += '<img class="product__item-img" src="' +contextPath+"api/images?imageName="+ product.image + '">';
-                        html += '<h5 class="product__item-name">' + product.productName + '</h5>';
-                        html += '<div class="product__item-price-wrapper">';
-                        // Thêm logic hiển thị giá cũ nếu cần
+                });
 
-                        html += '<h3 class="product__item-price">' + product.cost + ' VND</h3>'; // Thay thế bằng giá thực tế
-                        html += '</div>';
-                        html += '<div class="star-link-sold-wrapper">';
-                        html += '<div class="star-link">';
-                        // Thêm logic hiển thị số sao dựa trên product.ratingAverage
-                        // for (let i = 0; i < product.ratingAverage; i++) {
-                        //     html += '<i class="fa fa-star star--fill" aria-hidden="true"></i>';
-                        // }
-                        html += '<i class="fa fa-star star--fill" aria-hidden="true">'+product.ratingAverage+'</i>';
-                        html += '</div>';
-                        html += '<div class="product__sold-number">' + product.sellCount + ' sold</div>';
-                        html += '</div>';
-                        html += '<div class="product__item-company-wrapper">';
-                        html += '<span class="product__item-company">Ordinary</span>'; // Thay thế bằng tên company nếu cần
-                        html += '<span class="product__item-origin-name">' + product.origin + '</span>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</a>';
+
+                // Xử lý sự kiện click vào category
+                $('.product__items-list').on('click', '.product__item-link', function (event) {
+                    event.preventDefault(); // Ngăn chặn chuyển hướng mặc định của thẻ <a>
+                    var categoryId = $(this).data('category-id'); // Lấy category id từ data attribute
+                    // alert(categoryId);
+                    console.log('Category ID:', categoryId); // In ra categoryId để kiểm tra
+                    currentCategoryId = categoryId;
+                    getProductByCategory(categoryId, 0);
+
+                });
+
+                function getProductByCategory(categoryId, page) {
+                    $.ajax({
+                        url: contextPath + 'api/v1/categories/products', // Thay thế bằng URL của API endpoint
+                        type: 'GET',
+                        data: {
+                            page: page,
+                            categoryId: categoryId,
+                        },
+                        success: function (response) {
+                            if (response.sussess === false) {
+                                alert(response.message);
+                            }
+                            var products = response.data.products; // Lấy danh sách products từ response
+                            let html = '';
+                            console.log("day là product")
+                            console.log(products);
+                            products.forEach(product => {
+                                html += `
+                            <div class="col">
+                                <div class="card h-100">
+                                    <!-- Hình ảnh sản phẩm -->
+                                    <img src="${contextPath}api/images?imageName=${product.image}" class="card-img-top" alt="${product.productName}" style="height: 200px; object-fit: cover;">
+
+                                    <div class="card-body">
+                                        <!-- Tên sản phẩm -->
+                                        <h5 class="card-title">${product.productName}</h5>
+
+                                        <!-- Giá sản phẩm -->
+                                        <p class="card-text">
+                                            <strong>${product.cost} VND</strong>
+                                        </p>
+
+                                        <!-- Đánh giá sao -->
+                                        <div class="mb-2">
+                                            <span class="star-rating">
+                                                ${generateStars(product.ratingAverage)}
+                                            </span>
+                                            <small class="text-muted">(${product.ratingAverage})</small>
+                                        </div>
+
+                                        <!-- Số lượng đã bán -->
+                                        <p class="card-text">
+                                            <small class="text-muted">${product.sellCount} sold</small>
+                                        </p>
+
+                                        <!-- Nút thêm vào giỏ hàng -->
+                                        <button class="btn btn-primary" onclick="addToCart(${product.productCode})">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                            });
+
+// Hàm tạo sao từ ratingAverage
+                            function generateStars(rating) {
+                                let stars = '';
+                                for (let i = 0; i < 5; i++) {
+                                    if (i < rating) {
+                                        stars += '<i class="fa fa-star star--fill" aria-hidden="true"></i>';
+                                    } else {
+                                        stars += '<i class="fa fa-star" aria-hidden="true"></i>';
+                                    }
+                                }
+                                return stars;
+                            }
+
+                            // Gắn nội dung HTML vào phần tử trên trang
+                            $('#products-container').html(html); // Giả sử bạn có một phần tử với id "products-container"
+                            loadPagination(response.data.totalPages, response.data.pageNumber);
+                        },
+                        error: function (error) {
+                            console.error('Lỗi khi gọi API:', error);
+                        }
                     });
-                    $('.products').html(html);
-                    loadPagination(response.data.totalPages, response.data.pageNumber);
-                },
-                error: function (error) {
-                    console.error('Lỗi khi gọi API:', error);
+                };
+                getProductByCategory(1, 0);
+
+
+                function loadPagination(totalPages, currentPage) {
+                    $('#pagination').empty();  // Xóa phân trang cũ
+
+                    const maxVisiblePages = 5;  // Số trang tối đa được hiển thị
+
+                    // Hàm để thêm trang vào pagination
+                    function addPage(page, isActive = false) {
+                        const activeClass = isActive ? 'active' : '';
+                        $('#pagination').append(`
+                    <li class="page-item ${activeClass}">
+                        <a class="page-link" href="javascript:void(0)" data-page="${page}">${page + 1}</a>
+                    </li>
+                `);
+                    }
+
+                    // Nếu có nhiều trang hơn giới hạn hiển thị
+                    if (totalPages > maxVisiblePages) {
+                        // Trang đầu tiên
+                        addPage(0, currentPage === 0);
+
+                        // Nếu trang hiện tại lớn hơn giới hạn giữa, thêm dấu ba chấm
+                        if (currentPage > 2) {
+                            $('#pagination').append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                        }
+
+                        // Hiển thị các trang xung quanh trang hiện tại
+                        const startPage = Math.max(1, currentPage - 1);
+                        const endPage = Math.min(totalPages - 2, currentPage + 1);
+
+                        for (let i = startPage; i <= endPage; i++) {
+                            addPage(i, currentPage === i);
+                        }
+
+                        // Nếu còn nhiều trang sau trang hiện tại, thêm dấu ba chấm
+                        if (currentPage < totalPages - 3) {
+                            $('#pagination').append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                        }
+
+                        // Trang cuối cùng
+                        addPage(totalPages - 1, currentPage === totalPages - 1);
+                    } else {
+                        // Nếu tổng số trang nhỏ hơn giới hạn hiển thị, hiển thị tất cả các trang
+                        for (let i = 0; i < totalPages; i++) {
+                            addPage(i, currentPage === i);
+                        }
+                    }
+
+                    // Gán sự kiện click cho các trang
+                    $('#pagination .page-link').on('click', function () {
+                        const page = $(this).data('page');
+                        const categoryId = currentCategoryId;
+                        getProductByCategory(categoryId, page);
+                    });
                 }
-            });
-        };
-        getProductByCategory(1,0);
-        function loadPagination(totalPages, currentPage) {
-            $('#pagination').empty();  // Xóa phân trang cũ
 
-            const maxVisiblePages = 5;  // Số trang tối đa được hiển thị
-
-            // Hàm để thêm trang vào pagination
-            function addPage(page, isActive = false) {
-                const activeClass = isActive ? 'active' : '';
-                $('#pagination').append(`
-            <li class="page-item ${activeClass}">
-                <a class="page-link" href="javascript:void(0)" data-page="${page}">${page + 1}</a>
-            </li>
-        `);
             }
+        )
+        ;
 
-            // Nếu có nhiều trang hơn giới hạn hiển thị
-            if (totalPages > maxVisiblePages) {
-                // Trang đầu tiên
-                addPage(0, currentPage === 0);
-
-                // Nếu trang hiện tại lớn hơn giới hạn giữa, thêm dấu ba chấm
-                if (currentPage > 2) {
-                    $('#pagination').append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
-                }
-
-                // Hiển thị các trang xung quanh trang hiện tại
-                const startPage = Math.max(1, currentPage - 1);
-                const endPage = Math.min(totalPages - 2, currentPage + 1);
-
-                for (let i = startPage; i <= endPage; i++) {
-                    addPage(i, currentPage === i);
-                }
-
-                // Nếu còn nhiều trang sau trang hiện tại, thêm dấu ba chấm
-                if (currentPage < totalPages - 3) {
-                    $('#pagination').append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
-                }
-
-                // Trang cuối cùng
-                addPage(totalPages - 1, currentPage === totalPages - 1);
-            } else {
-                // Nếu tổng số trang nhỏ hơn giới hạn hiển thị, hiển thị tất cả các trang
-                for (let i = 0; i < totalPages; i++) {
-                    addPage(i, currentPage === i);
-                }
-            }
-
-            // Gán sự kiện click cho các trang
-            $('#pagination .page-link').on('click', function () {
-                const page = $(this).data('page');
-                const categoryId = currentCategoryId;
-                getProductByCategory(categoryId,page);
-            });
-        }
-
-    });
-
-</script>
+    </script>
+</div>
 </body>
 </html>

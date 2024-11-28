@@ -1,6 +1,8 @@
 package com.cosmeticsellingwebsite.exception;
 
 import com.cosmeticsellingwebsite.payload.response.ApiResponse;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -56,18 +58,23 @@ public class HandleErrorRestController
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleGenericException(Exception ex) {
         String error=ex.getMessage();
-
+        ex.printStackTrace();
         StackTraceElement[] lst= ex.getStackTrace();
-        StringBuilder errorDetails= new StringBuilder();
-        for (StackTraceElement element: lst) {
-            errorDetails.append(String.format("Error in %s at line %d: %s",
-                    element.getFileName(), element.getLineNumber(), ex.getMessage()));
-        }
-
+//        StringBuilder errorDetails= new StringBuilder();
+//        for (StackTraceElement element: lst) {
+//            errorDetails.append(String.format("Error in %s at line %d: %s",
+//                    element.getFileName(), element.getLineNumber(), ex.getMessage()));
+//        }
+        String message = ex.getMessage();
         // Tạo response với chi tiết lỗi
-        ApiResponse<?> response = new ApiResponse<>(false, error, errorDetails);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+//        ApiResponse<?> response = new ApiResponse<>(false, error, errorDetails);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
     }
-
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<?> handleCustomException(Exception e){
+        e.printStackTrace();
+        ApiResponse<?> response = new ApiResponse<>(false, e.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 }

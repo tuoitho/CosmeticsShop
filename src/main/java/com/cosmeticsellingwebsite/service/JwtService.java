@@ -1,11 +1,12 @@
 package com.cosmeticsellingwebsite.service;
 
 import com.cosmeticsellingwebsite.util.Logger;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,6 @@ import com.cosmeticsellingwebsite.payload.response.*;
 
 @Component
 public class JwtService {
-
     // Secret Key for signing the JWT. It should be kept private.
     @Value("${jwt.secret}")
     private String SECRET;
@@ -30,14 +30,9 @@ public class JwtService {
     private long EXPIRATION;
     // Generates a JWT token for the given userName.
     public String generateToken(String userName) {
-//        Logger.log(SECRET);
-//        Logger.log(EXPIRATION + "");
-//        Logger.log(Date.from(new Date().toInstant()).toString());
-//        Logger.log(Date.from(new Date().toInstant().plusMillis(EXPIRATION)).toString());
-//        Logger.log(new Date(System.currentTimeMillis() + EXPIRATION).toString());
         // Prepare claims for the token
         Map<String, Object> claims = new HashMap<>();
-
+        claims.put("role", "fsffsf"); // Thêm vai trò vào claims
         // Build JWT token with claims, subject, issued time, expiration time, and signing algorithm
           // Token valid for 3 minutes
         return Jwts.builder()
@@ -56,7 +51,14 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
+    public String extractRole(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSignKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("role", String.class); // Lấy role từ claims
+    }
 
     // Extracts the userName from the JWT token.
     //return -> The userName contained in the token.
@@ -117,5 +119,41 @@ public class JwtService {
         boolean isActive = true; // hoặc sử dụng một thuộc tính khác để kiểm tra trạng thái hoạt động
         String username = extractUserName(token);
         return new JwtResponse(username,token, expiration, isActive);
+    }
+
+    public boolean validateJwtToken(String authToken) {
+        try {
+            Jwts.parser().setSigningKey(SECRET).parseClaimsJws(authToken);
+            return true;
+        } catch (SignatureException e) {
+            Logger.log("Invalid JWT signature: {}", e.getMessage());
+        } catch (MalformedJwtException e) {
+            Logger.log("Invalid JWT token: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            Logger.log("JWT token is expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            Logger.log("JWT token is unsupported: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            Logger.log("JWT claims string is empty: {}", e.getMessage());
+        }
+
+        return false;
+    }
+
+    public String getTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+
+        // Kiểm tra nếu cookies không phải null
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                // Kiểm tra tên cookie có phải là "JWT" hay không (hoặc tên bạn đặt cho cookie)
+                if ("Authorization".equals(cookie.getName())) {
+                    // Trả về giá trị của cookie (token JWT)
+                    return cookie.getValue();
+                }
+            }
+        }
+        // Nếu không tìm thấy cookie chứa token, trả về null
+        return null;
     }
 }

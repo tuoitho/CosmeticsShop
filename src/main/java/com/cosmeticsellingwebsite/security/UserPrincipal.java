@@ -1,6 +1,7 @@
 package com.cosmeticsellingwebsite.security;
 
 import com.cosmeticsellingwebsite.entity.User;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+@ToString
 public class UserPrincipal implements UserDetails {
     @Serial
     private static final long serialVersionUID = 1L;
