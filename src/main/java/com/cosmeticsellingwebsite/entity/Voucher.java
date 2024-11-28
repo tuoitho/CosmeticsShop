@@ -23,7 +23,7 @@ public class Voucher implements Serializable {
     private LocalDateTime endDate;
     private Boolean used = false;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "orderId", referencedColumnName = "orderId")
     private Order order;
 
