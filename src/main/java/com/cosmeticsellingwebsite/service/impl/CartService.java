@@ -3,6 +3,7 @@ package com.cosmeticsellingwebsite.service.impl;
 import com.cosmeticsellingwebsite.config.AuthenticationHelper;
 import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.payload.request.AddProductToCartRequest;
+import com.cosmeticsellingwebsite.repository.CartItemRepository;
 import com.cosmeticsellingwebsite.repository.CartRepository;
 import com.cosmeticsellingwebsite.repository.ProductRepository;
 import com.cosmeticsellingwebsite.repository.UserRepository;
@@ -27,7 +28,12 @@ public class CartService implements ICartService {
     AuthenticationHelper authenticationHelper;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private CartItemRepository cartItemRepository;
 
+    public CartItem getCartItemById(Long id) {
+        return cartItemRepository.findById(id).orElseThrow(() -> new RuntimeException("Cart item not found"));
+    }
     public void addProductToCart(AddProductToCartRequest addProductToCartRequest) {
         Customer customer = (Customer) userRepository.findById(authenticationHelper.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
 

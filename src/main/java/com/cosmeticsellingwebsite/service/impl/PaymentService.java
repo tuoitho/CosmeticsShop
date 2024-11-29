@@ -40,4 +40,8 @@ public class PaymentService {
         paymentResponse.setOrderId(payment.getOrder().getOrderId());
         return paymentResponse;
     }
+
+    public void updatePayment(String orderInfo, String paymentTime) {
+
+    }
 }
