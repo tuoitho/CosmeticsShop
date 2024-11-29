@@ -36,41 +36,18 @@
 //    public void init() {
 ////        1	ADMIN
 ////        2	MANAGER
-////        3	EMPLOYEE
-////        4	CUSTOMER
+////       
+////        3	CUSTOMER
 //        Role role1 = new Role();
 //        role1.setRoleName("ADMIN");
 //        roleRepository.save(role1);
 //        Role role2 = new Role();
 //        role2.setRoleName("MANAGER");
 //        roleRepository.save(role2);
-//        Role role3 = new Role();
-//        role3.setRoleName("EMPLOYEE");
-//        roleRepository.save(role3);
+//        
 //        Role role4 = new Role();
 //        role4.setRoleName("CUSTOMER");
 //        roleRepository.save(role4);
-//
-//        User user1 = new Admin();
-//        user1.setUsername("a");
-//        user1.setPassword("a");
-//        User user2 = new Manager();
-//        user2.setUsername("m");
-//        user2.setPassword("m");
-//        User user3 = new Employee();
-//        user3.setUsername("e");
-//        user3.setPassword("e");
-//        User user4 = new Customer();
-//        user4.setUsername("c");
-//        user4.setPassword("c");
-//        user1.setRole(roleRepository.findByRoleName("ADMIN"));
-//        user2.setRole(roleRepository.findByRoleName("MANAGER"));
-//        user3.setRole(roleRepository.findByRoleName("EMPLOYEE"));
-//        user4.setRole(roleRepository.findByRoleName("CUSTOMER"));
-//        userRepository.save(user1);
-//        userRepository.save(user2);
-//        userRepository.save(user3);
-//        userRepository.save(user4);
 //
 //        Category category=new Category();
 //        category.setCategoryName("Body");
