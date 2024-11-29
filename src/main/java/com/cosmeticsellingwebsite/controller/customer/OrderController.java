@@ -122,7 +122,7 @@ public class OrderController {
             else{
                 return ResponseEntity.badRequest().body("Invalid payment method");
             }
-            //trả về trạng thái 200 và liên kết chuyển hướng phù hợp
+            //trả về trạng thái 200 và liên kết chuyển hướng
             return ResponseEntity.ok().body(Map.of("redirectUrl", "/customer/order/payment-return"));
 
         } catch (RuntimeException e) {
