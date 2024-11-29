@@ -7,6 +7,7 @@ import com.cosmeticsellingwebsite.repository.CartRepository;
 import com.cosmeticsellingwebsite.repository.ProductRepository;
 import com.cosmeticsellingwebsite.repository.UserRepository;
 import com.cosmeticsellingwebsite.service.interfaces.ICartService;
+import com.cosmeticsellingwebsite.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -80,11 +81,13 @@ public class CartService implements ICartService {
 
     public void addToCart(Long userId, AddProductToCartRequest addProductToCartRequest) {
         Product product = productRepository.findByProductCode(addProductToCartRequest.getProductCode()).orElseThrow(() -> new RuntimeException("Product not found"));
+        Logger.log(product.toString());
         Cart cart = cartRepository.findByCustomer_UserId(userId).orElseGet(() -> {
             Cart newCart = new Cart();
             newCart.setCustomer((Customer) userRepository.findById(authenticationHelper.getUserId()).orElseThrow(() -> new RuntimeException("User not found")));
             return cartRepository.save(newCart);
         });
+        Logger.log(cart.toString());
         Set<CartItem> cartItems = cart.getCartItems();
         if (cartItems == null) {
             cartItems = Set.of();
@@ -101,6 +104,7 @@ public class CartService implements ICartService {
             cartItem.setQuantity(addProductToCartRequest.getQuantity());
             cartItems.add(cartItem);
         }
+        cart.setCartItems(cartItems);
         cartRepository.save(cart);
     }
 
