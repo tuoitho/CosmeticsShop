@@ -91,7 +91,9 @@ public class SecurityConfig {
                         .requestMatchers("/assets/**","/showMsg.js","/notification.js","/error","/error/**"," /login").permitAll()
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
 //                        .requestMatchers("/**").permitAll()
-                        .requestMatchers("/api/images/**","/auth/**","/oauth2/**","/user/**","browser/**","/").permitAll()
+                        .requestMatchers("/api/images/**","/auth/**",
+                                "/oauth2/**","/user/**","browser/**",
+                                "/about","/").permitAll()
                         .requestMatchers("/customer/**","customer").hasRole("CUSTOMER")
                         .requestMatchers("/shipper/**").hasRole("SHIPPER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
