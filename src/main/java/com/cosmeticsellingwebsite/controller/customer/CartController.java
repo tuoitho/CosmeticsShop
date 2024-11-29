@@ -2,11 +2,13 @@ package com.cosmeticsellingwebsite.controller.customer;
 
 import com.cosmeticsellingwebsite.config.AuthenticationHelper;
 import com.cosmeticsellingwebsite.dto.CartItemDTO;
+import com.cosmeticsellingwebsite.dto.ProductSimpleDTO;
 import com.cosmeticsellingwebsite.entity.CartItem;
 import com.cosmeticsellingwebsite.entity.Product;
 import com.cosmeticsellingwebsite.payload.request.AddProductToCartRequest;
 import com.cosmeticsellingwebsite.service.impl.CartService;
 import com.cosmeticsellingwebsite.service.impl.ProductService;
+import com.cosmeticsellingwebsite.util.Logger;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +34,25 @@ public class CartController {
     @GetMapping("")
     public String showCart(Model model) {
         List<CartItemDTO> cartItems = cartService.getCartByUserId(authenticationHelper.getUserId()).getCartItems().stream().map(cartItem -> {
+            Logger.log(cartItem);
             CartItemDTO cartItemDTO = new CartItemDTO();
-            BeanUtils.copyProperties(cartItem, cartItemDTO);
+            Product product = cartItem.getProduct();
+            ProductSimpleDTO productSimpleDTO = new ProductSimpleDTO();
+            BeanUtils.copyProperties(product, productSimpleDTO);
+            cartItemDTO.setProduct(productSimpleDTO);
+            cartItemDTO.setQuantity(cartItem.getQuantity());
+            cartItemDTO.setCartItemId(cartItem.getCartItemId());
             return cartItemDTO;
         }).toList();
+        Logger.log(cartItems);
         model.addAttribute("cartItems", cartItems);
         double total = 0d;
         for (CartItemDTO c : cartItems) {
             total += c.getQuantity() * c.getProduct().getCost();
         }
+        Logger.log(total);
         model.addAttribute("total", total);
-        return "customer/cart";
+        return "user/cart";
     }
 
 

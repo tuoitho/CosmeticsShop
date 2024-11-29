@@ -71,6 +71,8 @@ public class CartService implements ICartService {
     }
 
     public Cart getCartByUserId(Long userId) {
+        Logger.log(userId);
+        Logger.log(cartRepository.findByCustomer_UserId(userId).toString());
         return cartRepository.findByCustomer_UserId(userId).orElseGet(() -> {
             Customer customer = (Customer) userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User " + userId + " not found"));
             Cart newCart = new Cart();
@@ -102,6 +104,7 @@ public class CartService implements ICartService {
             CartItem cartItem = new CartItem();
             cartItem.setProduct(product);
             cartItem.setQuantity(addProductToCartRequest.getQuantity());
+            cartItem.setCart(cart);
             cartItems.add(cartItem);
         }
         cart.setCartItems(cartItems);
