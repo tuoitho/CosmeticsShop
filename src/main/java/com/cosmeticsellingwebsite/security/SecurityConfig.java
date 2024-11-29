@@ -2,6 +2,7 @@ package com.cosmeticsellingwebsite.security;
 
 
 //import com.cosmeticsellingwebsite.filter.JwtFilter;
+import com.cosmeticsellingwebsite.enums.RoleEnum;
 import com.cosmeticsellingwebsite.security.oauth.CustomOAuth2UserService;
 import com.cosmeticsellingwebsite.security.oauth.OAuth2LoginSuccessHandler;
 import com.cosmeticsellingwebsite.service.impl.UserService;
@@ -87,13 +88,14 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/assets/**","/notification.js","/error","/error/**"," /login","/**").permitAll()
+                        .requestMatchers("/assets/**","/showMsg.js","/notification.js","/error","/error/**"," /login").permitAll()
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
 //                        .requestMatchers("/**").permitAll()
-                        .requestMatchers("/api/v1/auth/login","/api/v1/auth/logout").permitAll()
-                        .requestMatchers("/user/**").permitAll()
-                        .requestMatchers("/user").permitAll()
-                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/api/images/**","/auth/**","/oauth2/**","/user/**","browser/**","/").permitAll()
+                        .requestMatchers("/customer/**","customer").hasRole("CUSTOMER")
+                        .requestMatchers("/shipper/**").hasRole("SHIPPER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/manager/**").hasRole("MANAGER")
                         .anyRequest().authenticated()) // Require authentication for all other requests
                 .formLogin(f->f.loginPage("/auth/login").permitAll()
                                 .loginProcessingUrl("/login")
