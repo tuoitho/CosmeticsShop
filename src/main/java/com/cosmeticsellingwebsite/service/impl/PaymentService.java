@@ -3,7 +3,9 @@ package com.cosmeticsellingwebsite.service.impl;
 import com.cosmeticsellingwebsite.entity.Order;
 import com.cosmeticsellingwebsite.entity.Payment;
 import com.cosmeticsellingwebsite.enums.OrderStatus;
+import com.cosmeticsellingwebsite.enums.PaymentMethod;
 import com.cosmeticsellingwebsite.enums.PaymentStatus;
+import com.cosmeticsellingwebsite.exception.CustomException;
 import com.cosmeticsellingwebsite.payload.response.PaymentResponse;
 import com.cosmeticsellingwebsite.repository.OrderRepository;
 import com.cosmeticsellingwebsite.repository.PaymentRepository;
@@ -43,5 +45,10 @@ public class PaymentService {
 
     public void updatePayment(String orderInfo, String paymentTime) {
 
+    }
+
+    public PaymentMethod getPaymentMethodByOrder(Order order) {
+        Payment payment = paymentRepository.findByOrder(order).orElseThrow(() -> new CustomException("Payment not found"));
+        return payment.getPaymentMethod();
     }
 }

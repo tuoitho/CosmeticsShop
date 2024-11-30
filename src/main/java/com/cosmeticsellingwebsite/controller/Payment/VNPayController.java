@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+
+//Ngân hàng: NCB
+//Số thẻ: 9704198526191432198
+//Tên chủ thẻ:NGUYEN VAN A
+//Ngày phát hành:07/15
+//Mật khẩu OTP:123456
 @Controller
 public class VNPayController {
     @Autowired

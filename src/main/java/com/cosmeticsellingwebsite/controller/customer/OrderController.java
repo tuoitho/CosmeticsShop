@@ -6,11 +6,13 @@ import com.cosmeticsellingwebsite.dto.CartItemForCheckoutDTO;
 import com.cosmeticsellingwebsite.entity.Address;
 import com.cosmeticsellingwebsite.entity.Cart;
 import com.cosmeticsellingwebsite.entity.CartItem;
+import com.cosmeticsellingwebsite.entity.Order;
 import com.cosmeticsellingwebsite.enums.PaymentMethod;
 import com.cosmeticsellingwebsite.payload.request.CreateOrderRequest;
 import com.cosmeticsellingwebsite.payload.response.OrderResponse;
 import com.cosmeticsellingwebsite.service.impl.CartService;
 import com.cosmeticsellingwebsite.service.impl.OrderService;
+import com.cosmeticsellingwebsite.service.impl.PaymentService;
 import com.cosmeticsellingwebsite.service.impl.UserService;
 import com.cosmeticsellingwebsite.service.vnpay.VNPAYService;
 import com.cosmeticsellingwebsite.util.Logger;
@@ -29,8 +31,12 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
 // VNPAY
 //Ngân hàng: NCB
 //Số thẻ: 9704198526191432198
@@ -52,6 +58,8 @@ public class OrderController {
     VNPAYService vnpayService;
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    private PaymentService paymentService;
 
 
     @PostMapping("/preview-checkout")
@@ -99,59 +107,60 @@ public class OrderController {
             // Lấy thông tin khách hàng
             Long customerId = authenticationHelper.getUserId();
             OrderResponse orderResponse = orderService.createOrder(customerId,createOrderRequest);
-            //lưu orderid vào redis
-            redisTemplate.opsForValue().set("orderId", orderResponse.getOrderId());
-            // lưu phuương thức thanh toán vào redis
-            redisTemplate.opsForValue().set("paymentMethod", createOrderRequest.getPaymentMethod());
+            Long orderId = orderResponse.getOrderId();
+            String redirectUrl=null;
+            // Tạo token riêng cho đơn hàng
+//            String orderToken = UUID.randomUUID().toString();
+
             // Kiểm tra phương thức thanh toán
             if (createOrderRequest.getPaymentMethod().equals(PaymentMethod.COD)) {
                 // Cập nhật trạng thái đơn hàng
                 orderService.updateOrderPaymentCOD(orderResponse.getOrderId());
+//                String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+                redirectUrl ="/customer/order/payment-return?orderId=" + orderId;
             } else if (createOrderRequest.getPaymentMethod().equals(PaymentMethod.VNPAY)) {
                 // Tạo liên kết thanh toán VNPay và trả về
                 String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
                 String vnpayUrl = vnpayService.createOrder(request, orderResponse.getTotal().intValue(), orderResponse.getOrderId().toString(), baseUrl);
-                //lưu liên kết thanh toán vào redis
-                redisTemplate.opsForValue().set("vnpayUrl", vnpayUrl);
+                redirectUrl = vnpayUrl;
             } else if (createOrderRequest.getPaymentMethod().equals(PaymentMethod.PAYPAL)) {
                 // Tạo liên kết thanh toán Paypal
-                String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-                //lưu liên kết thanh toán vào redis
-                redisTemplate.opsForValue().set("paypalUrl", "/customer/paypal/checkout");
+//                String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+                redirectUrl = "/customer/paypal/checkout?orderId=" + orderId;
             }
             else{
                 return ResponseEntity.badRequest().body("Invalid payment method");
             }
-            //trả về trạng thái 200 và liên kết chuyển hướng
-            return ResponseEntity.ok().body(Map.of("redirectUrl", "/customer/order/payment-return"));
+
+//            String redisKey = "order:" + orderToken;
+//            Map<String, Object> orderData = new HashMap<>();
+//            orderData.put("orderId", orderResponse.getOrderId());
+//            orderData.put("paymentMethod", createOrderRequest.getPaymentMethod());
+//            orderData.put("processUrl", processUrl);
+//            // Lưu thông tin đơn hàng vào Redis
+//            redisTemplate.opsForHash().putAll(redisKey, orderData);
+//            redisTemplate.expire(redisKey, Duration.ofMinutes(30)); // Set TTL cho dữ liệu
+
+            //trả về trạng thái 200 và processUrl
+            return ResponseEntity.ok().body(Map.of("redirectUrl", redirectUrl));
 
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @RequestMapping(value = "/payment-return",method = {RequestMethod.GET, RequestMethod.POST})
-    public String paymentProcess(){
-        //lấy ra phương thức thanh toán
-        PaymentMethod paymentMethod = PaymentMethod.valueOf(redisTemplate.opsForValue().get("paymentMethod").toString());
-        if (paymentMethod.equals(PaymentMethod.COD)) {
-            // Cập nhật trạng thái đơn hàng
-            return "user/ordersuccess";
-        }else if (paymentMethod.equals(PaymentMethod.VNPAY)) {
-            // Lấy liên kết thanh toán VNPay
-            String vnpayUrl = (String) redisTemplate.opsForValue().get("vnpayUrl");
-            // Xóa liên kết thanh toán VNPay
-            redisTemplate.delete("vnpayUrl");
-            // Chuyển hướng đến liên kết thanh toán VNPay
-            return "redirect:" + vnpayUrl;
-        } else if (paymentMethod.equals(PaymentMethod.PAYPAL)) {
-            // Lấy liên kết thanh toán Paypal
-            String paypalUrl = (String) redisTemplate.opsForValue().get("paypalUrl");
-            // Xóa liên kết thanh toán Paypal
-            redisTemplate.delete("paypalUrl");
-            // Chuyển hướng đến liên kết thanh toán Paypal
-            return "redirect:" + paypalUrl;
+
+    // Controller này xử lý cho phương thức thanh toán COD
+    @GetMapping( "/payment-return")
+    public String paymentProcess(@RequestParam("orderId") Long orderId, Model model) {
+        Order order = orderService.getOrderById(orderId);
+        //Lấy ra người dùng đã đăng nhập
+        Long userId = authenticationHelper.getUserId();
+        // Kiểm tra xem đơn hàng có tồn tại và có thuộc về người dùng đó không, nếu không trả về trang lỗi
+        if (order == null || !order.getCustomerId().equals(userId)) {
+            return "err/error";
         }
-        return "err/error";
+        model.addAttribute("order", order);
+        return "user/ordersuccess";
     }
 
 }

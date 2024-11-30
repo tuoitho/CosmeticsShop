@@ -263,4 +263,9 @@ public class OrderService implements IOrderService {
         paymentRepository.save(payment);
         orderRepository.save(order);
     }
+
+    public Order getOrderById(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElse(null);
+    }
 }
