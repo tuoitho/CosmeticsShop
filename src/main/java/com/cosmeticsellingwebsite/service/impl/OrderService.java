@@ -39,6 +39,8 @@ public class OrderService implements IOrderService {
     private ProductStockRepository productStockRepository;
     @Autowired
     VoucherRepository voucherRepository;
+    @Autowired
+    private CartRepository cartRepository;
 
     @Transactional
     public OrderResponse createOrder(Long customerId, CreateOrderRequest createOrderRequest) {
@@ -123,6 +125,18 @@ public class OrderService implements IOrderService {
         Order savedOrder = orderRepository.save(order);
         OrderResponse createOrderResponse = new OrderResponse();
         BeanUtils.copyProperties(savedOrder, createOrderResponse);
+
+
+        // xoa cartitem
+        Cart cart = cartRepository.findByCustomer_UserId(customerId).orElseThrow(() -> new RuntimeException("Cart not found at OrderService"));
+        Set<CartItem> cartItems = cart.getCartItems();
+        for (CartItemForOrderDTO cartItemForOrderDTO : cartItemForOrderDTOS) {
+            cartItems.removeIf(
+                    cartItem1 -> cartItem1.getProduct().getProductCode().equals(cartItemForOrderDTO.getProductCode()));
+        }
+        cart.setCartItems(cartItems);
+        cartRepository.save(cart);
+
 
 //        xử lý OrderLineForOrderDTO cho phan hoi
         Set<OrderLineForOrderDTO> orderLineForOrderDTOS = savedOrder.getOrderLines().stream().map(x -> {
