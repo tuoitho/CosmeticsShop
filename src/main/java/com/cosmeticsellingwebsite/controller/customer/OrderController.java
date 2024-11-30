@@ -141,7 +141,7 @@ public class OrderController {
 //            redisTemplate.opsForHash().putAll(redisKey, orderData);
 //            redisTemplate.expire(redisKey, Duration.ofMinutes(30)); // Set TTL cho dữ liệu
 
-            //trả về trạng thái 200 và processUrl
+            //trả về trạng thái 200 và redirectUrl
             return ResponseEntity.ok().body(Map.of("redirectUrl", redirectUrl));
 
         } catch (RuntimeException e) {
