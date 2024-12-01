@@ -1,7 +1,6 @@
 package com.cosmeticsellingwebsite.service.impl;
 
-import com.cosmeticsellingwebsite.dto.CartItemForOrderDTO;
-import com.cosmeticsellingwebsite.dto.OrderLineForOrderDTO;
+import com.cosmeticsellingwebsite.dto.*;
 import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.enums.OrderStatus;
 import com.cosmeticsellingwebsite.enums.PaymentStatus;
@@ -9,13 +8,16 @@ import com.cosmeticsellingwebsite.payload.request.CreateOrderRequest;
 import com.cosmeticsellingwebsite.payload.response.OrderResponse;
 import com.cosmeticsellingwebsite.repository.*;
 import com.cosmeticsellingwebsite.service.interfaces.IOrderService;
+import com.cosmeticsellingwebsite.util.JsonToMapConverter;
 import com.cosmeticsellingwebsite.util.Logger;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -289,5 +291,64 @@ public class OrderService implements IOrderService {
 
     public Set<Order> getOrdersByOrderStatus(Long customerId, OrderStatus orderStatus) {
         return orderRepository.findAllByCustomerIdAndOrderStatus(customerId, orderStatus);
+    }
+
+    public OrderHistoryDetailDTO getOrderHistoryDetailById(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        OrderHistoryDetailDTO orderHistoryDetailDTO = new OrderHistoryDetailDTO();
+        BeanUtils.copyProperties(order, orderHistoryDetailDTO);
+        ShippingAddressDTO shippingAddressDTO = new ShippingAddressDTO();
+        BeanUtils.copyProperties(order.getShippingAddress(), shippingAddressDTO);
+        orderHistoryDetailDTO.setShippingAddress(shippingAddressDTO);
+        orderHistoryDetailDTO.setOrderLines(order.getOrderLines().stream().map(x -> {
+            OrderLineDTO orderLineDTO = new OrderLineDTO();
+            ProductSnapshotDTO productSnapshotDTO = new ProductSnapshotDTO();
+            Map<String, Object> productSnapshot = x.getProductSnapshot();
+            productSnapshotDTO.setProductId(Long.parseLong(productSnapshot.get("productId").toString()));
+            productSnapshotDTO.setProductCode((String) productSnapshot.get("productCode"));
+            productSnapshotDTO.setProductName((String) productSnapshot.get("productName"));
+            productSnapshotDTO.setCost((Double) productSnapshot.get("cost"));
+            productSnapshotDTO.setDescription((String) productSnapshot.get("description"));
+            productSnapshotDTO.setBrand((String) productSnapshot.get("brand"));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            productSnapshotDTO.setExpirationDate(productSnapshot.get("expirationDate") != null ? LocalDate.parse((String) productSnapshot.get("expirationDate"),formatter) : null);
+            productSnapshotDTO.setManufactureDate(productSnapshot.get("manufactureDate") != null ? LocalDate.parse((String) productSnapshot.get("manufactureDate"),formatter) : null);
+            productSnapshotDTO.setIngredient((String) productSnapshot.get("ingredient"));
+            productSnapshotDTO.setHow_to_use((String) productSnapshot.get("how_to_use"));
+            productSnapshotDTO.setVolume((String) productSnapshot.get("volume"));
+            productSnapshotDTO.setOrigin((String) productSnapshot.get("origin"));
+            productSnapshotDTO.setImage((String) productSnapshot.get("image"));
+            orderLineDTO.setQuantity(x.getQuantity());
+            orderLineDTO.setProductSnapshot(productSnapshotDTO);
+            return orderLineDTO;
+        }).collect(Collectors.toSet()));
+        Payment payment = paymentRepository.findByOrder(order).orElseThrow(() -> new RuntimeException("Payment not found"));
+        PaymentDTO paymentDTO = new PaymentDTO();
+        BeanUtils.copyProperties(payment, paymentDTO);
+        orderHistoryDetailDTO.setPayment(paymentDTO);
+        return orderHistoryDetailDTO;
+    }
+
+    public ProductSnapshotDTO getProductSnapshot(Long orderId, Long productId) {
+        OrderLine orderLine = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"))
+                .getOrderLines().stream().filter(x -> x.getProduct().getProductId().equals(productId)).findFirst()
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        ProductSnapshotDTO productSnapshotDTO = new ProductSnapshotDTO();
+        Map<String, Object> productSnapshot = orderLine.getProductSnapshot();
+        productSnapshotDTO.setProductId(Long.parseLong(productSnapshot.get("productId").toString()));
+        productSnapshotDTO.setProductCode((String) productSnapshot.get("productCode"));
+        productSnapshotDTO.setProductName((String) productSnapshot.get("productName"));
+        productSnapshotDTO.setCost((Double) productSnapshot.get("cost"));
+        productSnapshotDTO.setDescription((String) productSnapshot.get("description"));
+        productSnapshotDTO.setBrand((String) productSnapshot.get("brand"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        productSnapshotDTO.setExpirationDate(productSnapshot.get("expirationDate") != null ? LocalDate.parse((String) productSnapshot.get("expirationDate"),formatter) : null);
+        productSnapshotDTO.setManufactureDate(productSnapshot.get("manufactureDate") != null ? LocalDate.parse((String) productSnapshot.get("manufactureDate"),formatter) : null);
+        productSnapshotDTO.setIngredient((String) productSnapshot.get("ingredient"));
+        productSnapshotDTO.setHow_to_use((String) productSnapshot.get("how_to_use"));
+        productSnapshotDTO.setVolume((String) productSnapshot.get("volume"));
+        productSnapshotDTO.setOrigin((String) productSnapshot.get("origin"));
+        productSnapshotDTO.setImage((String) productSnapshot.get("image"));
+        return productSnapshotDTO;
     }
 }

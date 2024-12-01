@@ -3,6 +3,8 @@ package com.cosmeticsellingwebsite.controller.customer;
 import com.cosmeticsellingwebsite.config.AuthenticationHelper;
 import com.cosmeticsellingwebsite.dto.CartItemDTO;
 import com.cosmeticsellingwebsite.dto.CartItemForCheckoutDTO;
+import com.cosmeticsellingwebsite.dto.OrderHistoryDetailDTO;
+import com.cosmeticsellingwebsite.dto.ProductSnapshotDTO;
 import com.cosmeticsellingwebsite.entity.Address;
 import com.cosmeticsellingwebsite.entity.Cart;
 import com.cosmeticsellingwebsite.entity.CartItem;
@@ -189,18 +191,24 @@ public class OrderController {
         return "user/order-history";
     }
 
-//    @GetMapping("/followOrder/{orderId}")
-//    public ModelAndView followOrder(@PathVariable("orderId") Long orderId,ModelMap model){
-//        Long userId = authenticationHelper.getUserId();
-//        Order order = orderService.findById(orderId).get();
-//        List<ProductFeedback> list = new ArrayList<>();
-//        for( OrderLine orderline : order.getOrderLines())
-//        {
-//            list.addAll(reviewservice.findAllByCustomerIdAndProduct_ProductId(customer.getUserId(), orderline.getProduct().getProductId()));
-//        }
-//        model.addAttribute("order", order);
-//        model.addAttribute("list",list);
-//        return new ModelAndView("/customer/orderDetail",model);
-//
-//    }
+    @GetMapping("/followOrder/{orderId}")
+    public ModelAndView followOrder(@PathVariable("orderId") Long orderId,ModelMap model){
+        Long userId = authenticationHelper.getUserId();
+        OrderHistoryDetailDTO order = orderService.getOrderHistoryDetailById(orderId);
+        model.addAttribute("orderDetail", order);
+        Logger.log(order.getOrderLines());
+        return new ModelAndView("user/order-history-detail",model);
+    }
+    @GetMapping("/{orderId}/product-detail-snapshot/{productId}")
+    public String productDetailSnapshot(@PathVariable("orderId") Long orderId, @PathVariable("productId") Long productId, Model model) {
+        Long userId = authenticationHelper.getUserId();
+        //kiem tra orderId co thuoc ve userId hay khong
+        Order order = orderService.getOrderById(orderId);
+        if (order == null || !order.getCustomerId().equals(userId)) {
+            return "err/error";
+        }
+        ProductSnapshotDTO productSnapshot = orderService.getProductSnapshot(orderId, productId);
+        model.addAttribute("productSnapshot", productSnapshot);
+        return "user/product-snapshot";
+    }
 }
