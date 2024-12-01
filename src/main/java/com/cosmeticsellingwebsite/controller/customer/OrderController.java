@@ -7,6 +7,7 @@ import com.cosmeticsellingwebsite.entity.Address;
 import com.cosmeticsellingwebsite.entity.Cart;
 import com.cosmeticsellingwebsite.entity.CartItem;
 import com.cosmeticsellingwebsite.entity.Order;
+import com.cosmeticsellingwebsite.enums.OrderStatus;
 import com.cosmeticsellingwebsite.enums.PaymentMethod;
 import com.cosmeticsellingwebsite.payload.request.CreateOrderRequest;
 import com.cosmeticsellingwebsite.payload.response.OrderResponse;
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
@@ -32,10 +34,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 // VNPAY
 //Ngân hàng: NCB
@@ -163,4 +162,45 @@ public class OrderController {
         return "user/ordersuccess";
     }
 
+
+    @GetMapping("/order-history")
+    public String getOrderHistory(@RequestParam(value = "tab", required = false, defaultValue = "tat-ca-don-hang") String tab,Model model) {
+        // Lấy thông tin người dùng từ session
+        Long customerId = authenticationHelper.getUserId();
+//        Set<PurchaseHistoryDTO> orders;
+        Set<Order> orders = switch (tab) {
+            case "tat-ca-don-hang" -> orderService.getAllOrders(customerId); // Lấy tất cả đơn hàng của người dùng
+            case "don-cho-xac-nhan" ->
+                    orderService.getOrdersByOrderStatus(customerId, OrderStatus.PENDING); // Đơn chờ xác nhận
+            case "don-da-xac-nhan" ->
+                    orderService.getOrdersByOrderStatus(customerId, OrderStatus.CONFIRMED); // Đơn đã xác nhận
+            case "don-dang-van-chuyen" ->
+                    orderService.getOrdersByOrderStatus(customerId, OrderStatus.SHIPPING); // Đơn đang vận chuyển
+            case "don-da-giao" -> orderService.getOrdersByOrderStatus(customerId, OrderStatus.COMPLETED); // Đơn đã giao
+            case "don-huy" -> orderService.getOrdersByOrderStatus(customerId, OrderStatus.CANCELLED);
+            default -> orderService.getAllOrders(customerId); // Mặc định là tất cả đơn hàng của người dùng
+        };
+        // Ánh xạ trực tiếp từ "tab" sang trạng thái đơn hàng
+
+        Logger.log(orders);
+        // Gửi thông tin đến view
+        model.addAttribute("orders", orders);
+        model.addAttribute("tab", tab);
+        return "user/order-history";
+    }
+
+//    @GetMapping("/followOrder/{orderId}")
+//    public ModelAndView followOrder(@PathVariable("orderId") Long orderId,ModelMap model){
+//        Long userId = authenticationHelper.getUserId();
+//        Order order = orderService.findById(orderId).get();
+//        List<ProductFeedback> list = new ArrayList<>();
+//        for( OrderLine orderline : order.getOrderLines())
+//        {
+//            list.addAll(reviewservice.findAllByCustomerIdAndProduct_ProductId(customer.getUserId(), orderline.getProduct().getProductId()));
+//        }
+//        model.addAttribute("order", order);
+//        model.addAttribute("list",list);
+//        return new ModelAndView("/customer/orderDetail",model);
+//
+//    }
 }

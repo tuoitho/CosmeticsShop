@@ -282,4 +282,12 @@ public class OrderService implements IOrderService {
         return orderRepository.findById(orderId)
                 .orElse(null);
     }
+
+    public Set<Order> getAllOrders(Long customerId) {
+        return orderRepository.findAllByCustomerId(customerId);
+    }
+
+    public Set<Order> getOrdersByOrderStatus(Long customerId, OrderStatus orderStatus) {
+        return orderRepository.findAllByCustomerIdAndOrderStatus(customerId, orderStatus);
+    }
 }
