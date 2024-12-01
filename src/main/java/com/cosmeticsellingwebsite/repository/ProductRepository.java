@@ -24,4 +24,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Integer countByCategory_CategoryId(Long categoryId);
 
     List<Product> findByCategory_CategoryId(Long categoryId, Pageable pageable);
+
+    List<Product> findByActiveTrue();
+
+
+
 }

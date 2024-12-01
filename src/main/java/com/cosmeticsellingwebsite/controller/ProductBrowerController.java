@@ -1,8 +1,6 @@
 package com.cosmeticsellingwebsite.controller;
 
-import com.cosmeticsellingwebsite.payload.response.CategoryProductPagingResponse;
 import com.cosmeticsellingwebsite.service.impl.CategoryService;
-import com.cosmeticsellingwebsite.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +34,7 @@ public class ProductBrowerController {
     }
     @GetMapping("/categories")
     public Object getAllCategories() {
-        return ResponseEntity.ok(categoryService.getAllCategories());
+        return ResponseEntity.ok(categoryService.getAllCategoriess());
     }
     @GetMapping("/products")
     public String browseProducts() {

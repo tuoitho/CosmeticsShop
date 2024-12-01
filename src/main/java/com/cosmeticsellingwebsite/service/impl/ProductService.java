@@ -7,9 +7,10 @@ import com.cosmeticsellingwebsite.payload.response.ProductResponse;
 import com.cosmeticsellingwebsite.repository.*;
 import com.cosmeticsellingwebsite.service.interfaces.IProductService;
 import com.cosmeticsellingwebsite.service.ImageService;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,10 @@ public class ProductService implements IProductService {
     private OrderLineRepository orderLineRepository;
     @Autowired
     private CartItemRepository cartItemRepository;
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private CartRepository cartRepository;
     public List<ProductResponse> findAllProduct(Pageable page) {
         List<Product> products = productRepository.findAll(page).getContent();
         return products.stream()
@@ -138,5 +143,62 @@ public class ProductService implements IProductService {
         Long totalSold = orderLineRepository.sumQuantityByProduct(product).orElse(0L);
         productDetailResponse.setTotalSold(totalSold);
         return productDetailResponse;
+    }
+
+    @Override
+    public void deleteProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+        if (orderRepository.existsByOrderLines_Product_ProductId(productId) || cartRepository.existsByCartItems_Product_ProductId(productId)) {
+            product.setActive(false);
+            productRepository.save(product);
+        } else {
+            productRepository.delete(product);
+        }
+
+    }
+
+    @Override
+    public Page<Product> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
+
+    }
+
+    @Override
+    public Product getProductById(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + productId));
+    }
+
+    @Override
+    public void addProduct(Product product) {
+        productRepository.save(product);
+    }
+
+    @Override
+    public void updateProduct(Product product) {
+        Product existingProduct = productRepository.findById(product.getProductId())
+                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
+
+        existingProduct.setProductName(product.getProductName());
+        existingProduct.setCategory(product.getCategory());
+        existingProduct.setCost(product.getCost());
+        existingProduct.setDescription(product.getDescription());
+        existingProduct.setBrand(product.getBrand());
+        existingProduct.setManufactureDate(product.getManufactureDate());
+        existingProduct.setExpirationDate(product.getExpirationDate());
+        existingProduct.setIngredient(product.getIngredient());
+        existingProduct.setHow_to_use(product.getHow_to_use());
+        existingProduct.setVolume(product.getVolume());
+        existingProduct.setOrigin(product.getOrigin());
+        existingProduct.setImage(product.getImage());
+
+        productRepository.save(existingProduct); // Lưu sản phẩm
+    }
+
+    @Override
+    public boolean existsByProductCode(String productCode) {
+        return productRepository.existsByProductCode(productCode);
     }
 }

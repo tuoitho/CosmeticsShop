@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{admin/layout-admin.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Sản phẩm</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Optional: Custom CSS -->
+    <style>
+        .product-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+<section class="row" layout:fragment="app-content">
+<div class="container mt-4">
+    <h2 class="mb-4">Danh sách Sản phẩm</h2>
+
+    <!-- Nút thêm sản phẩm -->
+    <a href="/admin/products/new" class="btn btn-primary mb-3">Thêm Sản phẩm</a>
+
+    <!-- Bảng danh sách sản phẩm -->
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">STT</th>
+            <th scope="col">Hình ảnh</th>
+            <th scope="col">Mã sản phẩm</th>
+            <th scope="col">Tên sản phẩm</th>
+            <th scope="col">Danh mục</th>
+            <th scope="col">Giá</th>
+            <th scope="col">Số lượng</th>
+            <th scope="col">Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Lặp qua danh sách sản phẩm từ backend -->
+        <tr th:each="product, iterStat : ${products}">
+            <td th:text="${iterStat.index + 1}"></td>
+            <td>
+                <img th:src="@{${product.image}}" class="product-img" alt="Image">
+            </td>
+            <td th:text="${product.productCode}"></td>
+            <td th:text="${product.productName}"></td>
+            <td th:text="${product.category.categoryName}"></td>
+            <td th:text="${product.cost}" class="formatted-price"></td> <!-- Thêm lớp để áp dụng định dạng -->
+            <td th:text="${product.productStock.quantity}"></td>
+            <td>
+                <!-- Nút sửa sản phẩm -->
+                <a th:href="@{/admin/products/edit/{id}(id=${product.productId})}" class="btn btn-warning btn-sm">Sửa</a>
+                <!-- Nút xoá sản phẩm -->
+                <a th:href="@{/admin/products/delete/{id}(id=${product.productId})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xoá sản phẩm này không?')">Xoá</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="mt-4">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/products(page=${currentPage - 1}, size=${pageSize})}">Previous</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/admin/products(page=${i}, size=${pageSize})}" th:text="${i + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/products(page=${currentPage + 1}, size=${pageSize})}">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- Bootstrap JS và Popper.js (với tính năng dynamic của Bootstrap) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Script để định dạng giá -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const priceElements = document.querySelectorAll('.formatted-price');
+        priceElements.forEach(function(element) {
+            let price = parseFloat(element.textContent);
+            if (!isNaN(price)) {
+                // Định dạng giá với phân cách hàng nghìn
+                element.textContent = price.toLocaleString('vi-VN');
+            }
+        });
+    });
+</script>
+</section>
+</body>
+</html>

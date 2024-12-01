@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
 
-@Controller
-@RequestMapping("/admin")
-public class AdminController {
-
-    @GetMapping("/products")
-    public String manageProducts() {
-        return "admin/products";
-    }
-
-}
+//@Controller
+//@RequestMapping("/admin")
+//public class AdminController {
+//
+//    @GetMapping("/products")
+//    public String manageProducts() {
+//        return "admin/products";
+//    }
+//
+//}
