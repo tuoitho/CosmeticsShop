@@ -4,6 +4,7 @@ import com.cosmeticsellingwebsite.dto.*;
 import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.enums.OrderStatus;
 import com.cosmeticsellingwebsite.enums.PaymentStatus;
+import com.cosmeticsellingwebsite.exception.CustomException;
 import com.cosmeticsellingwebsite.payload.request.CreateOrderRequest;
 import com.cosmeticsellingwebsite.payload.response.OrderResponse;
 import com.cosmeticsellingwebsite.repository.*;
@@ -13,9 +14,11 @@ import com.cosmeticsellingwebsite.util.Logger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,13 +37,13 @@ public class OrderService implements IOrderService {
     @Autowired
     ProductRepository productRepository;
     @Autowired
+    VoucherRepository voucherRepository;
+    @Autowired
     private OrderRepository orderRepository;
     @Autowired
     private ProductService productService;
     @Autowired
     private ProductStockRepository productStockRepository;
-    @Autowired
-    VoucherRepository voucherRepository;
     @Autowired
     private CartRepository cartRepository;
 
@@ -190,12 +193,11 @@ public class OrderService implements IOrderService {
 //        return createOrderResponse;
 //    }
 
-    public OrderResponse cancelOrder(@Valid Long orderId) {
+    public void cancelOrder( Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
 //        if order is not pending, throw exception
-        if (order.getOrderStatus() != OrderStatus.PENDING) {
-            throw new RuntimeException("Order is not pending, cannot cancel");
-        }
+        if ((order.getOrderStatus() != OrderStatus.PENDING) && (order.getOrderStatus() != OrderStatus.CONFIRMED))
+            throw new CustomException("Order không thể hủy vì đã được xác nhận hoặc đang vận chuyển");
         order.setOrderStatus(OrderStatus.CANCELLED);
 //        hoàn lại số lượng sản phẩm
         order.getOrderLines().forEach(x -> {
@@ -203,26 +205,7 @@ public class OrderService implements IOrderService {
             productStock.setQuantity(productStock.getQuantity() + x.getQuantity());
             productStockRepository.save(productStock);
         });
-
-        Order savedOrder = orderRepository.save(order);
-        OrderResponse orderResponse = new OrderResponse();
-        BeanUtils.copyProperties(savedOrder, orderResponse);
-        //        xử lý OrderLineForOrderDTO cho phan hoi
-        Set<OrderLineForOrderDTO> orderLineForOrderDTOS = savedOrder.getOrderLines().stream().map(x -> {
-            OrderLineForOrderDTO dto = new OrderLineForOrderDTO();
-            dto.setProductCode(x.getProduct().getProductCode());
-            dto.setProductSnapshot(x.getProductSnapshot());
-            dto.setQuantity(x.getQuantity());
-            return dto;
-        }).collect(Collectors.toSet());
-        orderResponse.setOrderLines(orderLineForOrderDTOS);
-
-//        xử lý payment
-        Payment payment = paymentRepository.findByOrder(order).orElseThrow(() -> new RuntimeException("Payment not found"));
-        payment.setPaymentStatus(PaymentStatus.CANCELLED);
-        paymentRepository.save(payment);
-        orderResponse.setPaymentMethod(payment.getPaymentMethod());
-        return orderResponse;
+        orderRepository.save(order);
     }
 
     public OrderResponse updateOrderStatus(@Valid Long orderId, @Valid String status) {
@@ -253,6 +236,7 @@ public class OrderService implements IOrderService {
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         return order.getTotal();
     }
+
     public void updateOrderStatusPaymentTime(Long orderId, String paymentTime) {
         Logger.log("updating order status");
         Order order = orderRepository.findById(orderId)
@@ -311,8 +295,8 @@ public class OrderService implements IOrderService {
             productSnapshotDTO.setDescription((String) productSnapshot.get("description"));
             productSnapshotDTO.setBrand((String) productSnapshot.get("brand"));
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            productSnapshotDTO.setExpirationDate(productSnapshot.get("expirationDate") != null ? LocalDate.parse((String) productSnapshot.get("expirationDate"),formatter) : null);
-            productSnapshotDTO.setManufactureDate(productSnapshot.get("manufactureDate") != null ? LocalDate.parse((String) productSnapshot.get("manufactureDate"),formatter) : null);
+            productSnapshotDTO.setExpirationDate(productSnapshot.get("expirationDate") != null ? LocalDate.parse((String) productSnapshot.get("expirationDate"), formatter) : null);
+            productSnapshotDTO.setManufactureDate(productSnapshot.get("manufactureDate") != null ? LocalDate.parse((String) productSnapshot.get("manufactureDate"), formatter) : null);
             productSnapshotDTO.setIngredient((String) productSnapshot.get("ingredient"));
             productSnapshotDTO.setHow_to_use((String) productSnapshot.get("how_to_use"));
             productSnapshotDTO.setVolume((String) productSnapshot.get("volume"));
@@ -342,8 +326,8 @@ public class OrderService implements IOrderService {
         productSnapshotDTO.setDescription((String) productSnapshot.get("description"));
         productSnapshotDTO.setBrand((String) productSnapshot.get("brand"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        productSnapshotDTO.setExpirationDate(productSnapshot.get("expirationDate") != null ? LocalDate.parse((String) productSnapshot.get("expirationDate"),formatter) : null);
-        productSnapshotDTO.setManufactureDate(productSnapshot.get("manufactureDate") != null ? LocalDate.parse((String) productSnapshot.get("manufactureDate"),formatter) : null);
+        productSnapshotDTO.setExpirationDate(productSnapshot.get("expirationDate") != null ? LocalDate.parse((String) productSnapshot.get("expirationDate"), formatter) : null);
+        productSnapshotDTO.setManufactureDate(productSnapshot.get("manufactureDate") != null ? LocalDate.parse((String) productSnapshot.get("manufactureDate"), formatter) : null);
         productSnapshotDTO.setIngredient((String) productSnapshot.get("ingredient"));
         productSnapshotDTO.setHow_to_use((String) productSnapshot.get("how_to_use"));
         productSnapshotDTO.setVolume((String) productSnapshot.get("volume"));

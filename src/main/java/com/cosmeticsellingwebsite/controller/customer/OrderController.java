@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -210,5 +211,18 @@ public class OrderController {
         ProductSnapshotDTO productSnapshot = orderService.getProductSnapshot(orderId, productId);
         model.addAttribute("productSnapshot", productSnapshot);
         return "user/product-snapshot";
+    }
+
+
+    @PostMapping("/cancel")
+    public ResponseEntity<?> cancelOrder(@RequestParam("orderId") @NotNull Long orderId){
+        Long customerId = authenticationHelper.getUserId();
+        //kiem tra orderId co thuoc ve userId hay khong
+        Order order = orderService.getOrderById(orderId);
+        if (order == null || !order.getCustomerId().equals(customerId)) {
+            return ResponseEntity.badRequest().body("Đơn hàng không tồn tại hoặc không thuộc về bạn");
+        }
+        orderService.cancelOrder(orderId);
+        return ResponseEntity.ok().body("Đã hủy đơn hàng thành công");
     }
 }
