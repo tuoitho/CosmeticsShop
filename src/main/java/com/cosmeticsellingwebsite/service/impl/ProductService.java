@@ -6,7 +6,6 @@ import com.cosmeticsellingwebsite.payload.response.ProductDetailResponse;
 import com.cosmeticsellingwebsite.payload.response.ProductResponse;
 import com.cosmeticsellingwebsite.repository.*;
 import com.cosmeticsellingwebsite.service.interfaces.IProductService;
-import com.cosmeticsellingwebsite.service.ImageService;
 import jakarta.persistence.EntityNotFoundException;
 import com.cosmeticsellingwebsite.service.image.ImageService;
 import org.springframework.beans.BeanUtils;
