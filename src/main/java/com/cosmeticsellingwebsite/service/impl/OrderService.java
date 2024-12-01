@@ -194,7 +194,7 @@ public class OrderService implements IOrderService {
 //    }
 
     public void cancelOrder( Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomException("Order not found"));
 //        if order is not pending, throw exception
         if ((order.getOrderStatus() != OrderStatus.PENDING) && (order.getOrderStatus() != OrderStatus.CONFIRMED))
             throw new CustomException("Order không thể hủy vì đã được xác nhận hoặc đang vận chuyển");
