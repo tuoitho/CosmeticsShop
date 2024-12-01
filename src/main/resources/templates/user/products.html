@@ -50,6 +50,25 @@
         //mac dinh
         let currentCategoryId = 1;
         const contextPath = window.location.origin + '/';
+        //add to cart
+        function addToCart(productCode) {
+            console.log('Add to cart:', productCode);
+            $.ajax({
+                url: contextPath + 'customer/cart/add-to-cart',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    productCode: productCode,
+                    quantity: 1
+                }),
+                success: function (response) {
+                    alert(response);
+                },
+                error: function (error) {
+                    console.error('Lỗi khi gọi API:', error);
+                }
+            });
+        }
         $(document).ready(function () {
                 // lay danh sach category
                 $.ajax({
@@ -124,7 +143,7 @@
                                             <small class="text-muted">${product.sellCount} sold</small>
                                         </p>
                                         <!-- Nút thêm vào giỏ hàng -->
-                                        <button class="btn btn-primary" onclick="addToCart(${product.productCode})">Add to Cart</button>
+                                        <button class="btn btn-primary" onclick="addToCart('${product.productCode}')">Add to Cart</button>
                                     </div>
                                 </div>
                             </div>
@@ -210,6 +229,9 @@
                         getProductByCategory(categoryId, page);
                     });
                 }
+
+
+
 
             }
         )

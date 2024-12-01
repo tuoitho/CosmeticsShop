@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <style>
+        /* Container Styles */
+        .container {
+            margin-top: 50px;
+        }
+
+        /* Order Detail Styles */
+        .order-detail {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-detail-header {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-bottom: 2px solid #007bff;
+        }
+
+        .order-detail-body {
+            padding: 20px;
+        }
+
+        .order-line {
+            margin-bottom: 10px;
+        }
+
+        .order-line .product-name {
+            font-weight: bold;
+        }
+
+        .order-line .product-quantity {
+            font-size: 16px;
+        }
+
+        .shipping-address {
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .shipping-address h5 {
+            font-weight: bold;
+        }
+
+        .shipping-address .address-details {
+            margin-top: 10px;
+        }
+        /* Custom Styles for Order Lines */
+        .order-line img {
+            border-radius: 5px; /* Rounded corners for images */
+            transition: transform 0.2s; /* Smooth scaling effect on hover */
+        }
+
+        .order-line img:hover {
+            transform: scale(1.05); /* Scale image slightly on hover */
+        }
+
+        .table {
+            margin-top: 20px; /* Space above the table */
+        }
+
+        .table th {
+            background-color: #007bff; /* Blue background for headers */
+            color: white; /* White text for headers */
+        }
+
+        .table td {
+            vertical-align: middle; /* Center align content vertically */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .table {
+                font-size: 14px; /* Smaller font size on mobile */
+            }
+        }
+    </style>
+
+</head>
+<body>
+<div class="container">
+    <div class="order-detail">
+        <div class="order-detail-header">
+            <h2 th:text="${orderDetail.orderId}">Order ID</h2>
+            <p th:text="${orderDetail.orderDate}">Order Date</p>
+            <p th:text="${orderDetail.total}">Total: $<span th:text="${orderDetail.total}"></span></p>
+        </div>
+        <div class="order-detail-body">
+            <h3 class="text-center mb-4">Order Lines</h3>
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Cost</th>
+                </tr>
+                </thead>
+                <tbody th:each="orderLine : ${orderDetail.orderLines}">
+                <tr class="order-line">
+                    <td>
+                        <img th:src="@{/api/images(imageName=${orderLine.productSnapshot.image})}" alt="Product Image" width="100" height="100" class="img-fluid">
+                    </td>
+                    <td>
+                        <a th:href="@{/customer/order/{orderId}/product-detail-snapshot/{productId}(orderId=${orderDetail.orderId}, productId=${orderLine.productSnapshot.productId})}" th:text="${orderLine.productSnapshot.productName}"></a>
+                    </td>
+                    <td th:text="${orderLine.quantity}">Quantity</td>
+                    <td th:text="${orderLine.productSnapshot.cost}">Cost</td>
+                </tr>
+                </tbody>
+            </table>
+            <h3>Shipping Address</h3>
+            <div class="shipping-address">
+                <h5 th:text="${orderDetail.shippingAddress.receiverName}">
+                    ${orderDetail.shippingAddress.receiverName}</h5>
+                <p class="address-details">
+                    <span>Phone:</span> <span th:text="${orderDetail.shippingAddress.receiverPhone}">${orderDetail.shippingAddress.receiverPhone}</span>
+                </p>
+                <p class="address-details">
+                    <span>Address:</span> <span th:text="${orderDetail.shippingAddress.address}">${orderDetail.shippingAddress.address}</span>,
+                    <span th:text="${orderDetail.shippingAddress.province}">${orderDetail.shippingAddress.province}</span>,
+                    <span th:text="${orderDetail.shippingAddress.district}">${orderDetail.shippingAddress.district}</span>,
+                    <span th:text="${orderDetail.shippingAddress.ward}">${orderDetail.shippingAddress.ward}</span>
+                </p>
+            </div>
+            <h3>Payment Detail</h3>
+            <div class="payment-detail">
+                <h5 th:text="${orderDetail.payment.paymentMethod}"></h5>
+                <p th:text="${orderDetail.payment.paymentDate}">Payment Date</p>
+                <p th:text="${orderDetail.payment.paymentStatus}">Payment Status</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

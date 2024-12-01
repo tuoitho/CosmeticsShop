@@ -1,4 +1,4 @@
-package com.cosmeticsellingwebsite.service;
+package com.cosmeticsellingwebsite.service.image;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
