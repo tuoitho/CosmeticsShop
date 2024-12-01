@@ -14,6 +14,10 @@
 
     <title>Đăng Nhập và Đăng Ký</title>
     <style>
+        .g-recaptcha {
+            transform: scale(1.5); /* Tăng kích thước lên 1.5 lần */
+            transform-origin: 0 0; /* Đặt góc trái trên làm điểm gốc */
+        }
         button {
             width: 100%;
             padding: 10px;
@@ -115,7 +119,9 @@
             <div class="g-recaptcha" data-sitekey="6LfhgooqAAAAACfj2CyCG45KmQmX7zXUI9cDMXmg" data-callback="enableBtn"></div>
             <span id="captchaError" class="alert alert-danger" style="display: none;">Please complete the CAPTCHA</span>
 
-
+            <br>
+            <br>
+            <br>
             <button type="submit" id="registerBtn" disabled="disabled">Đăng Ký</button>
         </form>
     </div>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="vi" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết sản phẩm</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+        .product-image {
+            max-height: 400px;
+            object-fit: contain;
+        }
+        .product-info {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .product-description {
+            white-space: pre-line;
+        }
+        .btn-view {
+            background-color: #007bff;
+            color: white;
+            transition: all 0.3s;
+        }
+        .btn-view:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+    </style>
+ </head>
+ <body>
+  <div class="container my-5">
+   <div class="row">
+    <div class="col-md-6 mb-4">
+     <img src="https://via.placeholder.com/500" alt="Hình ảnh sản phẩm" class="img-fluid product-image">
+    </div>
+    <div class="col-md-6">
+     <div class="product-info">
+      <h1 class="mb-3">Tên sản phẩm</h1>
+      <p><strong>Mã sản phẩm:</strong> <span id="productCode">SP001</span></p>
+      <p><strong>Giá:</strong> <span id="cost">500.000 đ</span></p>
+      <p><strong>Thương hiệu:</strong> <span id="brand">Thương hiệu A</span></p>
+      <p><strong>Xuất xứ:</strong> <span id="origin">Việt Nam</span></p>
+      <p><strong>Thể tích:</strong> <span id="volume">100ml</span></p>
+      <p><strong>Ngày sản xuất:</strong> <span id="manufactureDate">01/01/2023</span></p>
+      <p><strong>Hạn sử dụng:</strong> <span id="expirationDate">01/01/2025</span></p>
+      <button class="btn btn-view btn-lg mt-3" onclick="viewDirect()">Xem trực tiếp</button>
+     </div>
+    </div>
+   </div>
+   <div class="row mt-5">
+    <div class="col-12">
+     <h2 class="mb-3">Mô tả sản phẩm</h2>
+     <p class="product-description" id="description">Đây là mô tả chi tiết về sản phẩm. Sản phẩm có nhiều tính năng và lợi ích...</p>
+    </div>
+   </div>
+   <div class="row mt-4">
+    <div class="col-md-6">
+     <h2 class="mb-3">Thành phần</h2>
+     <p id="ingredient">Nước, Glycerin, Niacinamide, ...</p>
+    </div>
+    <div class="col-md-6">
+     <h2 class="mb-3">Hướng dẫn sử dụng</h2>
+     <p id="howToUse">1. Làm sạch da mặt<br>
+       2. Thoa đều sản phẩm lên da<br>
+       3. Massage nhẹ nhàng</p>
+    </div>
+   </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script th:inline="javascript">
+        //lay tu thymeleaf
+        const productData = /*[[${productSnapshot}]]*/ null;
+  </script>
+<script>
+
+    //lay tu thymeleaf
+    // Populate the HTML with the product data
+    document.title = productData.productName;
+    document.querySelector('h1').textContent = productData.productName;
+    document.getElementById('productCode').textContent = productData.productCode;
+    document.getElementById('cost').textContent = productData.cost.toLocaleString('vi-VN') + ' đ';
+    document.getElementById('brand').textContent = productData.brand;
+    document.getElementById('origin').textContent = productData.origin;
+    document.getElementById('volume').textContent = productData.volume;
+    document.getElementById('manufactureDate').textContent = new Date(productData.manufactureDate).toLocaleDateString('vi-VN');
+    document.getElementById('expirationDate').textContent = new Date(productData.expirationDate).toLocaleDateString('vi-VN');
+    document.getElementById('description').textContent = productData.description;
+    document.getElementById('ingredient').textContent = productData.ingredient;
+    document.getElementById('howToUse').innerHTML = productData.how_to_use.replace(/\n/g, '<br>');
+    document.querySelector('.product-image').src = '/api/images?imageName=' + productData.image;
+
+    function viewDirect() {
+        window.location.href = '/browser/product/' + productData.productCode;
+    }
+</script>
+ </body>
+</html>

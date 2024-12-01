@@ -1,5 +1,5 @@
 package com.cosmeticsellingwebsite.enums;
 
 public enum PaymentMethod {
-    COD, VNPAY
+    COD, PAYPAL, VNPAY, MOMO
 }

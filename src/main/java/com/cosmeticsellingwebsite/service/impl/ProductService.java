@@ -8,6 +8,7 @@ import com.cosmeticsellingwebsite.repository.*;
 import com.cosmeticsellingwebsite.service.interfaces.IProductService;
 import com.cosmeticsellingwebsite.service.ImageService;
 import jakarta.persistence.EntityNotFoundException;
+import com.cosmeticsellingwebsite.service.image.ImageService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -200,5 +201,10 @@ public class ProductService implements IProductService {
     @Override
     public boolean existsByProductCode(String productCode) {
         return productRepository.existsByProductCode(productCode);
+    }
+
+    @Override
+    public List<Category> getAllCategories() {
+        return List.of();
     }
 }
