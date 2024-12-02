@@ -27,6 +27,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -192,6 +194,20 @@ public class OrderController {
         return "user/order-history";
     }
 
+    @GetMapping("/order-history-search")
+    @ResponseBody
+    public ResponseEntity<?> search(@RequestParam String keyword, int page) {
+        Long customerId = authenticationHelper.getUserId();
+        Pageable pageable = PageRequest.of(page, 3);
+        List<Order> orders = orderService.searchOrders(customerId, keyword, pageable);
+        return ResponseEntity.ok(orders);
+    }
+    @GetMapping("/search")
+    public String searchOrderHistory(@RequestParam String keyword, Model model) {
+        model.addAttribute("keyword", keyword);
+        return "user/order-history-search";
+    }
+
     @GetMapping("/followOrder/{orderId}")
     public ModelAndView followOrder(@PathVariable("orderId") Long orderId,ModelMap model){
         Long userId = authenticationHelper.getUserId();
@@ -225,4 +241,7 @@ public class OrderController {
         orderService.cancelOrder(orderId);
         return ResponseEntity.ok().body("Đã hủy đơn hàng thành công");
     }
+
+
+
 }

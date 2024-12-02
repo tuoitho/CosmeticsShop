@@ -17,6 +17,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -275,6 +277,15 @@ public class OrderService implements IOrderService {
 
     public Set<Order> getOrdersByOrderStatus(Long customerId, OrderStatus orderStatus) {
         return orderRepository.findAllByCustomerIdAndOrderStatus(customerId, orderStatus);
+    }
+
+
+    public List<Order> searchOrders(Long customerId, String keyword, Pageable pageable) {
+        Page<Order> page=orderRepository.searchOrdersByCustomerIdAndProductName(customerId, keyword, pageable);
+        if (page != null) {
+            return page.getContent();
+        }
+        return new ArrayList<>();
     }
 
     public OrderHistoryDetailDTO getOrderHistoryDetailById(Long orderId) {
