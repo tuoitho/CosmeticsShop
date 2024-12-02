@@ -25,13 +25,26 @@ public class JsonToMapConverter implements AttributeConverter<Map<String, Object
         }
     }
 
+//    @Override
+//    public Map<String, Object> convertToEntityAttribute(String dbData) {
+//        try {
+//            return objectMapper.readValue(dbData, Map.class);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return new HashMap<>(); // Fallback to empty map if deserialization fails
+//        }
+//    }
     @Override
     public Map<String, Object> convertToEntityAttribute(String dbData) {
+        if (dbData == null || dbData.isEmpty()){
+            return new HashMap<>();
+        }
         try {
             return objectMapper.readValue(dbData, Map.class);
         } catch (IOException e) {
             e.printStackTrace();
-            return new HashMap<>(); // Fallback to empty map if deserialization fails
+            return new HashMap<>();
         }
     }
+
 }
