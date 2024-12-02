@@ -14,6 +14,8 @@ public class ProductStock {
     private Long quantity;
 
     @OneToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @JoinColumn(name = "productId", referencedColumnName = "productId")
     private Product product;
 
