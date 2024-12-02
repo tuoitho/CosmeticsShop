@@ -1,5 +1,6 @@
 package com.cosmeticsellingwebsite.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +15,7 @@ public class ProductStock {
     private Long quantity;
 
     @OneToOne
+    @JsonBackReference
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @JoinColumn(name = "productId", referencedColumnName = "productId")

@@ -2,6 +2,7 @@ package com.cosmeticsellingwebsite.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -46,6 +47,7 @@ public class Product implements Serializable {
     private Category category;
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.PERSIST)
+    @JsonManagedReference
     private ProductStock productStock;
 
 }
