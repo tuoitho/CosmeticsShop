@@ -285,14 +285,6 @@
                         <span>Paypal</span>
                     </label>
                 </div>
-                <div class="form-check card mb-3">
-                    <input class="form-check-input" type="radio" name="paymentMethod" id="MOMO">
-                    <label class="form-check-label d-flex align-items-center" for="MOMO">
-                        <img src="https://e-magazine.asiamedia.vn/wp-content/uploads/2021/07/MoMo-Logo.png" alt="Momo"
-                             class="payment-icon">
-                        <span>Momo</span>
-                    </label>
-                </div>
             </div>
         </div>
     </div>
@@ -352,12 +344,6 @@
     });
     document.querySelector("button[type='submit']").addEventListener("click", function (event) {
         event.preventDefault(); // Ngăn chặn reload trang
-        //neu là momo
-        console.log("dang dat hang")
-        if(document.querySelector("input[name='paymentMethod']:checked").id === "MOMO"){
-            alert("Chức năng thanh toán qua Momo đang bảo trì, vui lòng chọn cái khác");
-            return;
-        }
         // Thu thập dữ liệu từ form
         const paymentMethod = document.querySelector("input[name='paymentMethod']:checked").id;
         const cartItems = Array.from(document.querySelectorAll(".row.g-0")).map(row => {

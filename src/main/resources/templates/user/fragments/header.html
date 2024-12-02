@@ -24,7 +24,7 @@
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="/customer/cart">
                             <i class="fas fa-shopping-cart"></i>
                         </a>
                     </li>
@@ -34,7 +34,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
                             th:if="${#authorization.expression('isAuthenticated()')}">
-                                <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                                <li><a class="dropdown-item" href="/customer/profile">Profile</a></li>
                                 <li><a class="dropdown-item" href="/customer/order/order-history">Orders</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="/logout" id="logout">Logout</a></li>
