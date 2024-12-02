@@ -36,7 +36,7 @@ public class Product implements Serializable {
     private String origin;
     @Column(columnDefinition = "text")
     private String image;
-    private Boolean active=true;
+    private Boolean active;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -44,4 +44,8 @@ public class Product implements Serializable {
     @JsonBackReference
     @JoinColumn(name = "categoryId", referencedColumnName = "categoryId")
     private Category category;
+
+    @OneToOne(mappedBy = "product", cascade = CascadeType.PERSIST)
+    private ProductStock productStock;
+
 }

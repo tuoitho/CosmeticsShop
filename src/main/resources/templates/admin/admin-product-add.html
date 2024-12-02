@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{admin/layout-admin.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Sản phẩm</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Optional: Custom CSS -->
+    <style>
+        .form-group label {
+            font-weight: bold;
+        }
+        .container {
+            max-width: 800px;
+        }
+    </style>
+</head>
+<body>
+<section class="row" layout:fragment="app-content">
+<div class="container mt-4">
+    <h2 class="mb-4">Thêm Sản phẩm</h2>
+
+    <!-- Form Thêm Sản phẩm -->
+    <form action="/admin/products/save" method="post">
+        <!-- Mã sản phẩm -->
+        <div class="form-group">
+            <label for="productCode">Mã sản phẩm</label>
+            <input type="text" id="productCode" name="productCode" class="form-control" required>
+        </div>
+
+        <!-- Tên sản phẩm -->
+        <div class="form-group">
+            <label for="productName">Tên sản phẩm</label>
+            <input type="text" id="productName" name="productName" class="form-control" required>
+        </div>
+
+        <!-- Danh mục sản phẩm -->
+        <div class="form-group">
+            <label for="category">Danh mục sản phẩm</label>
+            <select id="category" name="categoryId" class="form-control" required>
+                <option value="">Chọn danh mục</option>
+                <th:block th:each="category : ${categories}">
+                    <option th:value="${category.categoryId}" th:text="${category.categoryName}"></option>
+                </th:block>
+            </select>
+        </div>
+
+        <!-- Giá tiền -->
+        <div class="form-group">
+            <label for="cost">Giá</label>
+            <input type="number" id="cost" name="cost" class="form-control" step="0.01" required>
+        </div>
+
+        <!-- Mô tả sản phẩm -->
+        <div class="form-group">
+            <label for="description">Mô tả sản phẩm</label>
+            <textarea id="description" name="description" class="form-control" rows="4"></textarea>
+        </div>
+
+        <!-- Thương hiệu -->
+        <div class="form-group">
+            <label for="brand">Thương hiệu</label>
+            <input type="text" id="brand" name="brand" class="form-control">
+        </div>
+
+        <!-- Ngày sản xuất -->
+        <div class="form-group">
+            <label for="manufactureDate">Ngày sản xuất</label>
+            <input type="date" id="manufactureDate" name="manufactureDate" class="form-control">
+        </div>
+
+        <!-- Ngày hết hạn -->
+        <div class="form-group">
+            <label for="expirationDate">Ngày hết hạn</label>
+            <input type="date" id="expirationDate" name="expirationDate" class="form-control">
+        </div>
+
+        <!-- Thành phần -->
+        <div class="form-group">
+            <label for="ingredient">Thành phần</label>
+            <textarea id="ingredient" name="ingredient" class="form-control" rows="2"></textarea>
+        </div>
+
+        <!-- Hướng dẫn sử dụng -->
+        <div class="form-group">
+            <label for="how_to_use">Hướng dẫn sử dụng</label>
+            <textarea id="how_to_use" name="how_to_use" class="form-control" rows="2"></textarea>
+        </div>
+
+        <!-- Dung tích -->
+        <div class="form-group">
+            <label for="volume">Dung tích</label>
+            <input type="text" id="volume" name="volume" class="form-control">
+        </div>
+
+        <!-- Nơi sản xuất -->
+        <div class="form-group">
+            <label for="origin">Nơi sản xuất</label>
+            <input type="text" id="origin" name="origin" class="form-control">
+        </div>
+
+        <!-- Link hình ảnh -->
+        <div class="form-group">
+            <label for="image">Link hình ảnh</label>
+            <input type="text" id="image" name="image" class="form-control">
+        </div>
+
+        <!-- Trạng thái sản phẩm và số lượng -->
+        <input type="hidden" name="active" value="true">  <!-- Trạng thái mặc định là active -->
+        <input type="hidden" name="quantity" value="0">  <!-- Số lượng mặc định là 0 -->
+
+        <!-- Nút submit -->
+        <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
+    </form>
+</div>
+
+<!-- Bootstrap JS và Popper.js (với tính năng dynamic của Bootstrap) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</section>
+</body>
+</html>

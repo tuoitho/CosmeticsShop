@@ -10,6 +10,7 @@ import com.cosmeticsellingwebsite.repository.CategoryRepository;
 import com.cosmeticsellingwebsite.repository.OrderLineRepository;
 import com.cosmeticsellingwebsite.repository.ProductFeedbackRepository;
 import com.cosmeticsellingwebsite.repository.ProductRepository;
+import com.cosmeticsellingwebsite.service.interfaces.ICategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class CategoryService {
+public class CategoryService implements ICategoryService {
     @Autowired
     CategoryRepository categoryRepository;
     @Autowired
@@ -32,6 +33,24 @@ public class CategoryService {
         List<Category> categories = categoryRepository.findAll();
         return categories.stream().map(category -> new CategoryResponse(category.getCategoryId(), category.getCategoryName())).toList();
     }
+
+    @Override
+    public List<Category> getAllCategoriess() {
+        return categoryRepository.findAll();
+    }
+
+    @Override
+    public Category getCategoryById(Long id) {
+        return categoryRepository.findById(id).orElse(null);
+
+    }
+
+    @Override
+    public void saveCategory(Category category) {
+        categoryRepository.save(category);
+
+    }
+
     public CategoryProductResponse getCategoryWithProducts(Long categoryId) {
         CategoryProductResponse categoryWithProducts = new CategoryProductResponse();
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category not found"));

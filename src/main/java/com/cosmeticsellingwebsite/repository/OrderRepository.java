@@ -9,6 +9,7 @@ import java.util.Set;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
+    boolean existsByOrderLines_Product_ProductId(Long productId);
     Set<Order> findAllByCustomerId(Long customerId);
 
     Set<Order> findAllByCustomerIdAndOrderStatus(Long customerId, OrderStatus orderStatus);

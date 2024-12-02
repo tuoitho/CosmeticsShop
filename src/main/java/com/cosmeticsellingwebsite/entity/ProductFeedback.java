@@ -2,6 +2,7 @@ package com.cosmeticsellingwebsite.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,5 +31,10 @@ public class ProductFeedback implements Serializable {
     @JsonIgnore
     @JoinColumn(name = "productId", referencedColumnName = "productId")
     private Product product;
+
+    @OneToOne(mappedBy = "productFeedback")
+    @JsonManagedReference
+    private FeedbackResponse feedbackResponse;
+
 
 }
