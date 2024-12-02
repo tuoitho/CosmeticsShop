@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Order Details</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="/showMsg.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer">
   <style>
         @import url(https://fonts.googleapis.com/css2?family=Open+Sans&display=swap);
@@ -574,7 +575,25 @@
     </div>
    </div>
   </div>
-
+  <!-- Modal -->
+  <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="customModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+    <div class="modal-content">
+     <div class="modal-header">
+      <h5 class="modal-title" id="customModalLabel">Dynamic Modal</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeButton"></button>
+     </div>
+     <div class="modal-body">
+      <!-- Message content -->
+      <div id="message">Default message</div>
+     </div>
+     <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <button type="button" class="btn btn-primary" id="okButton">OK</button>
+     </div>
+    </div>
+   </div>
+  </div>
   <script th:inline="javascript">
     const orderId = [[${orderDetail.orderId}]];
   </script>
@@ -593,11 +612,13 @@
                     orderId: orderId
                 },
                 success: function (response) {
-                    alert(response);
+                    showModalWithMessage(response);
                     window.location.href = "/customer/order/order-history";
                 },
                 error: function (xhr, status, error) {
-                    alert(xhr.responseText);
+                    // alert(xhr.responseText);
+                 showModalWithMessage(xhr.responseText);
+
                 }
             });
         } else {

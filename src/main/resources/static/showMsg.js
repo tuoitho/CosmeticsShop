@@ -11,4 +11,14 @@ function showModalWithMessage(message) {
 
     // Show the modal
     modal.show();
+//     event nut close and ok
+    const closeBtn = document.getElementById('closeButton');
+    closeBtn.addEventListener('click', function() {
+        modal.hide();
+    });
+
+    const okBtn = document.getElementById('okButton');
+    okBtn.addEventListener('click', function() {
+        modal.hide();
+    });
 }

@@ -27,8 +27,6 @@ public class HomeController {
     private AuthenticationHelper authenticationHelper;
     @GetMapping("/")
     public String home(Model model) {
-        Logger.log(""+authenticationHelper.getUserId());
-        model.addAttribute("user", authenticationHelper.getFullname());
         return "user/home";
     }
 }
