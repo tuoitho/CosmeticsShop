@@ -1,7 +1,9 @@
 package com.cosmeticsellingwebsite.service.impl;
 
 
+import com.cosmeticsellingwebsite.dto.FeedbackDTO;
 import com.cosmeticsellingwebsite.entity.*;
+import com.cosmeticsellingwebsite.exception.CustomException;
 import com.cosmeticsellingwebsite.payload.response.ProductDetailResponse;
 import com.cosmeticsellingwebsite.payload.response.ProductResponse;
 import com.cosmeticsellingwebsite.repository.*;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +42,9 @@ public class ProductService implements IProductService {
     private OrderRepository orderRepository;
     @Autowired
     private CartRepository cartRepository;
+    @Autowired
+    private UserRepository userRepository;
+
     public List<ProductResponse> findAllProduct(Pageable page) {
         List<Product> products = productRepository.findAll(page).getContent();
         return products.stream()
@@ -139,9 +145,42 @@ public class ProductService implements IProductService {
                 .mapToDouble(ProductFeedback::getRating)
                 .average()
                 .orElse(0.0));
-//        TODO: cần check order đã xong hay bị hủy
-        Long totalSold = orderLineRepository.sumQuantityByProduct(product).orElse(0L);
+        Long totalSold = orderRepository.findTotalQuantitySoldByProductId(product.getProductId()).orElse(0L);
+        //get so luong da ban, don hang da hoan thanh
         productDetailResponse.setTotalSold(totalSold);
+        return productDetailResponse;
+    }
+
+    public ProductDetailResponse getProductDetailById(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        ProductDetailResponse productDetailResponse = new ProductDetailResponse();
+        BeanUtils.copyProperties(product, productDetailResponse);
+        productDetailResponse.setStock(product.getProductStock().getQuantity());
+        String category = product.getCategory().getCategoryName();
+        productDetailResponse.setCategory(category);
+
+        productDetailResponse.setTotalFeedback(productFeedbackRepository.countByProduct(product));
+        productDetailResponse.setAverageRating(productFeedbackRepository.findByProduct(product).stream()
+                .mapToDouble(ProductFeedback::getRating)
+                .average()
+                .orElse(0.0));
+        Long totalSold = orderRepository.findTotalQuantitySoldByProductId(product.getProductId()).orElse(0L);
+        //get so luong da ban, don hang da hoan thanh
+        productDetailResponse.setTotalSold(totalSold);
+        List<ProductFeedback> productFeedbacks = productFeedbackRepository.findByProduct(product);
+        Set<FeedbackDTO> feedbackDTOS = productFeedbacks.stream()
+                .map(productFeedback -> {
+                    FeedbackDTO feedbackDTO = new FeedbackDTO();
+                    BeanUtils.copyProperties(productFeedback, feedbackDTO);
+                    User customer = userRepository.findById(productFeedback.getCustomerId()).orElseThrow(() -> new CustomException("Customer not found at ProductService"));
+                    feedbackDTO.setCustomerName(customer.getFullname());
+                    return feedbackDTO;
+                })
+                .collect(Collectors.toSet());
+        productDetailResponse.setProductFeedbacks(feedbackDTOS);
+
         return productDetailResponse;
     }
 
@@ -206,4 +245,5 @@ public class ProductService implements IProductService {
     public List<Category> getAllCategories() {
         return List.of();
     }
+
 }

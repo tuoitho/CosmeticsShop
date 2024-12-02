@@ -1,6 +1,9 @@
 package com.cosmeticsellingwebsite.controller;
 
+import com.cosmeticsellingwebsite.payload.response.ProductDetailResponse;
 import com.cosmeticsellingwebsite.service.impl.CategoryService;
+import com.cosmeticsellingwebsite.service.impl.ProductService;
+import com.cosmeticsellingwebsite.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ProductBrowerController {
     @Autowired
     CategoryService categoryService;
+    @Autowired
+    private ProductService productService;
 
 
     @GetMapping("/category/products")
@@ -41,9 +46,17 @@ public class ProductBrowerController {
 //        Logger.log("Browsing products");
         return "user/products";
     }
-    @GetMapping("/product/{productCode}")
-    public String productDetail(@PathVariable("productCode") String productCode, ModelMap model) {
-        model.addAttribute("productCode", productCode); // Thêm sản phẩm vào model
-        return "user/product"; // Trả về view product-detail
+//    @GetMapping("/product/{productCode}")
+//    public String productDetail(@PathVariable("productCode") String productCode, ModelMap model) {
+//        model.addAttribute("productCode", productCode); // Thêm sản phẩm vào model
+//        return "user/product"; // Trả về view product-detail
+//    }
+    @GetMapping("/product/{productId}")
+    public String productDetail(@PathVariable("productId") Long productId, ModelMap model) {
+        ProductDetailResponse productDetailResponse = productService.getProductDetailById(productId);
+        model.addAttribute("productId", productId); // Thêm sản phẩm vào model
+        model.addAttribute("product", productDetailResponse);
+        Logger.log("Product detail: " + productDetailResponse);
+        return "user/product-detail"; // Trả về view product-detail
     }
 }

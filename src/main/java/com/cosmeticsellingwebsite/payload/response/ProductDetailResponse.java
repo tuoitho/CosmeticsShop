@@ -1,5 +1,6 @@
 package com.cosmeticsellingwebsite.payload.response;
 
+import com.cosmeticsellingwebsite.dto.FeedbackDTO;
 import com.cosmeticsellingwebsite.entity.ProductFeedback;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Data
 public class ProductDetailResponse {
+    private Long productId;
     private String productCode;
     private String productName;
     private String category;
@@ -30,4 +32,6 @@ public class ProductDetailResponse {
     private Long totalFeedback;
     private Long totalSold;
     private Boolean active;
+    private Set<FeedbackDTO> productFeedbacks;
+
 }
