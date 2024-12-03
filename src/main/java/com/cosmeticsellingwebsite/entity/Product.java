@@ -37,7 +37,8 @@ public class Product implements Serializable {
     private String origin;
     @Column(columnDefinition = "text")
     private String image;
-    private Boolean active;
+
+    private Boolean active=true;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
