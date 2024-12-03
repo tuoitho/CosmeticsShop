@@ -10,8 +10,8 @@ public class ProductFeedbackService implements IProductFeedbackService {
 
     @Autowired
     ProductFeedbackRepository productFeedbackRepository;
-    public boolean canUserReviewOrder(Long userId, Long orderId) {
-        return !productFeedbackRepository.existsByCustomerIdAndOrderId(userId, orderId);
+    public boolean canUserReviewOrder(Long customerId, Long orderId) {
+        return !productFeedbackRepository.existsByCustomerIdAndOrderId(customerId, orderId);
     }
 
 }
