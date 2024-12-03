@@ -112,28 +112,29 @@
       </div>
       <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
        <div class="mt-3" th:each="feedback : ${product.productFeedbacks}">
-           <div class="feedback-item">
-            <p th:text="${feedback.customerName}">Customer name goes here</p>
-            <p th:text="${feedback.comment}">Comment goes here</p>
-            <p>
-             <span th:text="${feedback.feedbackDate}">Date goes here</span> |
-             <span class="rating" th:text="${feedback.rating}">Rating goes here</span>
-            </p>
-            <!-- Rating stars -->
-            <div class="rating-stars">
-             <span class="star" th:classappend="${feedback.rating >= 1 ? 'filled' : ''}">&#9733;</span>
-             <span class="star" th:classappend="${feedback.rating >= 2 ? 'filled' : ''}">&#9733;</span>
-             <span class="star" th:classappend="${feedback.rating >= 3 ? 'filled' : ''}">&#9733;</span>
-             <span class="star" th:classappend="${feedback.rating >= 4 ? 'filled' : ''}">&#9733;</span>
-             <span class="star" th:classappend="${feedback.rating >= 5 ? 'filled' : ''}">&#9733;</span>
-            </div>
-            <div class="buttons">
-             <!-- Button to reply to feedback -->
-             <button class="btn btn-primary reply-btn">Reply</button>
-             <!-- Button to mark feedback as OK -->
-             <button class="btn btn-success ok-btn">OK</button>
-            </div>
-           </div>
+        <div class="feedback-item">
+         <p th:text="${feedback.customerName}">Customer name goes here</p>
+         <p>Đánh giá cho sản phẩm: <span th:text="${feedback.productSnapshotName}">productSnapshotName name goes here</span></p>
+
+         <p th:text="${feedback.comment}">Comment goes here</p>
+         <p>
+          <span th:text="${feedback.feedbackDate}">Date goes here</span> |
+          <span class="rating" th:text="${feedback.rating}">Rating goes here</span>
+         </p>
+         <div class="rating-stars">
+          <span class="star" th:classappend="${feedback.rating >= 1 ? 'filled' : ''}">&#9733;</span>
+          <span class="star" th:classappend="${feedback.rating >= 2 ? 'filled' : ''}">&#9733;</span>
+          <span class="star" th:classappend="${feedback.rating >= 3 ? 'filled' : ''}">&#9733;</span>
+          <span class="star" th:classappend="${feedback.rating >= 4 ? 'filled' : ''}">&#9733;</span>
+          <span class="star" th:classappend="${feedback.rating >= 5 ? 'filled' : ''}">&#9733;</span>
+         </div>
+
+         <div class="staff-response" th:if="${feedback.feedbackResponse != null}">
+          <p class="response-header">Phản hồi từ shop:</p>
+          <p class="response-date" th:text="${feedback.feedbackResponse.responseDate}">Ngày phản hồi</p>
+            <p class="response-content" th:text="${feedback.feedbackResponse.comment}">Nội dung phản hồi</p>
+         </div>
+        </div>
        </div>
       </div>
      </div>

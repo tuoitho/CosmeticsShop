@@ -311,8 +311,11 @@
 
             success: function (response) {
                 showModalWithMessage(response);
+
                 //reload lai trang
+                setTimeout(function () {
                     location.reload();
+                }, 2000);
             },
             error: function (xhr, status, error) {
                 showModalWithMessage(xhr.responseText);
