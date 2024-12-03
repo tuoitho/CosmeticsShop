@@ -12,11 +12,16 @@ public class ShippingAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long shippingAddressId;
+    @Column(columnDefinition = "text")
     private String receiverName;
     private String receiverPhone;
+    @Column(columnDefinition = "text")
     private String address;
+    @Column(columnDefinition = "text")
     private String province;
+    @Column(columnDefinition = "text")
     private String district;
+    @Column(columnDefinition = "text")
     private String ward;
 
     @ToString.Exclude
