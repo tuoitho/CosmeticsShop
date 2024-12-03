@@ -95,7 +95,7 @@ public class AdminProductController {
     @GetMapping("/edit/{id}")
     public String editProductForm(@PathVariable("id") Long productId, Model model) {
         Product product = productService.getProductById(productId);
-        List<Category> categories = productService.getAllCategoriess();
+        List<Category> categories = productService.getAllCategories();
         model.addAttribute("product", product);
         model.addAttribute("categories", categories);
         return "admin/admin-product-edit";

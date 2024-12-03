@@ -19,4 +19,6 @@ public interface ProductFeedbackRepository extends JpaRepository<ProductFeedback
     List<ProductFeedback> findByProduct(Product product);
 
     Long countByProduct(Product product);
+
+    boolean existsByCustomerIdAndOrderId(Long userId, Long orderId);
 }

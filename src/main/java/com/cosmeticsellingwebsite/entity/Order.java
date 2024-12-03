@@ -22,6 +22,7 @@ public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
+    // customerId trong trường hợp này là thuộc tính của Order, không phải của Customer
     private Long customerId;
     private LocalDateTime orderDate;
     private Double total;
