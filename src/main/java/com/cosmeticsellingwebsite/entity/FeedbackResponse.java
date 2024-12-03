@@ -1,5 +1,6 @@
 package com.cosmeticsellingwebsite.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class FeedbackResponse {
     @OneToOne
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    @JsonBackReference
     @JoinColumn(name = "productFeedbackId", referencedColumnName = "productFeedbackId")
     private ProductFeedback productFeedback;
 }
