@@ -1,609 +1,371 @@
 <!--<!DOCTYPE html>--><!--<html lang="en">--><!--<head>--><!--    <meta charset="UTF-8">--><!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"--><!--          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">--><!--    <style>--><!--        /* Add this CSS to your stylesheet */--><!--        .payment-detail .card {--><!--            border-color: #ced4da; /* Light gray border */--><!--            border-radius: 5px; /* Rounded corners */--><!--        }--><!--        .payment-detail label {--><!--            font-weight: bold;--><!--            display: block; /* Labels take up their own line */--><!--            margin-bottom: 0.25rem; /* Small space below labels */--><!--            color: #343a40; /* Dark gray for labels */--><!--        }--><!--        .payment-detail p {--><!--            margin: 0;--><!--            color: #666; /* Slightly lighter gray for values */--><!--        }--><!--        /*Optional - Style based on payment status*/--><!--        .payment-detail .payment-status-success {--><!--            color: green;--><!--        }--><!--        .payment-detail .payment-status-pending {--><!--            color: orange;--><!--        }--><!--        .payment-detail .payment-status-faile--><!--        }d {--><!--            color: red;--><!--        /* Container Styles */--><!--        .container {--><!--            margin-top: 50px;--><!--        }--><!--        /* Order Detail Styles */--><!--        .order-detail {--><!--            border: 1px solid #ddd;--><!--            padding: 20px;--><!--            border-radius: 0.5rem;--><!--            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);--><!--        }--><!--        .order-detail-header {--><!--            background-color: #f8f9fa;--><!--            padding: 10px;--><!--            border-bottom: 2px solid #007bff;--><!--        }--><!--        .order-detail-body {--><!--            padding: 20px;--><!--        }--><!--        .order-line {--><!--            margin-bottom: 10px;--><!--        }--><!--        .order-line .product-name {--><!--            font-weight: bold;--><!--        }--><!--        .order-line .product-quantity {--><!--            font-size: 16px;--><!--        }--><!--        .shipping-address {--><!--            padding: 20px;--><!--            border: 1px solid #ddd;--><!--        }--><!--        .shipping-address h5 {--><!--            font-weight: bold;--><!--        }--><!--        .shipping-address .address-details {--><!--            margin-top: 10px;--><!--        }--><!--        /* Custom Styles for Order Lines */--><!--        .order-line img {--><!--            border-radius: 5px; /* Rounded corners for images */--><!--            transition: transform 0.2s; /* Smooth scaling effect on hover */--><!--        }--><!--        .order-line img:hover {--><!--            transform: scale(1.05); /* Scale image slightly on hover */--><!--        }--><!--        .table {--><!--            margin-top: 20px; /* Space above the table */--><!--        }--><!--        .table th {--><!--            background-color: #007bff; /* Blue background for headers */--><!--            color: white; /* White text for headers */--><!--        }--><!--        .table td {--><!--            vertical-align: middle; /* Center align content vertically */--><!--        }--><!--        /* Responsive Design */--><!--        @media (max-width: 768px) {--><!--            .table {--><!--                font-size: 14px; /* Smaller font size on mobile */--><!--            }--><!--        }--><!--    </style>--><!--</head>--><!--<body>--><!--<div class="container">--><!--    <div class="order-detail">--><!--        <div class="order-detail-header">--><!--            <label>Order Detail</label>--><!--            <h2>Order ID: <span th:text="${orderDetail.orderId}"></span></h2>--><!--            <p>Ngày đặt hàng: <span th:text="${orderDetail.orderDate}"></span></p>--><!--            <p>Total: $<span th:text="${orderDetail.total}"></span></p>--><!--        </div>--><!--        <div class="order-detail-body">--><!--            <h3 class="text-center mb-4">Order Lines</h3>--><!--            <table class="table table-bordered table-striped">--><!--                <thead>--><!--                <tr>--><!--                    <th>Image</th>--><!--                    <th>Product Name</th>--><!--                    <th>Quantity</th>--><!--                    <th>Cost</th>--><!--                </tr>--><!--                </thead>--><!--                <tbody th:each="orderLine : ${orderDetail.orderLines}">--><!--                <tr class="order-line">--><!--                    <td>--><!--                        <img th:src="@{/api/images(imageName=${orderLine.productSnapshot.image})}" alt="Product Image" width="100" height="100" class="img-fluid">--><!--                    </td>--><!--                    <td>--><!--                        <a th:href="@{/customer/order/{orderId}/product-detail-snapshot/{productId}(orderId=${orderDetail.orderId}, productId=${orderLine.productSnapshot.productId})}" th:text="${orderLine.productSnapshot.productName}"></a>--><!--                    </td>--><!--                    <td th:text="${orderLine.quantity}">Quantity</td>--><!--                    <td th:text="${orderLine.productSnapshot.cost}">Cost</td>--><!--                </tr>--><!--                </tbody>--><!--            </table>--><!--            <h3>Shipping Address</h3>--><!--            <div class="shipping-address">--><!--                <h5 th:text="${orderDetail.shippingAddress.receiverName}">--><!--                    ${orderDetail.shippingAddress.receiverName}</h5>--><!--                <p class="address-details">--><!--                    <span>Phone:</span> <span th:text="${orderDetail.shippingAddress.receiverPhone}">${orderDetail.shippingAddress.receiverPhone}</span>--><!--                </p>--><!--                <p class="address-details">--><!--                    <span>Address:</span> <span th:text="${orderDetail.shippingAddress.address}">${orderDetail.shippingAddress.address}</span>,--><!--                    <span th:text="${orderDetail.shippingAddress.province}">${orderDetail.shippingAddress.province}</span>,--><!--                    <span th:text="${orderDetail.shippingAddress.district}">${orderDetail.shippingAddress.district}</span>,--><!--                    <span th:text="${orderDetail.shippingAddress.ward}">${orderDetail.shippingAddress.ward}</span>--><!--                </p>--><!--            </div>--><!--            <h3>Payment Detail</h3>--><!--            <div class="payment-detail">--><!--                <div class="card mb-3" style="border-color: #ced4da;">  &lt;!&ndash; Use card for better styling &ndash;&gt;--><!--                    <div class="card-body">--><!--                        <h5 class="card-title">Payment Details</h5>  &lt;!&ndash; Clearer label &ndash;&gt;--><!--                        <div class="form-row">  &lt;!&ndash; Use form-row for alignment &ndash;&gt;--><!--                            <div class="col-sm-4">--><!--                                <label class="col-form-label">Payment Method:</label>--><!--                                <p class="mb-1" th:text="${orderDetail.payment.paymentMethod}"></p>  &lt;!&ndash; Dynamic content &ndash;&gt;--><!--                            </div>--><!--                            <div class="col-sm-4">--><!--                                <label class="col-form-label">Payment Date:</label>--><!--                                <p class="mb-1" th:text="${orderDetail.payment.paymentDate}"></p>--><!--                            </div>--><!--                            <div class="col-sm-4">--><!--                                <label class="col-form-label">Payment Status:</label>--><!--                                <p class="mb-1" th:text="${orderDetail.payment.paymentStatus}"></p>--><!--                            </div>--><!--                        </div>--><!--                    </div>--><!--                </div>--><!--            </div>--><!--    </div>--><!--</div>--><!--</body>--><!--</html>-->
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order Details</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <script src="/showMsg.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <style>
-        @import url(https://fonts.googleapis.com/css2?family=Open+Sans&display=swap);
-
-        @import url(https://fonts.googleapis.com/css2?family=Oswald&display=swap);
-
-        /*! tailwindcss v3.4.11 | MIT License | https://tailwindcss.com*/
-        *,
-        :after,
-        :before {
-            border: 0 solid #e5e7eb;
-            box-sizing: border-box;
-        }
-        :after,
-        :before {
-            --tw-content: "";
-        }
-        :host,
-        html {
-            line-height: 1.5;
-            -webkit-text-size-adjust: 100%;
-            font-family:
-                    Oswald,
-                    ui-sans-serif,
-                    system-ui,
-                    sans-serif,
-                    Apple Color Emoji,
-                    Segoe UI Emoji,
-                    Segoe UI Symbol,
-                    Noto Color Emoji;
-            font-feature-settings: normal;
-            font-variation-settings: normal;
-            -moz-tab-size: 4;
-            tab-size: 4;
-            -webkit-tap-highlight-color: transparent;
-        }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="/showMsg.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <!--bootstrap-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer">
+    <style>
         body {
-            line-height: inherit;
-            margin: 0;
-        }
-        hr {
-            border-top-width: 1px;
-            color: inherit;
-            height: 0;
-        }
-        abbr:where([title]) {
-            text-decoration: underline dotted;
-        }
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            font-size: inherit;
-            font-weight: inherit;
-        }
-        a {
-            color: inherit;
-            text-decoration: inherit;
-        }
-        b,
-        strong {
-            font-weight: bolder;
-        }
-        code,
-        kbd,
-        pre,
-        samp {
-            font-family:
-                    ui-monospace,
-                    SFMono-Regular,
-                    Menlo,
-                    Monaco,
-                    Consolas,
-                    Liberation Mono,
-                    Courier New,
-                    monospace;
-            font-feature-settings: normal;
-            font-size: 1em;
-            font-variation-settings: normal;
-        }
-        small {
-            font-size: 80%;
-        }
-        sub,
-        sup {
-            font-size: 75%;
-            line-height: 0;
-            position: relative;
-            vertical-align: baseline;
-        }
-        sub {
-            bottom: -0.25em;
-        }
-        sup {
-            top: -0.5em;
-        }
-        table {
-            border-collapse: collapse;
-            border-color: inherit;
-            text-indent: 0;
-        }
-        button,
-        input,
-        optgroup,
-        select,
-        textarea {
-            color: inherit;
-            font-family: inherit;
-            font-feature-settings: inherit;
-            font-size: 100%;
-            font-variation-settings: inherit;
-            font-weight: inherit;
-            letter-spacing: inherit;
-            line-height: inherit;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
             margin: 0;
             padding: 0;
-        }
-        button,
-        select {
-            text-transform: none;
-        }
-        button,
-        input:where([type="button"]),
-        input:where([type="reset"]),
-        input:where([type="submit"]) {
-            -webkit-appearance: button;
-            background-color: transparent;
-            background-image: none;
-        }
-        :-moz-focusring {
-            outline: auto;
-        }
-        :-moz-ui-invalid {
-            box-shadow: none;
-        }
-        progress {
-            vertical-align: baseline;
-        }
-        ::-webkit-inner-spin-button,
-        ::-webkit-outer-spin-button {
-            height: auto;
-        }
-        [type="search"] {
-            -webkit-appearance: textfield;
-            outline-offset: -2px;
-        }
-        ::-webkit-search-decoration {
-            -webkit-appearance: none;
-        }
-        ::-webkit-file-upload-button {
-            -webkit-appearance: button;
-            font: inherit;
-        }
-        summary {
-            display: list-item;
-        }
-        blockquote,
-        dd,
-        dl,
-        figure,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        hr,
-        p,
-        pre {
-            margin: 0;
-        }
-        fieldset {
-            margin: 0;
-        }
-        fieldset,
-        legend {
-            padding: 0;
-        }
-        menu,
-        ol,
-        ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-        dialog {
-            padding: 0;
-        }
-        textarea {
-            resize: vertical;
-        }
-        input::placeholder,
-        textarea::placeholder {
-            color: #9ca3af;
-            opacity: 1;
-        }
-        [role="button"],
-        button {
-            cursor: pointer;
-        }
-        :disabled {
-            cursor: default;
-        }
-        audio,
-        canvas,
-        embed,
-        iframe,
-        img,
-        object,
-        svg,
-        video {
-            display: block;
-            vertical-align: middle;
-        }
-        img,
-        video {
-            height: auto;
-            max-width: 100%;
-        }
-        [hidden] {
-            display: none;
-        }
-        *,
-        :after,
-        :before {
-            --tw-border-spacing-x: 0;
-            --tw-border-spacing-y: 0;
-            --tw-translate-x: 0;
-            --tw-translate-y: 0;
-            --tw-rotate: 0;
-            --tw-skew-x: 0;
-            --tw-skew-y: 0;
-            --tw-scale-x: 1;
-            --tw-scale-y: 1;
-            --tw-pan-x: ;
-            --tw-pan-y: ;
-            --tw-pinch-zoom: ;
-            --tw-scroll-snap-strictness: proximity;
-            --tw-gradient-from-position: ;
-            --tw-gradient-via-position: ;
-            --tw-gradient-to-position: ;
-            --tw-ordinal: ;
-            --tw-slashed-zero: ;
-            --tw-numeric-figure: ;
-            --tw-numeric-spacing: ;
-            --tw-numeric-fraction: ;
-            --tw-ring-inset: ;
-            --tw-ring-offset-width: 0px;
-            --tw-ring-offset-color: #fff;
-            --tw-ring-color: rgba(59, 130, 246, 0.5);
-            --tw-ring-offset-shadow: 0 0 #0000;
-            --tw-ring-shadow: 0 0 #0000;
-            --tw-shadow: 0 0 #0000;
-            --tw-shadow-colored: 0 0 #0000;
-            --tw-blur: ;
-            --tw-brightness: ;
-            --tw-contrast: ;
-            --tw-grayscale: ;
-            --tw-hue-rotate: ;
-            --tw-invert: ;
-            --tw-saturate: ;
-            --tw-sepia: ;
-            --tw-drop-shadow: ;
-            --tw-backdrop-blur: ;
-            --tw-backdrop-brightness: ;
-            --tw-backdrop-contrast: ;
-            --tw-backdrop-grayscale: ;
-            --tw-backdrop-hue-rotate: ;
-            --tw-backdrop-invert: ;
-            --tw-backdrop-opacity: ;
-            --tw-backdrop-saturate: ;
-            --tw-backdrop-sepia: ;
-            --tw-contain-size: ;
-            --tw-contain-layout: ;
-            --tw-contain-paint: ;
-            --tw-contain-style: ;
-        }
-        ::backdrop {
-            --tw-border-spacing-x: 0;
-            --tw-border-spacing-y: 0;
-            --tw-translate-x: 0;
-            --tw-translate-y: 0;
-            --tw-rotate: 0;
-            --tw-skew-x: 0;
-            --tw-skew-y: 0;
-            --tw-scale-x: 1;
-            --tw-scale-y: 1;
-            --tw-pan-x: ;
-            --tw-pan-y: ;
-            --tw-pinch-zoom: ;
-            --tw-scroll-snap-strictness: proximity;
-            --tw-gradient-from-position: ;
-            --tw-gradient-via-position: ;
-            --tw-gradient-to-position: ;
-            --tw-ordinal: ;
-            --tw-slashed-zero: ;
-            --tw-numeric-figure: ;
-            --tw-numeric-spacing: ;
-            --tw-numeric-fraction: ;
-            --tw-ring-inset: ;
-            --tw-ring-offset-width: 0px;
-            --tw-ring-offset-color: #fff;
-            --tw-ring-color: rgba(59, 130, 246, 0.5);
-            --tw-ring-offset-shadow: 0 0 #0000;
-            --tw-ring-shadow: 0 0 #0000;
-            --tw-shadow: 0 0 #0000;
-            --tw-shadow-colored: 0 0 #0000;
-            --tw-blur: ;
-            --tw-brightness: ;
-            --tw-contrast: ;
-            --tw-grayscale: ;
-            --tw-hue-rotate: ;
-            --tw-invert: ;
-            --tw-saturate: ;
-            --tw-sepia: ;
-            --tw-drop-shadow: ;
-            --tw-backdrop-blur: ;
-            --tw-backdrop-brightness: ;
-            --tw-backdrop-contrast: ;
-            --tw-backdrop-grayscale: ;
-            --tw-backdrop-hue-rotate: ;
-            --tw-backdrop-invert: ;
-            --tw-backdrop-opacity: ;
-            --tw-backdrop-saturate: ;
-            --tw-backdrop-sepia: ;
-            --tw-contain-size: ;
-            --tw-contain-layout: ;
-            --tw-contain-paint: ;
-            --tw-contain-style: ;
-        }
-        #webcrumbs .my-1 {
-            margin-top: 4px;
-        }
-        #webcrumbs .mb-1,
-        #webcrumbs .my-1 {
-            margin-bottom: 4px;
-        }
-        #webcrumbs .mb-2 {
-            margin-bottom: 8px;
-        }
-        #webcrumbs .mb-4 {
-            margin-bottom: 16px;
-        }
-        #webcrumbs .mt-6 {
-            margin-top: 24px;
-        }
-        #webcrumbs .block {
-            display: block;
-        }
-        #webcrumbs .flex {
             display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        #webcrumbs .h-\[100px\] {
-            height: 100px;
+
+        .container {
+            width: 100%;
+            max-width: 28rem;
+            margin: 2rem auto;
+            padding: 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            background-color: #ffffff;
         }
-        #webcrumbs .w-\[100px\] {
-            width: 100px;
+
+        .mb-4 {
+            margin-bottom: 1rem;
         }
-        #webcrumbs .w-\[600px\] {
-            width: 600px;
+
+        .block {
+            display: block;
         }
-        #webcrumbs .w-full {
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .w-full {
             width: 100%;
         }
-        #webcrumbs .table-auto {
-            table-layout: auto;
-        }
-        #webcrumbs .border-collapse {
-            border-collapse: collapse;
-        }
-        #webcrumbs .flex-row {
-            flex-direction: row;
-        }
-        #webcrumbs .items-center {
-            align-items: center;
-        }
-        #webcrumbs .justify-between {
-            justify-content: space-between;
-        }
-        #webcrumbs .gap-4 {
-            gap: 16px;
-        }
-        #webcrumbs .rounded-lg {
-            border-radius: 8px;
-        }
-        #webcrumbs .rounded-md {
-            border-radius: 6px;
-        }
-        #webcrumbs .border {
-            border-width: 1px;
-        }
-        #webcrumbs .border-b-2 {
-            border-bottom-width: 2px;
-        }
-        #webcrumbs .border-neutral-300 {
-            --tw-border-opacity: 1;
-            border-color: rgb(232 221 66 / var(--tw-border-opacity));
-        }
-        #webcrumbs .border-primary-500 {
-            --tw-border-opacity: 1;
-            border-color: rgb(204 81 121 / var(--tw-border-opacity));
-        }
-        #webcrumbs .bg-neutral-100 {
-            --tw-bg-opacity: 1;
-            background-color: rgb(247 236 70 / var(--tw-bg-opacity));
-        }
-        #webcrumbs .bg-primary-500 {
-            --tw-bg-opacity: 1;
-            background-color: rgb(204 81 121 / var(--tw-bg-opacity));
-        }
-        #webcrumbs .bg-white {
-            --tw-bg-opacity: 1;
-            background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-        }
-        #webcrumbs .object-cover {
-            object-fit: cover;
-        }
-        #webcrumbs .p-2 {
-            padding: 8px;
-        }
-        #webcrumbs .p-4 {
-            padding: 16px;
-        }
-        #webcrumbs .p-6 {
-            padding: 24px;
-        }
-        #webcrumbs .px-4 {
-            padding-left: 16px;
-            padding-right: 16px;
-        }
-        #webcrumbs .py-2 {
-            padding-bottom: 8px;
-            padding-top: 8px;
-        }
-        #webcrumbs .text-center {
-            text-align: center;
-        }
-        #webcrumbs .font-title {
-            font-family:
-                    Open Sans,
-                    ui-sans-serif,
-                    system-ui,
-                    sans-serif,
-                    Apple Color Emoji,
-                    Segoe UI Emoji,
-                    Segoe UI Symbol,
-                    Noto Color Emoji;
-        }
-        #webcrumbs .text-lg {
-            font-size: 20.25px;
-            line-height: 30.375px;
-        }
-        #webcrumbs .text-xl {
-            font-size: 22.5px;
-            line-height: 31.499999999999996px;
-        }
-        #webcrumbs .font-semibold {
-            font-weight: 600;
-        }
-        #webcrumbs .text-green-600 {
-            --tw-text-opacity: 1;
-            color: rgb(22 163 74 / var(--tw-text-opacity));
-        }
-        #webcrumbs .text-neutral-700 {
-            --tw-text-opacity: 1;
-            color: rgb(77 73 22 / var(--tw-text-opacity));
-        }
-        #webcrumbs .text-neutral-950 {
-            --tw-text-opacity: 1;
-            color: rgb(10 10 10 / var(--tw-text-opacity));
-        }
-        #webcrumbs .text-primary-50 {
-            --tw-text-opacity: 1;
-            color: rgb(255 240 245 / var(--tw-text-opacity));
-        }
-        #webcrumbs .shadow-lg {
-            --tw-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-            0 4px 6px -4px rgba(0, 0, 0, 0.1);
-            --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color),
-            0 4px 6px -4px var(--tw-shadow-color);
-            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
-            var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-        }
-        #webcrumbs {
-            font-family: Oswald !important;
-            font-size: 18px !important;
-        }
-        #webcrumbs :is(.bg-neutral-100) {
-            color: rgba(0, 0, 0, 0.9) !important;
-        }
-        #webcrumbs :is(.bg-primary-500) {
-            color: hsla(0, 0%, 100%, 0.9) !important;
-            font-weight: 600;
+
+        .border {
+            border: 1px solid #d1d5db;
         }
 
-        body {
-            line-height: inherit;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            min-width: 100vw;
-            min-height: 100vh;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #ffffff, #d4d4d4);
+        .rounded {
+            border-radius: 0.25rem;
+        }
+
+        .p-2 {
+            padding: 0.5rem;
+        }
+
+        select, textarea {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        button {
+            background-color: #3b82f6;
+            color: #ffffff;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2563eb;
+        }
+
+        .star-rating {
+            font-size: 1.5rem;
+            color: #d1d5db;
+            cursor: pointer;
+        }
+
+        .star-rating .fa-star.active {
+            color: #fbbf24;
         }
     </style>
- </head>
- <body>
-  <div id="webcrumbs">
-   <button style="margin: 0 auto; display: block;" onclick="cancelOrder()" class="btn btn-primary">Cancel Order</button>
-   <div class="w-[1200px] bg-white shadow-lg rounded-lg p-6">
-    <div class="border border-neutral-300 rounded-lg">
-     <div class="bg-neutral-100 p-4 border-b-2 border-primary-500">
-      <h2 class="font-title text-neutral-950 text-lg mb-2">Order Detail</h2><span class="block text-neutral-700 mb-1">Order ID: <span th:text="${orderDetail.orderId}"></span></span> <span class="block text-neutral-700 mb-1">Order Date: <span th:text="${orderDetail.orderDate}"></span></span> <span class="block text-neutral-700">Total: <span th:text="${orderDetail.total}"></span>VND</span>
-     </div>
-     <div class="p-4">
-      <h3 class="text-center text-xl font-title mb-4">Order Lines</h3>
-      <table class="w-full table-auto border-collapse border border-neutral-300">
-       <thead>
-        <tr class="bg-primary-500 text-primary-50">
-         <th class="border border-neutral-300 py-2 px-4">Image</th>
-         <th class="border border-neutral-300 py-2 px-4">Product Name</th>
-         <th class="border border-neutral-300 py-2 px-4">Quantity</th>
-         <th class="border border-neutral-300 py-2 px-4">Cost</th>
-        </tr>
-       </thead>
-       <tbody>
-        <tr th:each="orderLine : ${orderDetail.orderLines}" class="border border-neutral-300">
-         <td class="border border-neutral-300 p-2"><img th:src="@{/api/images(imageName=${orderLine.productSnapshot.image})}" alt="Product Image" class="w-[100px] h-[100px] object-cover rounded-md" th:onerror="'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='"></td>
-         <td><a th:href="@{/customer/order/{orderId}/product-detail-snapshot/{productId}(orderId=${orderDetail.orderId}, productId=${orderLine.productSnapshot.productId})}" th:text="${orderLine.productSnapshot.productName}"></a></td>
-         <td class="border border-neutral-300 p-2" th:text="${orderLine.quantity}"></td>
-         <td class="border border-neutral-300 p-2" th:text="${orderLine.productSnapshot.cost}"></td>
-        </tr>
-       </tbody>
-      </table><!-- Shipping Address -->
-      <h3 class="text-xl font-title mt-6">Shipping Address</h3>
-      <div class="p-4 border border-neutral-300 rounded-lg">
-       <h5 class="font-title text-neutral-950" th:text="${orderDetail.shippingAddress.receiverName}"></h5>
-       <p class="text-neutral-700 my-1">Phone: <span th:text="${orderDetail.shippingAddress.receiverPhone}"></span></p>
-       <p class="text-neutral-700 my-1">Address: <span th:text="${orderDetail.shippingAddress.address}"></span></p>
-       <p class="text-neutral-700 my-1">Province: <span th:text="${orderDetail.shippingAddress.province}"></span></p>
-       <p class="text-neutral-700 my-1">District: <span th:text="${orderDetail.shippingAddress.district}"></span></p>
-       <p class="text-neutral-700 my-1">Ward: <span th:text="${orderDetail.shippingAddress.ward}"></span></p>
-      </div><!-- Payment Detail -->
-      <h3 class="text-xl font-title mt-6">Payment Detail</h3>
-      <div class="border border-neutral-300 rounded-lg p-4">
-       <div class="flex flex-row gap-4">
-        <div>
-         <span class="block text-neutral-950 font-semibold">Payment Method:</span>
-         <p class="text-neutral-700" th:text="${orderDetail.payment.paymentMethod}"></p>
+</head>
+<body>
+<div id="order-detail-container" class="max-w-7xl mx-auto p-4">
+    <button
+            style="margin: 0 auto; display: block;"
+            onclick="cancelOrder()"
+            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+    >
+        Cancel Order
+    </button>
+    <div class="bg-white shadow-lg rounded-lg">
+        <div class="border border-neutral-300 rounded-lg">
+            <div class="bg-neutral-100 p-4 border-b-2 border-primary-500">
+                <h2 class="font-title text-neutral-950 text-lg mb-2">Order Detail</h2>
+                <span class="block text-neutral-700 mb-1">Order ID: <span
+                        th:text="${orderDetail.orderId}"></span></span>
+                <span class="block text-neutral-700 mb-1">Order Date: <span
+                        th:text="${orderDetail.orderDate}"></span></span>
+                <span class="block text-neutral-700">Total: <span th:text="${orderDetail.total}"></span>VND</span>
+            </div>
+            <div class="p-4">
+                <h3 class="text-center text-xl font-title mb-4">Order Lines</h3>
+                <table class="w-full table-auto border-collapse border border-neutral-300">
+                    <thead>
+                    <tr class="bg-primary-500 text-primary-50">
+                        <th class="border border-neutral-300 py-2 px-4">Image</th>
+                        <th class="border border-neutral-300 py-2 px-4">Product Name</th>
+                        <th class="border border-neutral-300 py-2 px-4">Quantity</th>
+                        <th class="border border-neutral-300 py-2 px-4">Cost</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="orderLine : ${orderDetail.orderLines}" class="border border-neutral-300">
+                        <td class="border border-neutral-300 p-2">
+                            <img
+                                    th:src="@{/api/images(imageName=${orderLine.productSnapshot.image})}"
+                                    alt="Product Image"
+                                    class="object-cover rounded-md" style="height: 150px"
+                                    th:onerror="'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='"
+                            >
+                        </td>
+                        <td>
+                            <a
+                                    th:href="@{/customer/order/{orderId}/product-detail-snapshot/{productId}(orderId=${orderDetail.orderId}, productId=${orderLine.productSnapshot.productId})}"
+                                    th:text="${orderLine.productSnapshot.productName}"
+                            >
+                            </a>
+                        </td>
+                        <td class="border border-neutral-300 p-2" th:text="${orderLine.quantity}"></td>
+                        <td class="border border-neutral-300 p-2" th:text="${orderLine.productSnapshot.cost}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!-- Shipping Address -->
+                <h3 class="text-xl font-title mt-6">Shipping Address</h3>
+                <div class="p-4 border border-neutral-300 rounded-lg">
+                    <h5 class="font-title text-neutral-950" th:text="${orderDetail.shippingAddress.receiverName}"></h5>
+                    <p class="text-neutral-700 my-1">Phone: <span
+                            th:text="${orderDetail.shippingAddress.receiverPhone}"></span></p>
+                    <p class="text-neutral-700 my-1">Address: <span
+                            th:text="${orderDetail.shippingAddress.address}"></span></p>
+                    <p class="text-neutral-700 my-1">Province: <span
+                            th:text="${orderDetail.shippingAddress.province}"></span></p>
+                    <p class="text-neutral-700 my-1">District: <span
+                            th:text="${orderDetail.shippingAddress.district}"></span></p>
+                    <p class="text-neutral-700 my-1">Ward: <span th:text="${orderDetail.shippingAddress.ward}"></span>
+                    </p>
+                </div>
+                <!-- Payment-->
+                <h3 class="text-xl font-title mt-6">Payment Detail</h3>
+                <div class="border border-neutral-300 rounded-lg p-4">
+                    <div class="flex flex-row gap-4">
+                        <div>
+                            <span class="block text-neutral-950 font-semibold">Payment Method:</span>
+                            <p class="text-neutral-700" th:text="${orderDetail.payment.paymentMethod}"></p>
+                        </div>
+                        <div>
+                            <span class="block text-neutral-950 font-semibold">Payment Date:</span>
+                            <p class="text-neutral-700" th:text="${orderDetail.payment.paymentDate}"></p>
+                        </div>
+                        <div>
+                            <span class="block text-neutral-950 font-semibold">Payment Status:</span>
+                            <p class="text-green-600" th:text="${orderDetail.payment.paymentStatus}">Success</p>
+                            <!-- Default Success -->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div>
-         <span class="block text-neutral-950 font-semibold">Payment Date:</span>
-         <p class="text-neutral-700" th:text="${orderDetail.payment.paymentDate}"></p>
-        </div>
-        <div>
-         <span class="block text-neutral-950 font-semibold">Payment Status:</span>
-         <p class="text-green-600" th:text="${orderDetail.payment.paymentStatus}">Success</p><!-- Default Success -->
-        </div>
-       </div>
-      </div>
-     </div>
-    </div>
-   </div>
-  </div>
-  <!-- Modal -->
-  <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="customModalLabel" aria-hidden="true">
-   <div class="modal-dialog">
-    <div class="modal-content">
-     <div class="modal-header">
-      <h5 class="modal-title" id="customModalLabel">Dynamic Modal</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeButton"></button>
-     </div>
-     <div class="modal-body">
-      <!-- Message content -->
-      <div id="message">Default message</div>
-     </div>
-     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      <button type="button" class="btn btn-primary" id="okButton">OK</button>
-     </div>
-    </div>
-   </div>
-  </div>
-  <script th:inline="javascript">
-    const orderId = [[${orderDetail.orderId}]];
-  </script>
-<!--  ajax-->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-  <script>
-        function cancelOrder() {
+
+        <!-- thu nho vao trong-->
+        <div class="border border-neutral-300 rounded-lg p-4">
+            <div class="mb-4">
+                <label for="productSelect" class="block font-semibold mb-2">Select Product:</label>
+                <select id="productSelect" name="productId" class="w-full border rounded p-2">
+                    <option value="" disabled selected>Select a product</option>
+                    <option th:each="orderline : ${orderDetail.orderLines}"
+                            th:value="${orderline.productSnapshot.productId}"
+                            th:text="${orderline.productSnapshot.productName}"></option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="block font-semibold mb-2">Rating:</label>
+                <div class="star-rating" id="starRating">
+                    <i class="fas fa-star" data-rating="1"></i>
+                    <i class="fas fa-star" data-rating="2"></i>
+                    <i class="fas fa-star" data-rating="3"></i>
+                    <i class="fas fa-star" data-rating="4"></i>
+                    <i class="fas fa-star" data-rating="5"></i>
+                </div>
+                <input type="hidden" id="rating" name="rating" value="">
+            </div>
+
+            <div class="mb-4">
+                <label for="review" class="block font-semibold mb-2">Your Review:</label>
+                <textarea id="review" name="review" class="w-full border rounded p-2" rows="4"
+                          placeholder="Write your review here..."></textarea>
+            </div>
+
+            <div>
+                <button type="button" id="submitReview" class="w-full">
+                    Submit Review
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Modal -->
+
+<div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="customModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customModalLabel">Dynamic Modal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        id="closeButton"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Message content -->
+                <div id="message">Default message</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="okButton">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    const orderId = [[${orderDetail.orderId}]];
+</script>
+<script>
+
+    document.getElementById('productSelect').addEventListener('change', function () {
+        var productId = this.value;
+        //show neu da co danh gia
+        $.ajax({
+            type: 'GET',
+            url: '/customer/product/review',
+            contentType: 'application/json',
+            data: {
+                orderId: orderId,
+                productId: productId
+            },
+            success: function (response) {
+                //neu khac null thi show
+                if (response != null && response !== '') {
+                    document.getElementById('rating').value = response.rating;
+                    document.getElementById('review').value = response.comment;
+                    updateStars(response.rating);
+                    //disable
+                    document.getElementById('rating').disabled = true;
+                    document.getElementById('review').disabled = true;
+                    document.getElementById('submitReview').disabled = true;
+                } else {
+                    document.getElementById('rating').disabled = false;
+                    document.getElementById('review').disabled = false;
+                    document.getElementById('submitReview').disabled = false;
+                    document.getElementById('rating').value = '';
+                    document.getElementById('review').value = '';
+                    updateStars(0);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+
+    });
+    // Gửi ajax để lưu đánh gias
+    document.getElementById('submitReview').addEventListener('click', function () {
+        var productId = document.getElementById('productSelect').value;
+        var rating = document.getElementById('rating').value;
+        var review = document.getElementById('review').value;
+        console.log("click submit review");
+        $.ajax({
+            type: 'POST',
+            url: '/customer/product/addReview',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                orderId: orderId,
+                productId: productId,
+                rating: rating,
+                comment: review
+            }),
+
+            success: function (response) {
+                showModalWithMessage(response);
+
+                //reload lai trang
+                setTimeout(function () {
+                    location.reload();
+                }, 2000);
+            },
+            error: function (xhr, status, error) {
+                showModalWithMessage(xhr.responseText);
+            }
+        });
+
+
+    });
+    document.getElementById('starRating').addEventListener('click', function (event) {
+        if (event.target.tagName === 'I') {
+            document.getElementById('rating').value = event.target.getAttribute('data-rating');
+        }
+    });
+    const starRating = document.getElementById('starRating');
+    const stars = starRating.getElementsByClassName('fa-star');
+    const ratingInput = document.getElementById('rating');
+
+    starRating.addEventListener('click', function (e) {
+        if (e.target.classList.contains('fa-star')) {
+            const rating = e.target.getAttribute('data-rating');
+            ratingInput.value = rating;
+            updateStars(rating);
+        }
+    });
+
+    starRating.addEventListener('mouseover', function (e) {
+        if (e.target.classList.contains('fa-star')) {
+            const rating = e.target.getAttribute('data-rating');
+            updateStars(rating);
+        }
+    });
+
+    starRating.addEventListener('mouseout', function () {
+        updateStars(ratingInput.value);
+    });
+
+    function updateStars(rating) {
+        for (let i = 0; i < stars.length; i++) {
+            stars[i].classList.toggle('active', i < rating);
+        }
+    }
+</script>
+
+<!--  ajax-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function cancelOrder() {
         if (confirm("Are you sure you want to cancel this order?")) {
-         console.log("Order cancelled.");
+            console.log("Order cancelled.");
             // Code to cancel the order goes here
             $.ajax({
                 type: "POST",
@@ -617,19 +379,19 @@
                 },
                 error: function (xhr, status, error) {
                     // alert(xhr.responseText);
-                 showModalWithMessage(xhr.responseText);
+                    showModalWithMessage(xhr.responseText);
 
                 }
             });
         } else {
             console.log("Order not cancelled.");
         }
-        }
-    </script>
+    }
+</script>
 
 <!--  ajax-->
 
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
- </body>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
 </html>

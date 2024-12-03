@@ -92,7 +92,7 @@ public class SecurityConfig {
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
 //                        .requestMatchers("/**").permitAll()
                         .requestMatchers("/api/images/**","/auth/**",
-                                "/oauth2/**","/user/**","browser/**",
+                                "/oauth2/**","/user/**","browser/**","/**",
                                 "/about","/").permitAll()
                         .requestMatchers("/customer/**","customer").hasRole("CUSTOMER")
                         .requestMatchers("/shipper/**").hasRole("SHIPPER")

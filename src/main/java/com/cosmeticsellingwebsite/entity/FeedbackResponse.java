@@ -18,6 +18,8 @@ public class FeedbackResponse {
     private LocalDateTime responseDate;
 
     @OneToOne
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JoinColumn(name = "productFeedbackId", referencedColumnName = "productFeedbackId")
     private ProductFeedback productFeedback;
 }

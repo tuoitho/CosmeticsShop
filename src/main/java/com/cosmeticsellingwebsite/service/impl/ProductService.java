@@ -4,10 +4,12 @@ package com.cosmeticsellingwebsite.service.impl;
 import com.cosmeticsellingwebsite.dto.FeedbackDTO;
 import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.exception.CustomException;
+import com.cosmeticsellingwebsite.payload.request.AddProductFeedbackReq;
 import com.cosmeticsellingwebsite.payload.response.ProductDetailResponse;
 import com.cosmeticsellingwebsite.payload.response.ProductResponse;
 import com.cosmeticsellingwebsite.repository.*;
 import com.cosmeticsellingwebsite.service.interfaces.IProductService;
+import com.cosmeticsellingwebsite.util.Logger;
 import jakarta.persistence.EntityNotFoundException;
 import com.cosmeticsellingwebsite.service.image.ImageService;
 import org.springframework.beans.BeanUtils;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -105,7 +108,8 @@ public class ProductService implements IProductService {
 //            productRepository.save(product);
 //            return;
 //        }
-////        delete stock
+
+    /// /        delete stock
 //        productStockRepository.deleteByProduct(product);
 //        productRepository.delete(product);
 //    }
@@ -129,7 +133,6 @@ public class ProductService implements IProductService {
 //        productResponse.setCategory(categoryRepository.findById(addProductRequest.getCategoryId()).get().getCategoryName());
 //        return productResponse;
 //    }
-
     public ProductDetailResponse getProductDetail(String productCdoe) {
         Product product = productRepository.findByProductCode(productCdoe)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -246,4 +249,43 @@ public class ProductService implements IProductService {
         return List.of();
     }
 
+    public void addFeedback(Long customerId, AddProductFeedbackReq addProductFeedbackReq) {
+        Long orderId = addProductFeedbackReq.getOrderId();
+        Long productId = addProductFeedbackReq.getProductId();
+        if (!orderRepository.existsByOrderIdAndOrderLines_Product_ProductId(orderId, productId)) {
+            throw new CustomException("You have not ordered this product on this order");
+        }
+        Logger.log(customerId, orderId, productId);
+        if (productFeedbackRepository.existsByCustomerIdAndOrderIdAndProduct_ProductId(customerId, orderId, productId)) {
+            throw new CustomException("You have already reviewed this product");
+        }
+        ProductFeedback productFeedback = new ProductFeedback();
+        productFeedback.setCustomerId(customerId);
+        productFeedback.setOrderId(orderId);
+        productFeedback.setProduct(productRepository.findById(productId).get());
+        productFeedback.setRating(addProductFeedbackReq.getRating());
+        productFeedback.setComment(addProductFeedbackReq.getComment());
+        productFeedback.setFeedbackDate(LocalDateTime.now());
+        String productSnapshotName = orderRepository.findById(orderId).get().getOrderLines().stream()
+                .filter(orderLine -> orderLine.getProduct().getProductId().equals(productId))
+                .findFirst()
+                .get()
+                .getProductSnapshot().get("productName").toString();
+        productFeedback.setProductSnapshotName(productSnapshotName);
+        productFeedbackRepository.save(productFeedback);
+    }
+
+    public FeedbackDTO getFeedback(Long customerId, Long orderId, Long productId) {
+//        Logger.log(customerId, orderId, productId);
+//        Logger.log(productFeedbackRepository.findByCustomerIdAndOrderIdAndProduct_ProductId(customerId, orderId, productId));
+        ProductFeedback productFeedback = productFeedbackRepository.findByCustomerIdAndOrderIdAndProduct_ProductId(customerId, orderId, productId)
+                .orElse(null);
+        Logger.log(productFeedback);
+        if (productFeedback == null) {
+            return null;
+        }
+        FeedbackDTO feedbackDTO = new FeedbackDTO();
+        BeanUtils.copyProperties(productFeedback, feedbackDTO);
+        return feedbackDTO;
+    }
 }

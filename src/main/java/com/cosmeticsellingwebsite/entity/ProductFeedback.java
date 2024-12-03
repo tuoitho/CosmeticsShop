@@ -22,7 +22,13 @@ public class ProductFeedback implements Serializable {
     @Column(columnDefinition = "text")
     private String comment;
     private LocalDateTime feedbackDate;
+    // đây là thuộc tính của ProductFeedback, không phải của Customer
     private Long customerId;
+    // đây là thuộc tính của ProductFeedback, không phải của Order
+    private Long orderId;
+
+    private String productSnapshotName;
+
     private Double rating;
 
 //    @ToString.Exclude
