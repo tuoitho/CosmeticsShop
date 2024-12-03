@@ -18,4 +18,6 @@ public class FeedbackDTO {
     private Long customerId;
     private Double rating;
     private FeedbackResponse feedbackResponse;
+    private String productSnapshotName;
+
 }

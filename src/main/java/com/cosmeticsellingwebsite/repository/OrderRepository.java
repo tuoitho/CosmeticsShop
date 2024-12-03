@@ -17,6 +17,8 @@ import java.util.Set;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     boolean existsByOrderLines_Product_ProductId(Long productId);
 
+    boolean existsByOrderIdAndOrderLines_Product_ProductId(Long orderId, Long orderLinesProductProductId);
+
     Set<Order> findAllByCustomerId(Long customerId);
 
     @Query("""

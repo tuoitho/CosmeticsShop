@@ -26,6 +26,9 @@ public class ProductFeedback implements Serializable {
     private Long customerId;
     // đây là thuộc tính của ProductFeedback, không phải của Order
     private Long orderId;
+
+    private String productSnapshotName;
+
     private Double rating;
 
 //    @ToString.Exclude
