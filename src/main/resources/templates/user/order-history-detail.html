@@ -190,7 +190,7 @@
 
 
         <!-- thu nho vao trong-->
-        <div class="border border-neutral-300 rounded-lg p-4">
+        <div class="border border-neutral-300 rounded-lg p-4" id="reviewContainer">
             <div class="mb-4">
                 <label for="productSelect" class="block font-semibold mb-2">Select Product:</label>
                 <select id="productSelect" name="productId" class="w-full border rounded p-2">
@@ -253,9 +253,14 @@
 </div>
 <script th:inline="javascript">
     const orderId = [[${orderDetail.orderId}]];
+    const orderStatus = [[${orderDetail.orderStatus}]];
+
 </script>
 <script>
-
+<!--    nếu order ko completed thì ẩn-->
+    if (orderStatus !== 'COMPLETED') {
+        document.getElementById('reviewContainer').style.display = 'none';
+    }
     document.getElementById('productSelect').addEventListener('change', function () {
         var productId = this.value;
         //show neu da co danh gia
