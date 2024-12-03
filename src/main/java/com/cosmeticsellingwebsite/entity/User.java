@@ -24,10 +24,12 @@ public class User implements Serializable {
     protected String password;
     @Column(unique = true)
     protected String email;
-    private String fullname;
-    private String phone;
+    protected String fullname;
+    protected String phone;
     @Enumerated(EnumType.STRING)
-    private Gender gender;
+    protected Gender gender;
+
+    protected Boolean active = true;
 
     @ManyToOne
     @JoinColumn(name = "roleId", referencedColumnName = "roleId")
