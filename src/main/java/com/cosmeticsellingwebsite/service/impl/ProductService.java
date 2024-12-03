@@ -3,6 +3,7 @@ package com.cosmeticsellingwebsite.service.impl;
 
 import com.cosmeticsellingwebsite.dto.FeedbackDTO;
 import com.cosmeticsellingwebsite.entity.*;
+import com.cosmeticsellingwebsite.enums.OrderStatus;
 import com.cosmeticsellingwebsite.exception.CustomException;
 import com.cosmeticsellingwebsite.payload.request.AddProductFeedbackReq;
 import com.cosmeticsellingwebsite.payload.response.ProductDetailResponse;
@@ -252,12 +253,13 @@ public class ProductService implements IProductService {
     public void addFeedback(Long customerId, AddProductFeedbackReq addProductFeedbackReq) {
         Long orderId = addProductFeedbackReq.getOrderId();
         Long productId = addProductFeedbackReq.getProductId();
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomException("Order not found"));
+        //check status of order
+        if (!order.getOrderStatus().equals(OrderStatus.COMPLETED)) {
+            throw new CustomException("You can only review products in delivered orders");
+        }
         if (!orderRepository.existsByOrderIdAndOrderLines_Product_ProductId(orderId, productId)) {
             throw new CustomException("You have not ordered this product on this order");
-        }
-        Logger.log(customerId, orderId, productId);
-        if (productFeedbackRepository.existsByCustomerIdAndOrderIdAndProduct_ProductId(customerId, orderId, productId)) {
-            throw new CustomException("You have already reviewed this product");
         }
         ProductFeedback productFeedback = new ProductFeedback();
         productFeedback.setCustomerId(customerId);
