@@ -41,4 +41,7 @@ public class Order implements Serializable {
     @JsonManagedReference
     private ShippingAddress shippingAddress;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<OrderStatusHistory> orderStatusHistories;
 }

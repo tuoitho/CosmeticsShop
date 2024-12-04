@@ -118,6 +118,27 @@
                         th:text="${orderDetail.orderDate}"></span></span>
                 <span class="block text-neutral-700">Total: <span th:text="${orderDetail.total}"></span>VND</span>
             </div>
+            <!-- Order Status History Section -->
+            <div class="p-4">
+                <h3 class="font-title text-neutral-950 text-lg mb-4">Order Status History</h3>
+                <div class="space-y-4">
+                    <div th:each="history : ${orderDetail.orderStatusHistories}" class="flex items-start">
+<!--                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center">-->
+<!--                            <span class=" text-sm" th:text="${#strings.substring(history.status, 0, 1)}"></span>-->
+<!--                        </div>-->
+                        <div class="ml-4 flex-grow">
+                            <div class="flex justify-between items-center mb-1">
+                                <h4 class="text-neutral-400 font-semibold" th:text="${history.status}"></h4>
+                                <span>Updated at:
+                                <span class="text-neutral-200 text-sm" th:text="${#temporals.format(history.updateAt, 'dd-MM-yyyy HH:mm')}"></span>
+                                    </span>
+                            </div>
+                            <p class="text-neutral-700" th:text="${history.description}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="p-4">
                 <h3 class="text-center text-xl font-title mb-4">Order Lines</h3>
                 <table class="w-full table-auto border-collapse border border-neutral-300">

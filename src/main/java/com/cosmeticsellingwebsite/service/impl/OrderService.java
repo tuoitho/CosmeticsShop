@@ -321,6 +321,11 @@ public class OrderService implements IOrderService {
         PaymentDTO paymentDTO = new PaymentDTO();
         BeanUtils.copyProperties(payment, paymentDTO);
         orderHistoryDetailDTO.setPayment(paymentDTO);
+        orderHistoryDetailDTO.setOrderStatusHistories(order.getOrderStatusHistories().stream().map(x -> {
+            OrderStatusHistoryDTO orderStatusHistoryDTO = new OrderStatusHistoryDTO();
+            BeanUtils.copyProperties(x, orderStatusHistoryDTO);
+            return orderStatusHistoryDTO;
+        }).collect(Collectors.toList()));
         return orderHistoryDetailDTO;
     }
 
