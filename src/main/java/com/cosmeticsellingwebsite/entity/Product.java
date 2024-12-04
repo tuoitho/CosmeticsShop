@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -41,6 +42,8 @@ public class Product implements Serializable {
     @Column(columnDefinition = "text")
     private String image;
 
+    // phục vụ cho việc hiển thị sản phẩm mới ở trang chủ
+    private LocalDateTime createdDate = LocalDateTime.now();
     private Boolean active=true;
 
     @ToString.Exclude
