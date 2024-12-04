@@ -35,12 +35,12 @@ import java.util.Arrays;
 @EnableWebSecurity
 @CrossOrigin
 public class SecurityConfig {
-//    @Autowired
+    //    @Autowired
 //    private JwtFilter jwtFilter;
     @Autowired
     private    CustomOAuth2UserService oauth2UserService; // Inject CustomOAuth2UserService
 
-//    @Autowired
+    //    @Autowired
 //    @Lazy
     private final OAuth2LoginSuccessHandler oauth2LoginSuccessHandler;
 
@@ -92,7 +92,7 @@ public class SecurityConfig {
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
 //                        .requestMatchers("/**").permitAll()
                         .requestMatchers("/api/images/**","/auth/**",
-                                "/oauth2/**","/user/**","browser/**","/**",
+                                "/oauth2/**","/user/**","browser/**",
                                 "/about","/").permitAll()
                         .requestMatchers("/customer/**","customer").hasRole("CUSTOMER")
                         .requestMatchers("/shipper/**").hasRole("SHIPPER")
@@ -100,7 +100,7 @@ public class SecurityConfig {
                         .requestMatchers("/manager/**").hasRole("MANAGER")
                         .anyRequest().authenticated()) // Require authentication for all other requests
                 .formLogin(f->f.loginPage("/auth/login").permitAll()
-                                .loginProcessingUrl("/login")
+                        .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/")
                         .failureUrl("/auth/login")
                 )
