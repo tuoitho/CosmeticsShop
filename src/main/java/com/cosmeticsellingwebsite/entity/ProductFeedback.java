@@ -21,6 +21,7 @@ public class ProductFeedback implements Serializable {
     private Long productFeedbackId;
     @Column(columnDefinition = "text")
     private String comment;
+    private String image;
     private LocalDateTime feedbackDate;
     // đây là thuộc tính của ProductFeedback, không phải của Customer
     private Long customerId;
