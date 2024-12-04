@@ -3,6 +3,7 @@ package com.cosmeticsellingwebsite.service.capcha;
 
 import com.cosmeticsellingwebsite.dto.gooogle.GoogleResponse;
 import com.cosmeticsellingwebsite.config.CaptchaSettings;
+import com.cosmeticsellingwebsite.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -23,7 +24,7 @@ public class CaptchaService {
 
     public void processResponse(String response) {
         if (!responseSanityCheck(response)) {
-            throw new RuntimeException("Bạn không phải là con người");
+            throw new CustomException("Bạn không phải là con người");
         }
         URI verifyUri = URI.create(String.format(
             "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s",
@@ -32,7 +33,7 @@ public class CaptchaService {
         GoogleResponse googleResponse = restTemplate.getForObject(verifyUri, GoogleResponse.class);
 
         if (!googleResponse.isSuccess()) {
-            throw new RuntimeException("Bạn không phải là con người");
+            throw new CustomException("Bạn không phải là con người");
         }
     }
 

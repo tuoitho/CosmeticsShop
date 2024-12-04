@@ -25,7 +25,7 @@ public class PaymentService {
     OrderRepository orderRepository;
     @Transactional
     public PaymentResponse updatePaymentStatus(@Valid Long orderId, @Valid String status) {
-        Payment payment = paymentRepository.findByOrder_OrderId(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        Payment payment = paymentRepository.findByOrder_OrderId(orderId).orElseThrow(() -> new CustomException("Order not found"));
         PaymentStatus paymentStatus = PaymentStatus.valueOf(status);
         payment.setPaymentStatus(paymentStatus);
         if (paymentStatus == PaymentStatus.PAID) {

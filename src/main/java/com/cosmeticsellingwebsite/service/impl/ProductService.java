@@ -75,13 +75,13 @@ public class ProductService implements IProductService {
 
 //    public ProductResponse addProduct(AddProductRequest createProductRequest) {
 //        if (productRepository.existsByProductCode(createProductRequest.getProductCode())) {
-//            throw new RuntimeException("Product code already exists");
+//            throw new CustomException("Product code already exists");
 //        }
 //        Product product = new Product();
 //        Long quantity = createProductRequest.getStock();
 //        BeanUtils.copyProperties(createProductRequest, product);
 //        Category category = categoryRepository.findById(createProductRequest.getCategoryId())
-//                .orElseThrow(() -> new RuntimeException("Category not found"));
+//                .orElseThrow(() -> new CustomException("Category not found"));
 //        product.setCategory(category);
 //
 //
@@ -100,7 +100,7 @@ public class ProductService implements IProductService {
 //    public void deleteProduct(Long id) {
 //        Optional<Product> productOptional = productRepository.findById(id);
 //        if (productOptional.isEmpty()) {
-//            throw new RuntimeException("Product not found");
+//            throw new CustomException("Product not found");
 //        }
 //        Product product = productOptional.get();
 ////        kiem tra xem product co trong order hay cart hay khong
@@ -117,15 +117,15 @@ public class ProductService implements IProductService {
 //
 //    public ProductResponse updateProduct(AddProductRequest addProductRequest) {
 //        Product product = productRepository.findByProductCode(addProductRequest.getProductCode())
-//                .orElseThrow(() -> new RuntimeException("Product not found"));
+//                .orElseThrow(() -> new CustomException("Product not found"));
 //        Long quantity = addProductRequest.getStock();
 //        BeanUtils.copyProperties(addProductRequest, product);
 //        Category category = categoryRepository.findById(addProductRequest.getCategoryId())
-//                .orElseThrow(() -> new RuntimeException("Category not found"));
+//                .orElseThrow(() -> new CustomException("Category not found"));
 //        product.setCategory(category);
 //        Product product1=productRepository.save(product);
 //        ProductStock productStock = productStockRepository.findByProduct_ProductCode(product1.getProductCode())
-//                .orElseThrow(() -> new RuntimeException("ProductStock not found"));
+//                .orElseThrow(() -> new CustomException("ProductStock not found"));
 //        productStock.setQuantity(quantity);
 //        productStockRepository.save(productStock);
 //        ProductResponse productResponse = new ProductResponse();
@@ -136,7 +136,7 @@ public class ProductService implements IProductService {
 //    }
     public ProductDetailResponse getProductDetail(String productCdoe) {
         Product product = productRepository.findByProductCode(productCdoe)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new CustomException("Product not found"));
 
         ProductDetailResponse productDetailResponse = new ProductDetailResponse();
         BeanUtils.copyProperties(product, productDetailResponse);
@@ -157,7 +157,7 @@ public class ProductService implements IProductService {
 
     public ProductDetailResponse getProductDetailById(Long productId) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new CustomException("Product not found"));
 
         ProductDetailResponse productDetailResponse = new ProductDetailResponse();
         BeanUtils.copyProperties(product, productDetailResponse);
@@ -238,7 +238,7 @@ public class ProductService implements IProductService {
     @Override
     public void updateProduct(Product product) {
         Product existingProduct = productRepository.findById(product.getProductId())
-                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
+                .orElseThrow(() -> new CustomException("Sản phẩm không tồn tại"));
 
         existingProduct.setProductName(product.getProductName());
         existingProduct.setCategory(product.getCategory());

@@ -53,7 +53,7 @@ public class OrderService implements IOrderService {
     public OrderResponse createOrder(Long customerId, CreateOrderRequest createOrderRequest) {
         // TODO: chưa xử lý trường hợp tranh nhau đặt hàng
         // Tìm người dùng
-        User user = userRepository.findById(customerId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(customerId).orElseThrow(() -> new CustomException("User not found"));
         // Khởi tạo đơn hàng và các dòng đơn hàng
         Order order = new Order();
         Set<CartItemForOrderDTO> cartItemForOrderDTOS = createOrderRequest.getCartItemForOrderDTOS();
@@ -69,13 +69,13 @@ public class OrderService implements IOrderService {
         double total = 0.0;
         for (var cartItem : cartItemForOrderDTOS) {
             Product product = Optional.ofNullable(productMap.get(cartItem.getProductCode()))
-                    .orElseThrow(() -> new RuntimeException("Product " + cartItem.getProductCode() + " not found"));
+                    .orElseThrow(() -> new CustomException("Product " + cartItem.getProductCode() + " not found"));
 //check quantity
             if (productService.getStockByProductCode(product.getProductCode()) < cartItem.getQuantity()) {
-                throw new RuntimeException("Product " + product.getProductCode() + " out of stock");
+                throw new CustomException("Product " + product.getProductCode() + " out of stock");
             }
 //            tru so luong san pham
-            ProductStock productStock = productStockRepository.findByProduct_ProductCode(product.getProductCode()).orElseThrow(() -> new RuntimeException("Product stock not found"));
+            ProductStock productStock = productStockRepository.findByProduct_ProductCode(product.getProductCode()).orElseThrow(() -> new CustomException("Product stock not found"));
             productStock.setQuantity(productStock.getQuantity() - cartItem.getQuantity());
             productStockRepository.save(productStock);
 
@@ -109,7 +109,7 @@ public class OrderService implements IOrderService {
         if (createOrderRequest.getVoucherCodes() != null) {
             for (String voucherCode : createOrderRequest.getVoucherCodes()) {
                 Voucher voucher = voucherRepository.findFirstByVoucherCodeAndUsedFalseAndStartDateBeforeAndEndDateAfter(voucherCode, LocalDateTime.now(), LocalDateTime.now())
-                        .orElseThrow(() -> new RuntimeException("Voucher " + voucherCode + " is not available"));
+                        .orElseThrow(() -> new CustomException("Voucher " + voucherCode + " is not available"));
                 voucher.setUsed(true);
                 voucherRepository.save(voucher);
                 total -= voucher.getVoucherValue();
@@ -135,7 +135,7 @@ public class OrderService implements IOrderService {
 
 
         // xoa cartitem
-        Cart cart = cartRepository.findByCustomer_UserId(customerId).orElseThrow(() -> new RuntimeException("Cart not found at OrderService"));
+        Cart cart = cartRepository.findByCustomer_UserId(customerId).orElseThrow(() -> new CustomException("Cart not found at OrderService"));
         Set<CartItem> cartItems = cart.getCartItems();
         for (CartItemForOrderDTO cartItemForOrderDTO : cartItemForOrderDTOS) {
             cartItems.removeIf(
@@ -169,14 +169,14 @@ public class OrderService implements IOrderService {
 //
 //    @Transactional
 //    public OrderResponse updateOrder(@Valid UpdateOrderRequest updateOrderRequest) {
-//        Order order = orderRepository.findById(updateOrderRequest.getOrderId()).orElseThrow(() -> new RuntimeException("Order not found"));
+//        Order order = orderRepository.findById(updateOrderRequest.getOrderId()).orElseThrow(() -> new CustomException("Order not found"));
 //        Logger.log("Order found: " + order.getOrderLines());
 //        ShippingAddress shippingAddress = new ShippingAddress();
 //        BeanUtils.copyProperties(updateOrderRequest.getAddress(), shippingAddress);
 //        order.setShippingAddress(shippingAddress);
 //        Order savedOrder = orderRepository.save(order);
 //
-//        Payment payment = paymentRepository.findByOrder(order).orElseThrow(() -> new RuntimeException("Payment not found"));
+//        Payment payment = paymentRepository.findByOrder(order).orElseThrow(() -> new CustomException("Payment not found"));
 //        payment.setPaymentMethod(updateOrderRequest.getPaymentMethod());
 //        paymentRepository.save(payment);
 //
@@ -203,7 +203,7 @@ public class OrderService implements IOrderService {
         order.setOrderStatus(OrderStatus.CANCELLED);
 //        hoàn lại số lượng sản phẩm
         order.getOrderLines().forEach(x -> {
-            ProductStock productStock = productStockRepository.findByProduct_ProductCode(x.getProduct().getProductCode()).orElseThrow(() -> new RuntimeException("Product stock not found"));
+            ProductStock productStock = productStockRepository.findByProduct_ProductCode(x.getProduct().getProductCode()).orElseThrow(() -> new CustomException("Product stock not found"));
             productStock.setQuantity(productStock.getQuantity() + x.getQuantity());
             productStockRepository.save(productStock);
         });
@@ -212,7 +212,7 @@ public class OrderService implements IOrderService {
 
     public OrderResponse updateOrderStatus(@Valid Long orderId, @Valid String status) {
 //        TODO: khi thanh toan truoc va khi nhan hang can xu ly khac nhau
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomException("Order not found"));
         OrderStatus orderStatus = OrderStatus.valueOf(status);
         order.setOrderStatus(orderStatus);
         Order savedOrder = orderRepository.save(order);
@@ -228,24 +228,24 @@ public class OrderService implements IOrderService {
         }).collect(Collectors.toSet());
         orderResponse.setOrderLines(orderLineForOrderDTOS);
 //        SET payment
-        Payment payment = paymentRepository.findByOrder(order).orElseThrow(() -> new RuntimeException("Payment not found"));
+        Payment payment = paymentRepository.findByOrder(order).orElseThrow(() -> new CustomException("Payment not found"));
         orderResponse.setPaymentMethod(payment.getPaymentMethod());
         return orderResponse;
     }
 
     public Double getOrderTotal(Long orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new CustomException("Order not found"));
         return order.getTotal();
     }
 
     public void updateOrderStatusPaymentTime(Long orderId, String paymentTime) {
         Logger.log("updating order status");
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new CustomException("Order not found"));
         order.setOrderStatus(OrderStatus.CONFIRMED);
         Payment payment = paymentRepository.findByOrder(order)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+                .orElseThrow(() -> new CustomException("Payment not found"));
         payment.setPaymentStatus(PaymentStatus.PAID);
         payment.setPaymentDate(LocalDateTime.parse(paymentTime, DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
         paymentRepository.save(payment);
@@ -256,10 +256,10 @@ public class OrderService implements IOrderService {
 
     public void updateOrderPaymentCOD(Long orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new CustomException("Order not found"));
         order.setOrderStatus(OrderStatus.CONFIRMED);
         Payment payment = paymentRepository.findByOrder(order)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+                .orElseThrow(() -> new CustomException("Payment not found"));
         payment.setPaymentStatus(PaymentStatus.PENDING);
         payment.setPaymentDate(order.getOrderDate());
         paymentRepository.save(payment);
@@ -289,7 +289,7 @@ public class OrderService implements IOrderService {
     }
 
     public OrderHistoryDetailDTO getOrderHistoryDetailById(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomException("Order not found"));
         OrderHistoryDetailDTO orderHistoryDetailDTO = new OrderHistoryDetailDTO();
         BeanUtils.copyProperties(order, orderHistoryDetailDTO);
         ShippingAddressDTO shippingAddressDTO = new ShippingAddressDTO();
@@ -317,7 +317,7 @@ public class OrderService implements IOrderService {
             orderLineDTO.setProductSnapshot(productSnapshotDTO);
             return orderLineDTO;
         }).collect(Collectors.toSet()));
-        Payment payment = paymentRepository.findByOrder(order).orElseThrow(() -> new RuntimeException("Payment not found"));
+        Payment payment = paymentRepository.findByOrder(order).orElseThrow(() -> new CustomException("Payment not found"));
         PaymentDTO paymentDTO = new PaymentDTO();
         BeanUtils.copyProperties(payment, paymentDTO);
         orderHistoryDetailDTO.setPayment(paymentDTO);
@@ -325,9 +325,9 @@ public class OrderService implements IOrderService {
     }
 
     public ProductSnapshotDTO getProductSnapshot(Long orderId, Long productId) {
-        OrderLine orderLine = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"))
+        OrderLine orderLine = orderRepository.findById(orderId).orElseThrow(() -> new CustomException("Order not found"))
                 .getOrderLines().stream().filter(x -> x.getProduct().getProductId().equals(productId)).findFirst()
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new CustomException("Product not found"));
         ProductSnapshotDTO productSnapshotDTO = new ProductSnapshotDTO();
         Map<String, Object> productSnapshot = orderLine.getProductSnapshot();
         productSnapshotDTO.setProductId(Long.parseLong(productSnapshot.get("productId").toString()));

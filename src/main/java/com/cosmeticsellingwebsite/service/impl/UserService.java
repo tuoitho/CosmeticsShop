@@ -35,7 +35,7 @@ public class UserService implements IUserService, UserDetailsService {
 //    public void addAddress(AddAddressRequest addAddressRequest) {
 //        Optional<User> userOptional = userRepository.findById(addAddressRequest.getUserId());
 //        if (userOptional.isEmpty()) {
-//            throw new RuntimeException("User not found");
+//            throw new CustomException("User not found");
 //        }
 //
 //        Address address = new Address();
@@ -47,7 +47,7 @@ public class UserService implements IUserService, UserDetailsService {
 
     public List<Address> getAddresses(Long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new RuntimeException("User not found");
+            throw new CustomException("User not found");
         }
         return addressRepository.findAllByUser_UserId(userId);
     }

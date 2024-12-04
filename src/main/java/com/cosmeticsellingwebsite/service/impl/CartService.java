@@ -2,6 +2,7 @@ package com.cosmeticsellingwebsite.service.impl;
 
 import com.cosmeticsellingwebsite.config.AuthenticationHelper;
 import com.cosmeticsellingwebsite.entity.*;
+import com.cosmeticsellingwebsite.exception.CustomException;
 import com.cosmeticsellingwebsite.payload.request.AddProductToCartRequest;
 import com.cosmeticsellingwebsite.repository.CartItemRepository;
 import com.cosmeticsellingwebsite.repository.CartRepository;
@@ -35,9 +36,9 @@ public class CartService implements ICartService {
         return cartItemRepository.findById(id).orElseThrow(() -> new RuntimeException("Cart item not found"));
     }
     public void addProductToCart(AddProductToCartRequest addProductToCartRequest) {
-        Customer customer = (Customer) userRepository.findById(authenticationHelper.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+        Customer customer = (Customer) userRepository.findById(authenticationHelper.getUserId()).orElseThrow(() -> new CustomException("User not found"));
 
-        Product product = productRepository.findByProductCode(addProductToCartRequest.getProductCode()).orElseThrow(() -> new RuntimeException("Product Code " + addProductToCartRequest.getProductCode() + " not found"));
+        Product product = productRepository.findByProductCode(addProductToCartRequest.getProductCode()).orElseThrow(() -> new CustomException("Product Code " + addProductToCartRequest.getProductCode() + " not found"));
 //        neu chua co cart thi tao moi
         Cart cart = cartRepository.findByCustomer(customer).orElseGet(() -> {
             Cart newCart = new Cart();
@@ -80,7 +81,7 @@ public class CartService implements ICartService {
         Logger.log(userId);
         Logger.log(cartRepository.findByCustomer_UserId(userId).toString());
         return cartRepository.findByCustomer_UserId(userId).orElseGet(() -> {
-            Customer customer = (Customer) userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User " + userId + " not found"));
+            Customer customer = (Customer) userRepository.findById(userId).orElseThrow(() -> new CustomException("User " + userId + " not found"));
             Cart newCart = new Cart();
             newCart.setCustomer(customer);
             return cartRepository.save(newCart);

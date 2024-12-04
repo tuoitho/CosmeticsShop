@@ -3,6 +3,7 @@ package com.cosmeticsellingwebsite.service.impl;
 import com.cosmeticsellingwebsite.dto.ProductSummaryDTO;
 import com.cosmeticsellingwebsite.entity.Category;
 import com.cosmeticsellingwebsite.entity.ProductFeedback;
+import com.cosmeticsellingwebsite.exception.CustomException;
 import com.cosmeticsellingwebsite.payload.response.CategoryProductPagingResponse;
 import com.cosmeticsellingwebsite.payload.response.CategoryProductResponse;
 import com.cosmeticsellingwebsite.payload.response.CategoryResponse;
@@ -53,7 +54,7 @@ public class CategoryService implements ICategoryService {
 
     public CategoryProductResponse getCategoryWithProducts(Long categoryId) {
         CategoryProductResponse categoryWithProducts = new CategoryProductResponse();
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category not found"));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CustomException("Category not found"));
         categoryWithProducts.setCategoryId(category.getCategoryId());
         categoryWithProducts.setCategoryName(category.getCategoryName());
         categoryWithProducts.setProducts(category.getProducts().stream().map(product -> {
@@ -71,7 +72,7 @@ public class CategoryService implements ICategoryService {
 
     public CategoryProductPagingResponse getCategoryWithProductsPaging(Long categoryId, Pageable pageable) {
         CategoryProductPagingResponse categoryWithProductsPaging = new CategoryProductPagingResponse();
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category not found"));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CustomException("Category not found"));
         categoryWithProductsPaging.setCategoryId(category.getCategoryId());
         categoryWithProductsPaging.setCategoryName(category.getCategoryName());
         categoryWithProductsPaging.setProducts(productRepository.findByCategory_CategoryId(categoryId,pageable).stream().map(product -> {

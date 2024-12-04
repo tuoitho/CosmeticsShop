@@ -51,14 +51,14 @@ public class HandleErrorRestController
 //        ApiResponse<?> response = new ApiResponse<>(false, error, errorDetails);
 //        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 //    }
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<?> handleGenericException(Exception ex) {
-        String error=ex.getMessage();
-        ex.printStackTrace();
-        StackTraceElement[] lst= ex.getStackTrace();
-        String message = ex.getMessage();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
-    }
+//    @ExceptionHandler(RuntimeException.class)
+//    public ResponseEntity<?> handleGenericException(Exception ex) {
+//        String error=ex.getMessage();
+//        ex.printStackTrace();
+//        StackTraceElement[] lst= ex.getStackTrace();
+//        String message = ex.getMessage();
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
+//    }
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<?> handleCustomException(Exception e){
 
