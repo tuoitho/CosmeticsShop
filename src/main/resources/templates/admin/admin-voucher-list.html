@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{admin/layout-admin.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách mã giảm giá</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<section class="container mt-4" layout:fragment="app-content">
+    <h2 class="mb-4">Danh sách mã giảm giá</h2>
+
+    <!-- Nút thêm mã giảm giá -->
+    <a href="/admin/vouchers/new" class="btn btn-primary mb-3">Thêm mã giảm giá</a>
+
+    <!-- Bảng danh sách mã giảm giá -->
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>STT</th>
+            <th>Code giảm giá</th>
+            <th>Giá trị (%)</th>
+            <th>Ngày hiệu lực</th>
+            <th>Ngày hết hạn</th>
+            <th>Tình trạng</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="voucher, iterStat : ${voucherPage.content}">
+            <td th:text="${iterStat.index + 1 + voucherPage.number * voucherPage.size}"></td>
+            <td th:text="${voucher.voucherCode}"></td>
+            <td th:text="${voucher.voucherValue}"></td>
+            <td th:text="${@dateTimeUtils.formatLocalDateTime(voucher.startDate, 'dd/MM/yyyy HH:mm:ss')}"></td>
+            <td th:text="${@dateTimeUtils.formatLocalDateTime(voucher.endDate, 'dd/MM/yyyy HH:mm:ss')}"></td>
+            <td>
+                <span th:if="${voucher.used}" class="badge badge-success">Đã sử dụng</span>
+                <span th:if="${!voucher.used}" class="badge badge-info">Chưa sử dụng</span>
+            </td>
+            <td>
+                <!-- Nếu mã đã sử dụng hoặc liên kết với đơn hàng, không hiển thị nút chỉnh sửa và xoá -->
+                <a th:if="${!voucher.used && voucher.order == null}"
+                   th:href="@{/admin/vouchers/edit/{id}(id=${voucher.voucherId})}"
+                   class="btn btn-warning btn-sm">Chỉnh sửa</a>
+
+                <a th:if="${!voucher.used && voucher.order == null}"
+                   th:href="@{/admin/vouchers/delete/{id}(id=${voucher.voucherId})}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Bạn có chắc chắn muốn xoá mã giảm giá này không?')">Xoá</a>
+
+                <span th:if="${voucher.order != null}" class="text-muted">Mã đang được áp dụng</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Phân trang -->
+    <nav>
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${voucherPage.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/vouchers(page=${voucherPage.number - 1}, size=${voucherPage.size})}">Trước</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, voucherPage.totalPages - 1)}"
+                th:classappend="${i == voucherPage.number} ? 'active'">
+                <a class="page-link" th:href="@{/admin/vouchers(page=${i}, size=${voucherPage.size})}" th:text="${i + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${voucherPage.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/vouchers(page=${voucherPage.number + 1}, size=${voucherPage.size})}">Sau</a>
+            </li>
+        </ul>
+    </nav>
+
+</section>
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -101,6 +101,14 @@
 
                 });
 
+                // Hàm định dạng giá tiền
+                function formatCurrency(value) {
+                    return new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }).format(value);
+                }
+
                 function getProductByCategory(categoryId, page) {
                     $.ajax({
                         url: contextPath + 'browser/category/products', // Thay thế bằng URL của API endpoint
@@ -127,7 +135,7 @@
 
                                         <!-- Giá sản phẩm -->
                                         <p class="card-text">
-                                            <strong>${product.cost} VND</strong>
+                                            <strong>${formatCurrency(product.cost)}</strong>
                                         </p>
 
                                         <!-- Đánh giá sao -->
