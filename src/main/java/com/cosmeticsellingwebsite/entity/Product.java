@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -26,7 +27,9 @@ public class Product implements Serializable {
     private String description;
     @Column(columnDefinition = "text")
     private String brand;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate manufactureDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate expirationDate;
     @Column(columnDefinition = "text")
     private String ingredient;
