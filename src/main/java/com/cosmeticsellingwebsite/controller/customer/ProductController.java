@@ -6,6 +6,7 @@ import com.cosmeticsellingwebsite.payload.request.AddProductFeedbackReq;
 import com.cosmeticsellingwebsite.service.image.ImageService;
 import com.cosmeticsellingwebsite.service.impl.ProductService;
 import com.cosmeticsellingwebsite.util.Logger;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
