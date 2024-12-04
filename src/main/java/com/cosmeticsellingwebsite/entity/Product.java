@@ -50,7 +50,7 @@ public class Product implements Serializable {
     @JoinColumn(name = "categoryId", referencedColumnName = "categoryId")
     private Category category;
 
-    @OneToOne(mappedBy = "product", cascade = CascadeType.PERSIST)
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonManagedReference
     private ProductStock productStock;
 
