@@ -38,15 +38,11 @@ public class ProductController {
         if (image != null) {
             imageUrl = imageService.saveImage(image);  // Giả sử bạn có dịch vụ lưu trữ ảnh
         }
-        try {
-            Gson gson = new Gson();
-            AddProductFeedbackReq addProductFeedbackReq = gson.fromJson(addProductFeedbackReqStr, AddProductFeedbackReq.class);
-            addProductFeedbackReq.setImage(imageUrl);
-            productService.addFeedback(customerId, addProductFeedbackReq);
-            return ResponseEntity.ok("Review added successfully");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Vui lòng nhập đầy đủ thông tin");
-        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        AddProductFeedbackReq addProductFeedbackReq = objectMapper.readValue(addProductFeedbackReqStr, AddProductFeedbackReq.class);
+        addProductFeedbackReq.setImage(imageUrl);
+        productService.addFeedback(customerId, addProductFeedbackReq);
+        return ResponseEntity.ok("Review added successfully");
     }
 
     @GetMapping("/review")
