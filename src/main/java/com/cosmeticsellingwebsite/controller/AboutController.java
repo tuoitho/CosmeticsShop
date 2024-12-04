@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/about")
 public class AboutController {
-    @GetMapping("")
+    @GetMapping({"", "/"})
     public String about() {
         return "user/about";
     }

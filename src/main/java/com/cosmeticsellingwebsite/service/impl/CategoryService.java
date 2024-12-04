@@ -17,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService implements ICategoryService {
@@ -79,7 +81,12 @@ public class CategoryService implements ICategoryService {
             ProductSummaryDTO productSummaryDTO = new ProductSummaryDTO();
             BeanUtils.copyProperties(product, productSummaryDTO);
             List<ProductFeedback> feedbacks = productFeedbackRepository.findByProduct(product);
-            Double rating = feedbacks.stream().mapToDouble(ProductFeedback::getRating).average().orElse(0);
+            Double rating = Optional.ofNullable(feedbacks)
+                    .orElse(Collections.emptyList())
+                    .stream()
+                    .mapToDouble(ProductFeedback::getRating)
+                    .average()
+                    .orElse(0);
             productSummaryDTO.setRatingAverage(rating);
             Long numOfSold = orderLineRepository.sumQuantityByProduct(product).orElse(0L);
             productSummaryDTO.setSellCount(numOfSold);

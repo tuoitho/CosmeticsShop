@@ -1,107 +1,125 @@
-<header  th:fragment="header">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+<header th:fragment="header">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #fce4ec, #f3e5f5, #e8eaf6);
+            min-height: 100vh;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 192, 203, 0.3);
+        }
+        .navbar-nav .nav-link {
+            color: #6a1b9a;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #e91e63;
+        }
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: #e91e63;
+            transition: all 0.3s ease;
+        }
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+        .logo {
+            max-height: 50px;
+            filter: drop-shadow(0 0 2px rgba(233, 30, 99, 0.5));
+        }
+        .cart-icon, .profile-menu {
+            font-size: 1.4rem;
+            color: #6a1b9a;
+            transition: all 0.3s ease;
+        }
+        .cart-icon:hover, .profile-menu:hover {
+            color: #e91e63;
+            transform: scale(1.1);
+        }
+        .dropdown-menu {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(233, 30, 99, 0.2);
+        }
+        .dropdown-item {
+            color: #6a1b9a;
+            transition: all 0.3s ease;
+        }
+        .dropdown-item:hover {
+            background-color: rgba(233, 30, 99, 0.1);
+            color: #e91e63;
+        }
+        @media (max-width: 991px) {
+            .navbar-nav {
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 10px;
+                padding: 10px;
+            }
+        }
+    </style>
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-            <a class="navbar-brand" href="#">Cosmetic Brand</a>
+            <a class="navbar-brand" href="#">
+                <img src="https://via.placeholder.com/150x50?text=Glamour" alt="Glamour Cosmetics" class="logo">
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">HOME</a>
+                        <a class="nav-link" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/browser/products">PRODUCTS</a>
+                        <a class="nav-link" href="/browser/products">Products</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">ABOUT US</a>
+                        <a class="nav-link" href="/about">About Us</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/customer/cart">
-                            <i class="fas fa-shopping-cart"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Account
-                        </a>
+                <a href="/customer/cart" class="cart-icon me-3">
+                    <i class="fas fa-shopping-cart"></i>
+                </a>
+                <div class="d-flex align-items-center">
+                    <a href="#" class="cart-icon me-3">
+                        <i class="bi bi-bag-heart"></i>
+                    </a>
+                    <div class="dropdown">
+                        <div class="profile-menu" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
                             th:if="${#authorization.expression('isAuthenticated()')}">
-                                <li><a class="dropdown-item" href="/customer/profile">Profile</a></li>
-                                <li><a class="dropdown-item" href="/customer/order/order-history">Orders</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="/logout" id="logout">Logout</a></li>
+                            <li><a class="dropdown-item" id="profileItem" href="/customer/profile">Profile</a></li>
+                            <li><a class="dropdown-item" id="manageProductItem" href="/customer/order/order-history">Orders</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item"   href="/logout" id="logout">Logout</a></li>
                         </ul>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
                             th:if="${#authorization.expression('!isAuthenticated()')}">
-                                <li><a class="dropdown-item" href="/auth/login">Login</a></li>
-                                <li><a class="dropdown-item" href="/auth/register">Register</a></li>
+                            <li><a class="dropdown-item" id="loginItem" href="/auth/login">Login</a></li>
+                            <li><a class="dropdown-item" id="registerItem" href="/auth/register">Register</a></li>
                         </ul>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown" id="account-menu">
-                            <!-- Nội dung sẽ được thay đổi dựa trên điều kiện -->
-                        </ul>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
-    <script>
-        // $(document).ready(function () {
-        //     function checkToken() {
-        //         const token = localStorage.getItem('token');
-        //         const accountMenu = $('#account-menu');
-        //
-        //         // Kiểm tra nếu có token và token chưa hết hạn
-        //         if (token && isTokenValid(token)) {
-        //             // console.log(token);
-        //             // Nếu token hợp lệ, hiển thị các mục "Profile" và "Logout"
-        //             accountMenu.html(`
-        //             <li><a class="dropdown-item" href="/profile">Profile</a></li>
-        //             <li><a class="dropdown-item" href="/orders">Orders</a></li>
-        //             <li><hr class="dropdown-divider"></li>
-        //             <li><a class="dropdown-item" href="javascript:void(0)" id="logout">Logout</a></li>
-        //         `);
-        //             // console.log("show");
-        //             $('#logout').on('click', function () {
-        //                 logout();
-        //             });
-        //         } else {
-        //             // Nếu không có token hoặc token hết hạn, hiển thị các mục "Login" và "Register"
-        //             accountMenu.html(`
-        //             <li><a class="dropdown-item" href="/login">Login</a></li>
-        //             <li><a class="dropdown-item" href="/register">Register</a></li>
-        //         `);
-        //         }
-        //     }
-        //
-        //     function isTokenValid(token) {
-        //         // console.log(token);
-        //         try {
-        //             // Giả sử token là JWT, bạn cần kiểm tra ngày hết hạn (exp)
-        //             const payload = JSON.parse(token); // Giải mã phần payload của JWT
-        //             const expirationDate = new Date(payload.expiration).getTime(); // Lấy ngày hết hạn
-        //             // console.log(expirationDate);
-        //             // console.log(Date.now());
-        //             return expirationDate > Date.now(); // Kiểm tra nếu token chưa hết hạn
-        //         } catch (error) {
-        //             return false;
-        //         }
-        //     }
-        //
-        //     function logout() {
-        //         // Xóa token và thực hiện hành động đăng xuất
-        //         localStorage.removeItem('token');
-        //         window.location.reload(); // Reload lại trang
-        //     }
-        //
-        //     checkToken(); // Gọi hàm kiểm tra token khi trang tải
-        // });
-    </script>
+</header>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </header>
