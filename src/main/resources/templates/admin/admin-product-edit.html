@@ -42,11 +42,11 @@
             <!-- Danh mục sản phẩm -->
             <div class="form-group">
                 <label for="category">Danh mục sản phẩm</label>
-                <select id="category" th:field="*{categoryId}" class="form-control" required>
+                <select id="category" th:field="*{category.categoryId}" class="form-control" required>
                     <option value="">Chọn danh mục</option>
                     <th:block th:each="category : ${categories}">
                         <option th:value="${category.categoryId}" th:text="${category.categoryName}"
-                                th:selected="${product.categoryId == category.categoryId}"></option>
+                                th:selected="${product.category != null and product.category.categoryId == category.categoryId}">
                     </th:block>
                 </select>
             </div>
@@ -90,7 +90,7 @@
             <!-- Hướng dẫn sử dụng -->
             <div class="form-group">
                 <label for="how_to_use">Hướng dẫn sử dụng</label>
-                <textarea id="how_to_use" th:field="*{howToUse}" class="form-control" rows="2"></textarea>
+                <textarea id="how_to_use" th:field="*{how_to_use}" class="form-control" rows="2"></textarea>
             </div>
 
             <!-- Dung tích -->
