@@ -16,6 +16,7 @@ public class FeedbackDTO {
     private String comment;
     private LocalDateTime feedbackDate;
     private Long customerId;
+    private String image;
     private Double rating;
     private FeedbackResponse feedbackResponse;
     private String productSnapshotName;

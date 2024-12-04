@@ -1,179 +1,212 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title th:text="${product.productName + ' - Product Detail'}">Product Detail</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-   .feedback-item {
-    border: 1px solid #ccc;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-   }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.productName + ' - Product Detail'}">Product Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .feedback-item {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
 
-   .rating-stars {
-    color: #ffc107; /* Màu vàng cho sao */
-   }
+        .rating-stars {
+            color: #ffc107; /* Màu vàng cho sao */
+        }
 
-   .star {
-    font-size: 1.5em;
-   }
+        .star {
+            font-size: 1.5em;
+        }
 
-   .filled {
-    color: #ffc107; /* Màu vàng cho sao đã tô */
-   }
+        .filled {
+            color: #ffc107; /* Màu vàng cho sao đã tô */
+        }
 
-   .staff-response {
-    margin-top: 15px;
-    border-top: 1px dashed #ccc;
-    padding-top: 10px;
-   }
+        .staff-response {
+            margin-top: 15px;
+            border-top: 1px dashed #ccc;
+            padding-top: 10px;
+        }
 
-   .response-header {
-    font-weight: bold;
-   }
+        .response-header {
+            font-weight: bold;
+        }
 
-   .response-date {
-    font-size: 0.8em;
-    color: #777;
-   }
+        .response-date {
+            font-size: 0.8em;
+            color: #777;
+        }
+
         .star-rating {
             color: #ffc107;
         }
+
         /* Container for feedback item */
         .feedback-item {
-         border: 1px solid #ddd;
-         padding: 15px;
-         margin: 10px 0;
-         border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
         }
 
         /* Star rating style */
         .rating-stars {
-         margin: 10px 0;
+            margin: 10px 0;
         }
 
         .star {
-         font-size: 20px;
-         color: #ccc;
-         margin-right: 5px;
+            font-size: 20px;
+            color: #ccc;
+            margin-right: 5px;
         }
 
         .star.filled {
-         color: gold;
+            color: gold;
         }
 
         /* Buttons styles */
         .buttons {
-         margin-top: 10px;
+            margin-top: 10px;
         }
 
         .reply-btn, .ok-btn {
-         margin-right: 10px;
+            margin-right: 10px;
         }
 
-  </style>
- </head>
- <body>
-  <div class="container mt-5">
-   <div class="row">
-    <div class="col-md-6">
-     <img th:src="@{/api/images(imageName=${product.image})}" alt="Product Image" class="img-fluid rounded">
-    </div>
-    <div class="col-md-6">
-     <h1 th:text="${product.productName}">Product Name</h1>
-     <p class="text-muted" th:text="${'Product Code: ' + product.productCode}">Product Code</p>
-     <div class="mb-3">
-      <span class="star-rating" th:each="i : ${#numbers.sequence(1, 5)}"> <i class="fas fa-star" th:classappend="${i <= product.averageRating ? 'text-warning' : 'text-secondary'}"></i> </span> <span th:text="${'(' + product.averageRating + ' / 5) ' + product.totalFeedback + ' reviews'}"></span>
-     </div>
-     <p class="h3 text-primary" th:text="${'$' + #numbers.formatDecimal(product.cost, 1, 2)}">$0.00</p>
-     <p th:text="${'Brand: ' + product.brand}">Brand</p>
-     <p th:text="${'Category: ' + product.category}">Category</p>
-     <p th:text="${'Stock: ' + product.stock}">Stock</p>
-     <p th:text="${'Total Sold: ' + product.totalSold}">Total Sold</p>
-     <p th:if="${product.active}" class="text-success">In Stock</p>
-     <p th:unless="${product.active}" class="text-danger">Out of Stock</p>
-     <button class="btn btn-primary">Add to Cart</button>
-    </div>
-   </div>
-   <div class="row mt-5">
-    <div class="col-12">
-     <ul class="nav nav-tabs" id="productTabs" role="tablist">
-      <li class="nav-item" role="presentation">
-       <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="true">Description</button></li>
-      <li class="nav-item" role="presentation">
-       <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="false">Details</button></li>
-      <li class="nav-item" role="presentation">
-       <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">Reviews</button></li>
-     </ul>
-     <div class="tab-content" id="productTabsContent">
-      <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
-       <p class="mt-3" th:text="${product.description}">Product description</p>
-      </div>
-      <div class="tab-pane fade" id="details" role="tabpanel" aria-labelledby="details-tab">
-       <table class="table mt-3">
-        <tbody>
-         <tr>
-          <th>Manufacture Date</th>
-          <td th:text="${#temporals.format(product.manufactureDate, 'dd MMMM yyyy')}">Manufacture Date</td>
-         </tr>
-         <tr>
-          <th>Expiration Date</th>
-          <td th:text="${#temporals.format(product.expirationDate, 'dd MMMM yyyy')}">Expiration Date</td>
-         </tr>
-         <tr>
-          <th>Ingredients</th>
-          <td th:text="${product.ingredient}">Ingredients</td>
-         </tr>
-         <tr>
-          <th>How to Use</th>
-          <td th:text="${product.how_to_use}">How to Use</td>
-         </tr>
-         <tr>
-          <th>Volume</th>
-          <td th:text="${product.volume}">Volume</td>
-         </tr>
-         <tr>
-          <th>Origin</th>
-          <td th:text="${product.origin}">Origin</td>
-         </tr>
-        </tbody>
-       </table>
-      </div>
-      <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
-       <div class="mt-3" th:each="feedback : ${product.productFeedbacks}">
-        <div class="feedback-item">
-         <p th:text="${feedback.customerName}">Customer name goes here</p>
-         <p>Đánh giá cho sản phẩm: <span th:text="${feedback.productSnapshotName}">productSnapshotName name goes here</span></p>
-
-         <p th:text="${feedback.comment}">Comment goes here</p>
-         <p>
-          <span th:text="${feedback.feedbackDate}">Date goes here</span> |
-          <span class="rating" th:text="${feedback.rating}">Rating goes here</span>
-         </p>
-         <div class="rating-stars">
-          <span class="star" th:classappend="${feedback.rating >= 1 ? 'filled' : ''}">&#9733;</span>
-          <span class="star" th:classappend="${feedback.rating >= 2 ? 'filled' : ''}">&#9733;</span>
-          <span class="star" th:classappend="${feedback.rating >= 3 ? 'filled' : ''}">&#9733;</span>
-          <span class="star" th:classappend="${feedback.rating >= 4 ? 'filled' : ''}">&#9733;</span>
-          <span class="star" th:classappend="${feedback.rating >= 5 ? 'filled' : ''}">&#9733;</span>
-         </div>
-
-         <div class="staff-response" th:if="${feedback.feedbackResponse != null}">
-          <p class="response-header">Phản hồi từ shop:</p>
-          <p class="response-date" th:text="${feedback.feedbackResponse.responseDate}">Ngày phản hồi</p>
-            <p class="response-content" th:text="${feedback.feedbackResponse.comment}">Nội dung phản hồi</p>
-         </div>
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <img th:src="@{/api/images(imageName=${product.image})}" alt="Product Image" class="img-fluid rounded">
         </div>
-       </div>
-      </div>
-     </div>
+        <div class="col-md-6">
+            <h1 th:text="${product.productName}">Product Name</h1>
+            <p class="text-muted" th:text="${'Product Code: ' + product.productCode}">Product Code</p>
+            <div class="mb-3">
+                <span class="star-rating" th:each="i : ${#numbers.sequence(1, 5)}"> <i class="fas fa-star"
+                                                                                       th:classappend="${i <= product.averageRating ? 'text-warning' : 'text-secondary'}"></i> </span>
+                <span th:text="${'(' + product.averageRating + ' / 5) ' + product.totalFeedback + ' reviews'}"></span>
+            </div>
+            <p class="h3 text-primary" th:text="${'$' + #numbers.formatDecimal(product.cost, 1, 2)}">$0.00</p>
+            <p th:text="${'Brand: ' + product.brand}">Brand</p>
+            <p th:text="${'Category: ' + product.category}">Category</p>
+            <p th:text="${'Stock: ' + product.stock}">Stock</p>
+            <p th:text="${'Total Sold: ' + product.totalSold}">Total Sold</p>
+            <p th:if="${product.active}" class="text-success">In Stock</p>
+            <p th:unless="${product.active}" class="text-danger">Out of Stock</p>
+            <button class="btn btn-primary">Add to Cart</button>
+        </div>
     </div>
-   </div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
- </body>
+    <div class="row mt-5">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="productTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
+                            data-bs-target="#description" type="button" role="tab" aria-controls="description"
+                            aria-selected="true">Description
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#details"
+                            type="button" role="tab" aria-controls="details" aria-selected="false">Details
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews"
+                            type="button" role="tab" aria-controls="reviews" aria-selected="false">Reviews
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="productTabsContent">
+                <div class="tab-pane fade show active" id="description" role="tabpanel"
+                     aria-labelledby="description-tab">
+                    <p class="mt-3" th:text="${product.description}">Product description</p>
+                </div>
+                <div class="tab-pane fade" id="details" role="tabpanel" aria-labelledby="details-tab">
+                    <table class="table mt-3">
+                        <tbody>
+                        <tr>
+                            <th>Manufacture Date</th>
+                            <td th:text="${#temporals.format(product.manufactureDate, 'dd MMMM yyyy')}">Manufacture
+                                Date
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Expiration Date</th>
+                            <td th:text="${#temporals.format(product.expirationDate, 'dd MMMM yyyy')}">Expiration Date
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Ingredients</th>
+                            <td th:text="${product.ingredient}">Ingredients</td>
+                        </tr>
+                        <tr>
+                            <th>How to Use</th>
+                            <td th:text="${product.how_to_use}">How to Use</td>
+                        </tr>
+                        <tr>
+                            <th>Volume</th>
+                            <td th:text="${product.volume}">Volume</td>
+                        </tr>
+                        <tr>
+                            <th>Origin</th>
+                            <td th:text="${product.origin}">Origin</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                    <div class="mt-3" th:each="feedback : ${product.productFeedbacks}">
+                        <div class="feedback-item">
+                            <p th:text="${feedback.customerName}">Customer name goes here</p>
+                            <p>Đánh giá cho sản phẩm: <span th:text="${feedback.productSnapshotName}">productSnapshotName name goes here</span>
+                            </p>
+
+                            <p th:text="${feedback.comment}">Comment goes here</p>
+                            <!--         image-->
+                            <!--         if not null or empty-->
+                            <div th:if="${feedback.image != null and feedback.image != ''}">
+                                <img th:src="@{/api/images(imageName=${feedback.image})}" style="height: 200px"
+                                     alt="Feedback Image" class="img-fluid rounded">
+                            </div>
+                            <p>
+                                <span th:text="${feedback.feedbackDate}">Date goes here</span> |
+                                <span class="rating" th:text="${feedback.rating}">Rating goes here</span>
+                            </p>
+                            <div class="rating-stars">
+                                <span class="star"
+                                      th:classappend="${feedback.rating >= 1 ? 'filled' : ''}">&#9733;</span>
+                                <span class="star"
+                                      th:classappend="${feedback.rating >= 2 ? 'filled' : ''}">&#9733;</span>
+                                <span class="star"
+                                      th:classappend="${feedback.rating >= 3 ? 'filled' : ''}">&#9733;</span>
+                                <span class="star"
+                                      th:classappend="${feedback.rating >= 4 ? 'filled' : ''}">&#9733;</span>
+                                <span class="star"
+                                      th:classappend="${feedback.rating >= 5 ? 'filled' : ''}">&#9733;</span>
+                            </div>
+
+
+                            <div class="staff-response" th:if="${feedback.feedbackResponse != null}">
+                                <p class="response-header">Phản hồi từ shop:</p>
+                                <p class="response-date" th:text="${feedback.feedbackResponse.responseDate}">Ngày phản
+                                    hồi</p>
+                                <p class="response-content" th:text="${feedback.feedbackResponse.comment}">Nội dung phản
+                                    hồi</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

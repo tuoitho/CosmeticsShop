@@ -9,4 +9,5 @@ public class AddProductFeedbackReq {
     private Long productId;
     private String comment;
     private Double rating;
+    private String image;
 }

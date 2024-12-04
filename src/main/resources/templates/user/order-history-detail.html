@@ -218,7 +218,18 @@
                 <textarea id="review" name="review" class="w-full border rounded p-2" rows="4"
                           placeholder="Write your review here..."></textarea>
             </div>
-
+            <div class="mb-4">
+                <label class="block font-semibold mb-2">Add Image:</label>
+                <div class="flex items-center gap-2">
+                    <button id="customButton" type="button" class="px-4 py-2 bg-blue-500 text-white rounded">Choose
+                        File
+                    </button>
+                    <span id="fileName" class="text-gray-500">No file chosen</span>
+                </div>
+                <input type="file" id="imageInput" name="image" accept="image/*" class="hidden">
+                <img id="imagePreview" src="#" alt="Image Preview"
+                     style="max-width: 200px; max-height: 200px; display: none; margin-top: 10px;">
+            </div>
             <div>
                 <button type="button" id="submitReview" class="w-full">
                     Submit Review
@@ -257,7 +268,64 @@
 
 </script>
 <script>
-<!--    nếu order ko completed thì ẩn-->
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const customButton = document.getElementById('customButton');
+    const fileNameDisplay = document.getElementById('fileName');
+    let selectedFile = null; // Biến lưu trữ file được chọn
+
+    let previousImageUrl = imagePreview.src === "#" ? null : imagePreview.src;
+
+    // Click vào nút tùy chỉnh để kích hoạt input file
+    customButton.addEventListener('click', function () {
+        imageInput.click();
+    });
+
+    // Hiển thị ảnh được chọn
+    function displayImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previousImageUrl = imagePreview.src;
+                imagePreview.src = e.target.result;
+                selectedFile = input.files[0]; // Lưu trữ file được chọn
+                imagePreview.style.display = 'block';
+                fileNameDisplay.textContent = input.files[0].name; // Cập nhật tên file
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Khôi phục ảnh trước đó
+    function restorePreviousImage() {
+        if (previousImageUrl) {
+            imagePreview.src = previousImageUrl;
+            imagePreview.style.display = 'block';
+        } else {
+            imagePreview.style.display = 'none';
+        }
+        fileNameDisplay.textContent = "No file chosen"; // Khôi phục trạng thái tên file
+    }
+
+    // Xử lý khi file input thay đổi
+    imageInput.addEventListener('change', function () {
+        if (this.files.length > 0) {
+            displayImage(this);
+        } else {
+            restorePreviousImage();
+        }
+    });
+
+    // Xử lý khi người dùng nhấp vào input file
+    imageInput.addEventListener('click', function () {
+        // Đặt lại giá trị chỉ khi cần
+        setTimeout(() => {
+            this.value = ''; // Đặt lại input file về rỗng
+        }, 0); // Đảm bảo thực hiện sau khi sự kiện click hoàn thành
+    });
+</script>
+<script>
+    <!--    nếu order ko completed thì ẩn-->
     if (orderStatus !== 'COMPLETED') {
         document.getElementById('reviewContainer').style.display = 'none';
     }
@@ -277,12 +345,15 @@
                 if (response != null && response !== '') {
                     document.getElementById('rating').value = response.rating;
                     document.getElementById('review').value = response.comment;
+                    document.getElementById('imagePreview').src = '/api/images?imageName=' + response.image;
+                    document.getElementById('imagePreview').style.display = 'block';
                     updateStars(response.rating);
                     //disable
                     document.getElementById('rating').disabled = true;
                     document.getElementById('review').disabled = true;
                     document.getElementById('submitReview').disabled = true;
                 } else {
+                    document.getElementById('imagePreview').style.display = 'none';
                     document.getElementById('rating').disabled = false;
                     document.getElementById('review').disabled = false;
                     document.getElementById('submitReview').disabled = false;
@@ -302,32 +373,33 @@
         var productId = document.getElementById('productSelect').value;
         var rating = document.getElementById('rating').value;
         var review = document.getElementById('review').value;
+        var formData = new FormData();
+        formData.append("review", JSON.stringify({
+            orderId: orderId,
+            productId: productId,
+            rating: rating,
+            comment: review
+        }));
+        formData.append('image', selectedFile);
         console.log("click submit review");
         $.ajax({
             type: 'POST',
+            enctype: 'multipart/form-data',
             url: '/customer/product/addReview',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                orderId: orderId,
-                productId: productId,
-                rating: rating,
-                comment: review
-            }),
-
+            data: formData,
+            contentType: false,
+            processData: false,
             success: function (response) {
                 showModalWithMessage(response);
-
                 //reload lai trang
-                setTimeout(function () {
-                    location.reload();
-                }, 2000);
+                // setTimeout(function () {
+                //     location.reload();
+                // }, 3000);
             },
             error: function (xhr, status, error) {
                 showModalWithMessage(xhr.responseText);
             }
         });
-
-
     });
     document.getElementById('starRating').addEventListener('click', function (event) {
         if (event.target.tagName === 'I') {

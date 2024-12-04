@@ -268,6 +268,7 @@ public class ProductService implements IProductService {
         productFeedback.setRating(addProductFeedbackReq.getRating());
         productFeedback.setComment(addProductFeedbackReq.getComment());
         productFeedback.setFeedbackDate(LocalDateTime.now());
+        productFeedback.setImage(addProductFeedbackReq.getImage());
         String productSnapshotName = orderRepository.findById(orderId).get().getOrderLines().stream()
                 .filter(orderLine -> orderLine.getProduct().getProductId().equals(productId))
                 .findFirst()
