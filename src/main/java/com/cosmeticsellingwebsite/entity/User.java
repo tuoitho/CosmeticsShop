@@ -28,6 +28,7 @@ public class User implements Serializable {
     protected String phone;
     @Enumerated(EnumType.STRING)
     protected Gender gender;
+    protected String image;
 
     protected Boolean active = true;
 
