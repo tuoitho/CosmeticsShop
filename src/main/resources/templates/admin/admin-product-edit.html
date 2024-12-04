@@ -16,6 +16,30 @@
         .container {
             max-width: 800px;
         }
+
+        .choose-file-button {
+            background-color: #007bff; /* Bright blue color */
+            color: white;
+            font-weight: bold;
+            padding: 12px 24px; /* Larger padding for better clickability */
+            border: 2px solid #0056b3; /* Darker blue border */
+            border-radius: 8px; /* Slightly rounded corners */
+            font-size: 18px; /* Larger font size */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Smooth transitions */
+        }
+
+        .choose-file-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            transform: scale(1.05); /* Slightly grow the button on hover */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow on hover for depth */
+        }
+
+        #fileName {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -115,9 +139,7 @@
             <div class="mb-4">
                 <label class="block font-semibold mb-2">Add Image:</label>
                 <div class="flex items-center gap-2">
-                    <button id="customButton" type="button" class="px-4 py-2 bg-blue-500 text-white rounded">Choose
-                        File
-                    </button>
+                    <button id="customButton" type="button" class="choose-file-button">Choose File</button>
                     <span id="fileName" class="text-gray-500">No file chosen</span>
                 </div>
                 <input type="file" id="imageInput" name="imagePath" accept="image/*" hidden>
@@ -127,7 +149,11 @@
 
             <!-- Nút submit -->
             <button type="submit" class="btn btn-primary">Cập nhật sản phẩm</button>
+
         </form>
+
+        <!-- Nút quay lại -->
+        <a href="/admin/products" class="btn btn-secondary mt-3">Quay lại danh sách sản phẩm</a>
     </div>
 
     <!-- Bootstrap JS và Popper.js -->

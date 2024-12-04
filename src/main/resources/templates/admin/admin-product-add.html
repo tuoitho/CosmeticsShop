@@ -16,6 +16,29 @@
         .container {
             max-width: 800px;
         }
+
+        .choose-file-button {
+            background-color: #007bff; /* Bright blue color */
+            color: white;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 2px solid #0056b3; /* Darker blue border */
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .choose-file-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            transform: scale(1.05); /* Slightly grow the button on hover */
+        }
+
+        #fileName {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -108,17 +131,15 @@
 <!--            <input type="text" id="image" name="image" class="form-control">-->
 <!--        </div>-->
         <!-- Hình ảnh -->
+        <!-- Button choose file -->
         <div class="mb-4">
             <label class="block font-semibold mb-2">Add Image:</label>
             <div class="flex items-center gap-2">
-                <button id="customButton" type="button" class="px-4 py-2 bg-blue-500 text-white rounded">Choose
-                    File
-                </button>
+                <button id="customButton" type="button" class="choose-file-button">Choose File</button>
                 <span id="fileName" class="text-gray-500">No file chosen</span>
             </div>
             <input type="file" id="imageInput" name="imagePath" accept="image/*" hidden>
-            <img id="imagePreview" alt="Image Preview"
-                 style="max-width: 200px; max-height: 200px; margin-top: 10px; display: none">
+            <img id="imagePreview" alt="Image Preview" style="max-width: 200px; max-height: 200px; margin-top: 10px; display: none">
         </div>
 
         <!-- Trạng thái sản phẩm và số lượng -->
@@ -128,6 +149,10 @@
         <!-- Nút submit -->
         <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
     </form>
+
+    <!-- Nút quay lại -->
+    <a href="/admin/products" class="btn btn-secondary mt-3">Quay lại danh sách sản phẩm</a>
+
 </div>
 
 <!-- Bootstrap JS và Popper.js (với tính năng dynamic của Bootstrap) -->
