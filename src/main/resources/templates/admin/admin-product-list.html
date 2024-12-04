@@ -54,8 +54,27 @@
             <td>
                 <!-- Nút sửa sản phẩm -->
                 <a th:href="@{/admin/products/edit/{id}(id=${product.productId})}" class="btn btn-warning btn-sm">Sửa</a>
-                <!-- Nút xoá sản phẩm -->
-                <a th:href="@{/admin/products/delete/{id}(id=${product.productId})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xoá sản phẩm này không?')">Xoá</a>
+                <!-- Hiển thị nút Xoá hoặc Vô hiệu dựa trên trạng thái -->
+                <a th:if="${product.active}"
+                   th:href="@{/admin/products/delete/{id}(id=${product.productId})}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Bạn có chắc chắn muốn xoá sản phẩm này không?')">
+                    Xoá
+                </a>
+
+                <a th:if="${!product.active}"
+                   th:href="@{/admin/products/activate/{id}(id=${product.productId})}"
+                   class="btn btn-success btn-sm"
+                   onclick="return confirm('Bạn có muốn kích hoạt lại sản phẩm này không?')">
+                    Kích hoạt
+                </a>
+
+                <a th:if="${product.active}"
+                   th:href="@{/admin/products/disable/{id}(id=${product.productId})}"
+                   class="btn btn-warning btn-sm"
+                   onclick="return confirm('Bạn có muốn vô hiệu sản phẩm này không?')">
+                    Vô hiệu
+                </a>
             </td>
         </tr>
         </tbody>

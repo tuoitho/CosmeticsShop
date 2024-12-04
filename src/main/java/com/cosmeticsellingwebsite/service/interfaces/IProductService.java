@@ -11,6 +11,8 @@ import java.util.List;
 @Service
 public interface IProductService {
     public void deleteProduct(Long productId);
+    public void disableProduct(Long productId);
+    public void activateProduct(Long productId);
     Page<Product> getAllProducts(Pageable pageable);
     Product getProductById(Long productId);
     void addProduct(Product product);

@@ -203,6 +203,22 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    public void disableProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        product.setActive(false);
+        productRepository.save(product);
+    }
+
+    @Override
+    public void activateProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        product.setActive(true);
+        productRepository.save(product);
+    }
+
+    @Override
     public Page<Product> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable);
 
@@ -247,7 +263,7 @@ public class ProductService implements IProductService {
 
     @Override
     public List<Category> getAllCategories() {
-        return List.of();
+        return categoryRepository.findAll();
     }
 
     public void addFeedback(Long customerId, AddProductFeedbackReq addProductFeedbackReq) {

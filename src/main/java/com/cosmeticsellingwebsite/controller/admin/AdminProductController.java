@@ -91,6 +91,18 @@ public class AdminProductController {
         return "redirect:/admin/products";
     }
 
+    @GetMapping("/disable/{id}")
+    public String disableProduct(@PathVariable("id") Long id) {
+        productService.disableProduct(id);
+        return "redirect:/admin/products";
+    }
+
+    @GetMapping("/activate/{id}")
+    public String activateProduct(@PathVariable("id") Long id) {
+        productService.activateProduct(id);
+        return "redirect:/admin/products";
+    }
+
     // Hiển thị form chỉnh sửa sản phẩm
     @GetMapping("/edit/{id}")
     public String editProductForm(@PathVariable("id") Long productId, Model model) {

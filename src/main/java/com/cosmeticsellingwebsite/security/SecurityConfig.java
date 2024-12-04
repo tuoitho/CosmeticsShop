@@ -93,7 +93,7 @@ public class SecurityConfig {
 //                        .requestMatchers("/**").permitAll()
                         .requestMatchers("/api/images/**","/auth/**",
                                 "/oauth2/**","/user/**","browser/**",
-                                "/about","/").permitAll()
+                                "/about","/","/admin/products/**").permitAll()
                         .requestMatchers("/customer/**","customer").hasRole("CUSTOMER")
                         .requestMatchers("/shipper/**").hasRole("SHIPPER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
