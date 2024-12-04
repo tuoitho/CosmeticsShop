@@ -1,7 +1,5 @@
 package com.cosmeticsellingwebsite.entity;
 
-import com.cosmeticsellingwebsite.enums.Gender;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,7 +17,7 @@ public class Customer extends User implements Serializable {
     //    muốn mqh 2 chiều nên vầy có lẽ đc
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<Address> addresses;
 

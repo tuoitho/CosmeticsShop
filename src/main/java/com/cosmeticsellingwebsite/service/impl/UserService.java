@@ -49,7 +49,7 @@ public class UserService implements IUserService, UserDetailsService {
         if (!userRepository.existsById(userId)) {
             throw new CustomException("User not found");
         }
-        return addressRepository.findAllByUser_UserId(userId);
+        return addressRepository.findAllByCustomer_UserId(userId);
     }
 
     public List<User> list() {

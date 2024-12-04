@@ -1,11 +1,8 @@
 package com.cosmeticsellingwebsite.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.Objects;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,6 +29,6 @@ public class Address {
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "customerId", referencedColumnName = "userId")
-    private Customer user;
+    private Customer customer;
 
 }
