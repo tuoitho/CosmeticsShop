@@ -3,6 +3,7 @@ package com.cosmeticsellingwebsite.controller.admin;
 import com.cosmeticsellingwebsite.entity.Category;
 import com.cosmeticsellingwebsite.entity.Product;
 import com.cosmeticsellingwebsite.entity.ProductStock;
+import com.cosmeticsellingwebsite.service.image.ImageService;
 import com.cosmeticsellingwebsite.service.impl.CategoryService;
 import com.cosmeticsellingwebsite.service.impl.ProductService;
 import com.cosmeticsellingwebsite.service.interfaces.ICategoryService;
@@ -18,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -28,6 +30,8 @@ public class AdminProductController {
 
     @Autowired
     ICategoryService categoryService = new CategoryService();
+    @Autowired
+    private ImageService imageService;
 
     @GetMapping("")
     public String getAllProducts(@RequestParam(defaultValue = "0") int page,
@@ -57,7 +61,7 @@ public class AdminProductController {
     }
 
     @PostMapping("/save")
-    public String saveProduct(@ModelAttribute Product product, @RequestParam("categoryId") Long categoryId) {
+    public String saveProduct(@ModelAttribute Product product, @RequestParam("imagePath") MultipartFile image ,@RequestParam("categoryId") Long categoryId) throws IOException {
         // Kiểm tra xem productCode đã tồn tại trong cơ sở dữ liệu chưa
         if (productService.existsByProductCode(product.getProductCode())) {
             // Trả về thông báo lỗi nếu mã sản phẩm đã tồn tại
@@ -80,6 +84,10 @@ public class AdminProductController {
 
         // Lưu productStock
         product.setProductStock(productStock); // Liên kết Product với ProductStock
+
+        //xử lý ảnh
+        String imageUrl = imageService.saveImage(image);
+        product.setImage(imageUrl);
 
         productService.addProduct(product);
         return "redirect:/admin/products";  // Chuyển hướng đến danh sách sản phẩm
@@ -115,7 +123,17 @@ public class AdminProductController {
 
     // Xử lý cập nhật sản phẩm
     @PostMapping("/update")
-    public String updateProduct(@ModelAttribute("product") Product product) {
+    public String updateProduct(@ModelAttribute("product") Product product,@RequestParam("imagePath") MultipartFile image) throws IOException {
+        // Nếu người dùng không tải lên ảnh mới
+        if (image == null || image.isEmpty()) {
+            // Không thay đổi ảnh, giữ ảnh cũ
+            String existingImage = productService.getExistingImage(product.getProductId());
+            product.setImage(existingImage);
+        } else {
+            // Người dùng tải lên ảnh mới, lưu ảnh
+            String newImageUrl = imageService.saveImage(image);
+            product.setImage(newImageUrl);
+        }
         productService.updateProduct(product);
         return "redirect:/admin/products"; // Quay lại danh sách sản phẩm
     }

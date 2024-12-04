@@ -266,6 +266,13 @@ public class ProductService implements IProductService {
         return categoryRepository.findAll();
     }
 
+    @Override
+    public String getExistingImage(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"))
+                .getImage();
+    }
+
     public void addFeedback(Long customerId, AddProductFeedbackReq addProductFeedbackReq) {
         Long orderId = addProductFeedbackReq.getOrderId();
         Long productId = addProductFeedbackReq.getProductId();

@@ -20,4 +20,5 @@ public interface IProductService {
     public boolean existsByProductCode(String productCode);
     List<Category> getAllCategories();
 
+    String getExistingImage(Long productId);
 }

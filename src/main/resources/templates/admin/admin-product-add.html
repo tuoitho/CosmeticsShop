@@ -24,7 +24,7 @@
     <h2 class="mb-4">Thêm Sản phẩm</h2>
 
     <!-- Form Thêm Sản phẩm -->
-    <form action="/admin/products/save" method="post">
+    <form action="/admin/products/save" method="post" enctype="multipart/form-data">
         <!-- Mã sản phẩm -->
         <div class="form-group">
             <label for="productCode">Mã sản phẩm</label>
@@ -102,10 +102,23 @@
             <input type="text" id="origin" name="origin" class="form-control">
         </div>
 
-        <!-- Link hình ảnh -->
-        <div class="form-group">
-            <label for="image">Link hình ảnh</label>
-            <input type="text" id="image" name="image" class="form-control">
+<!--        &lt;!&ndash; Link hình ảnh &ndash;&gt;-->
+<!--        <div class="form-group">-->
+<!--            <label for="image">Link hình ảnh</label>-->
+<!--            <input type="text" id="image" name="image" class="form-control">-->
+<!--        </div>-->
+        <!-- Hình ảnh -->
+        <div class="mb-4">
+            <label class="block font-semibold mb-2">Add Image:</label>
+            <div class="flex items-center gap-2">
+                <button id="customButton" type="button" class="px-4 py-2 bg-blue-500 text-white rounded">Choose
+                    File
+                </button>
+                <span id="fileName" class="text-gray-500">No file chosen</span>
+            </div>
+            <input type="file" id="imageInput" name="imagePath" accept="image/*" hidden>
+            <img id="imagePreview" alt="Image Preview"
+                 style="max-width: 200px; max-height: 200px; margin-top: 10px; display: none">
         </div>
 
         <!-- Trạng thái sản phẩm và số lượng -->
@@ -121,6 +134,63 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const customButton = document.getElementById('customButton');
+        const fileNameDisplay = document.getElementById('fileName');
+        let selectedFile = null; // Biến lưu trữ file được chọn
+
+        let previousImageUrl = imagePreview.src === "#" ? null : imagePreview.src;
+
+        // Click vào nút tùy chỉnh để kích hoạt input file
+        customButton.addEventListener('click', function () {
+            imageInput.click();
+        });
+
+        // Hiển thị ảnh được chọn
+        function displayImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previousImageUrl = imagePreview.src;
+                    imagePreview.src = e.target.result;
+                    selectedFile = input.files[0]; // Lưu trữ file được chọn
+                    imagePreview.style.display = 'block';
+                    fileNameDisplay.textContent = input.files[0].name; // Cập nhật tên file
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Khôi phục ảnh trước đó
+        function restorePreviousImage() {
+            if (previousImageUrl) {
+                imagePreview.src = previousImageUrl;
+                imagePreview.style.display = 'block';
+            } else {
+                imagePreview.style.display = 'none';
+            }
+            fileNameDisplay.textContent = "No file chosen"; // Khôi phục trạng thái tên file
+        }
+
+        // Xử lý khi file input thay đổi
+        imageInput.addEventListener('change', function () {
+            if (this.files.length > 0) {
+                displayImage(this);
+            } else {
+                restorePreviousImage();
+            }
+        });
+
+        // Xử lý khi người dùng nhấp vào input file
+        imageInput.addEventListener('click', function () {
+            // Đặt lại giá trị chỉ khi cần
+            setTimeout(() => {
+                this.value = ''; // Đặt lại input file về rỗng
+            }, 0); // Đảm bảo thực hiện sau khi sự kiện click hoàn thành
+        });
+    </script>
 </section>
 </body>
 </html>

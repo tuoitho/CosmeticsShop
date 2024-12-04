@@ -44,7 +44,7 @@
         <tr th:each="product, iterStat : ${products}">
             <td th:text="${iterStat.index + 1}"></td>
             <td>
-                <img th:src="@{${product.image}}" class="product-img" alt="Image">
+                <img th:src="@{/api/images(imageName=${product.image})}" class="product-img" alt="Image">
             </td>
             <td th:text="${product.productCode}"></td>
             <td th:text="${product.productName}"></td>
