@@ -1,10 +1,9 @@
 package com.cosmeticsellingwebsite.controller;
 
 import com.cosmeticsellingwebsite.dto.mail.MailDTO;
-import com.cosmeticsellingwebsite.entity.Customer;
 import com.cosmeticsellingwebsite.entity.User;
 import com.cosmeticsellingwebsite.payload.request.RegisterReq;
-import com.cosmeticsellingwebsite.service.capcha.CaptchaService;
+import com.cosmeticsellingwebsite.service.captcha.CaptchaService;
 import com.cosmeticsellingwebsite.service.google.GoogleService;
 import com.cosmeticsellingwebsite.service.impl.UserService;
 import com.cosmeticsellingwebsite.service.mail.MailService;
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
 import java.util.ArrayList;

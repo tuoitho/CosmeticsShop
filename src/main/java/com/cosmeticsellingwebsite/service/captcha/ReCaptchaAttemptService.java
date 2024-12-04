@@ -1,4 +1,4 @@
-package com.cosmeticsellingwebsite.service.capcha;
+package com.cosmeticsellingwebsite.service.captcha;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
