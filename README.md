@@ -1,28 +1,20 @@
-# Cosmetic Shop
+# Cosmetics Shop 💄
 
-**Cosmetics Shop** is a modern e-commerce platform built with Java 21, Spring Boot 3, and Thymeleaf for java template engine. It leverages JPA for ORM, employs Spring Security 6.1 for robust authentication and authorization, integrates Google login, and utilizes reCAPTCHA. The platform provides an intuitive interface for browsing products, managing orders, and tracking shipments,... all while ensuring secure transactions with MySQL and Redis for data storage and OTP management. Payment options include PayPal and VNPay for a flexible shopping experience.
+Cosmetics Shop is a modern e-commerce platform built with cutting-edge technologies like Java 21, Spring Boot 3, and Thymeleaf for Java template engine. It leverages JPA for ORM, employs Spring Security 6.1 for robust authentication and authorization, integrates Google login for user convenience, and utilizes reCAPTCHA for enhanced security. The platform relies on MySQL for reliable data storage and Redis for efficient OTP management. Payment options include PayPal and VNPay, ensuring a smooth and flexible shopping experience.
 
-## Technologies Used
-
-- **Backend**: 
-  - **Java 21** for modern features and performance.
-  - **Spring Boot 3** for rapid backend development.
-  - **Spring Security 6.1** for secure user authentication and authorization.
-  - **JPA** (Java Persistence API) for ORM (Object-Relational Mapping) with **MySQL** database.
-  
-- **Frontend**:
-  - **Thymeleaf** as the template engine to render dynamic content.
-  - **CSS/Bootstrap** for responsive and clean UI components.
-
-- **Database**:
-  - **MySQL** for reliable relational database management.
-
-
-## Purpose
+## Purpose 🎯
 
 The **Cosmetics Shop** aims to provide an online platform where users can browse, review, and purchase a wide range of cosmetic products with ease. The platform prioritizes security and user experience, offering a secure environment for transactions, flexible payment options, and intuitive browsing features. Whether you are looking for skincare, makeup, or beauty accessories, this platform ensures a seamless shopping experience, backed by powerful technology.
 
-## Installation and Setup
+## Technologies Used 🛠️
+
+- **Backend**: Java 21, Spring Boot 3, Spring Security 6.1
+- **Frontend**: Thymeleaf, HTML, CSS, JavaScript
+- **Database**: MySQL 🗄️
+- **ORM**: JPA (Java Persistence API) 🔄
+- **Version Control**: Git, GitHub 🌐
+
+## Installation and Setup 🚀
 
 To set up the **Cosmetics Shop** locally, follow these steps:
 
