@@ -35,7 +35,7 @@ To set up the **Cosmetics Shop** locally, follow these steps:
    cd cosmetics-shop
 
 3. Set up the database:
-4. Ensure you have MySQL installed and running.
+Ensure you have MySQL installed and running.
 Create a new database (e.g., cosmetics_shop)
     ```bash
     CREATE DATABASE cosmetics_shop;
