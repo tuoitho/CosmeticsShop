@@ -31,7 +31,7 @@ public class Address {
     @EqualsAndHashCode.Exclude
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "userId", referencedColumnName = "userId")
-    private User user;
+    @JoinColumn(name = "customerId", referencedColumnName = "userId")
+    private Customer user;
 
 }
