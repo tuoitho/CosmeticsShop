@@ -2,6 +2,7 @@ package com.cosmeticsellingwebsite.service.impl;
 
 
 import com.cosmeticsellingwebsite.dto.FeedbackDTO;
+import com.cosmeticsellingwebsite.dto.ProductHomeDTO;
 import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.enums.OrderStatus;
 import com.cosmeticsellingwebsite.exception.CustomException;
@@ -72,6 +73,25 @@ public class ProductService implements IProductService {
         return productRepository.count();
     }
 
+    public List<ProductHomeDTO> getTop20NewestProducts() {
+        return productRepository.findTop20ByOrderByCreatedDateDesc().stream()
+                .map(product -> {
+                    ProductHomeDTO productHomeDTO = new ProductHomeDTO();
+                    BeanUtils.copyProperties(product, productHomeDTO);
+                    return productHomeDTO;
+                })
+                .collect(Collectors.toList());
+    }
+    public List<ProductHomeDTO> getTop20BestSellingProducts() {
+        return productRepository.findTop20BestSellingProducts().stream()
+                .map(product -> {
+                    ProductHomeDTO productHomeDTO = new ProductHomeDTO();
+                    BeanUtils.copyProperties(product, productHomeDTO);
+                    productHomeDTO.setTotalSoldLast30Days(productRepository.countSoldLast30DaysByProductId(product.getProductId()));
+                    return productHomeDTO;
+                })
+                .collect(Collectors.toList());
+    }
 
 //    public ProductResponse addProduct(AddProductRequest createProductRequest) {
 //        if (productRepository.existsByProductCode(createProductRequest.getProductCode())) {

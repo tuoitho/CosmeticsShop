@@ -5,6 +5,7 @@ import com.cosmeticsellingwebsite.entity.Role;
 import com.cosmeticsellingwebsite.entity.User;
 import com.cosmeticsellingwebsite.security.UserPrincipal;
 import com.cosmeticsellingwebsite.security.oauth.CustomOAuth2User;
+import com.cosmeticsellingwebsite.service.impl.ProductService;
 import com.cosmeticsellingwebsite.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,8 +26,12 @@ import java.security.Principal;
 public class HomeController {
     @Autowired
     private AuthenticationHelper authenticationHelper;
+    @Autowired
+    private ProductService productService;
     @GetMapping("/")
     public String home(Model model) {
+        model.addAttribute("top20BestSellingProducts", productService.getTop20BestSellingProducts());
+        model.addAttribute("top20NewestProducts", productService.getTop20NewestProducts());
         return "user/home";
     }
 }

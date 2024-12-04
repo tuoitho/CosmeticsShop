@@ -27,7 +27,7 @@ public class TESTDATA {
     ProductRepository productRepository;
     @PostConstruct
     public void t(){
-        productRepository.findTop20BestSellingProducts().forEach(System.out::println);
-        Logger.log(productRepository.countSoldLast30DaysByProductId(13L));
+//        productRepository.findTop20BestSellingProducts().forEach(System.out::println);
+//        Logger.log(productRepository.countSoldLast30DaysByProductId(13L));
     }
 }

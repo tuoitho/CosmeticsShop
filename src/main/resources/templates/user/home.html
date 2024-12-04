@@ -1,29 +1,216 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <link rel="stylesheet" href="/assets/css/grid.css">
-    <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="stylesheet" href="/assets/css/responsive.css">
+<!--    <link rel="stylesheet" href="/assets/css/grid.css">-->
+<!--    <link rel="stylesheet" href="/assets/css/main.css">-->
+<!--    <link rel="stylesheet" href="/assets/css/responsive.css">-->
     <link href="https://fonts.googleapis.com/css2?family=Comforter+Brush&family=Estonia&family=Kaushan+Script&family=Marck+Script&family=Nothing+You+Could+Do&family=Patrick+Hand&family=Roboto&family=Satisfy&family=Sawarabi+Gothic&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .numsold{
+            color: #c81616;
+            font-weight: bold;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #e83e8c;
+        }
+        .nav-link {
+            color: #333;
+        }
+        .hero {
+            background-image: url('https://via.placeholder.com/1920x600');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 100px 0;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #e83e8c;
+        }
+        .product-slider {
+            position: relative;
+            overflow: hidden;
+            width: calc(250px * 5 + 20px * 4); /* Đảm bảo đúng 5 item (250px width + 20px margin) */
+            margin: auto;
+        }
+
+        .product-container {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card {
+            flex: 0 0 auto;
+            width: 250px; /* Đảm bảo width cố định */
+            margin-right: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .product-info {
+            padding: 15px;
+        }
+        .product-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .product-price {
+            color: #e83e8c;
+            font-weight: bold;
+        }
+        .slider-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255,255,255,0.7);
+            border: none;
+            font-size: 24px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .slider-button.prev {
+            left: 10px;
+        }
+        .slider-button.next {
+            right: 10px;
+        }
+    </style>
 </head>
 
 <body>
 <div id="app">
     <header th:replace="~{user/fragments/header::header}"></header>
+    <div class="hero">
+        <div class="container">
+            <h1>Discover Your Beauty</h1>
+            <p class="lead">Explore our wide range of premium cosmetics</p>
+        </div>
+    </div>
+    <main class="container my-5">
+        <section class="mb-5">
+            <h2 class="section-title">Top 20 Best Sellers</h2>
+            <div class="product-slider" id="bestSellersSlider">
+                <button class="slider-button prev" onclick="slide('bestSellersSlider', -1)"><i class="fas fa-chevron-left"></i></button>
+                <div class="product-container">
+                    <!-- Best Sellers Products -->
+                    <div th:each="product : ${top20BestSellingProducts}" class="product-card">
+                        <img th:src="@{/api/images(imageName=${product.image})}" th:alt="${product.productId}" class="product-image">
+                        <div class="product-info">
+                            <h3 th:text="${product.productName}" class="product-title">1</h3>
+                            <p th:text="${product.cost}" class="product-price">$19.99</p>
+<!--                            num sold-->
+                            <p class="numsold">Đã mua trong 30 ngày: <span th:text="${product.totalSoldLast30Days}" class="product-price"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <button class="slider-button next" onclick="slide('bestSellersSlider', 1)"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </section>
 
-   <h1 style="font-size: 133px" >Daay la trang home cua user, xin chao
-       <h1 style="font-size: 133px" th:text="${user}"></h1>
-   </h1>
+        <section>
+            <h2 class="section-title">20 New Arrivals</h2>
+            <div class="product-slider" id="newArrivalsSlider">
+                <button class="slider-button prev" onclick="slide('newArrivalsSlider', -1)"><i class="fas fa-chevron-left"></i></button>
+                <div class="product-container">
+                    <!-- New Arrivals Products -->
+                    <div th:each="product : ${top20NewestProducts}" class="product-card">
+                        <img th:src="@{/api/images(imageName=${product.image})}" th:alt="${product.productId}" class="product-image">
+                        <div class="product-info">
+                            <h3 th:text="${product.productName}" class="product-title">1</h3>
+                            <p th:text="${product.cost}" class="product-price">$19.99</p>
+                        </div>
+                    </div>
+
+                    <!-- Add more product cards here to reach 20 -->
+                </div>
+                <button class="slider-button next" onclick="slide('newArrivalsSlider', 1)"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </section>
+    </main>
 
     <div class="footer" th:replace="~{user/fragments/footer::footer}">
     </div>
 </div>
 <!--    modal-->
-<script src="/assets/js/showHide.js"></script>
-<script></script>
+<!--<script src="/assets/js/showHide.js"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function slide(sliderId, direction) {
+        const slider = document.getElementById(sliderId);
+        const container = slider.querySelector('.product-container');
+        const cardWidth = 270; // 250px width + 20px margin
+        const visibleCards = Math.floor(slider.offsetWidth / cardWidth);
+        const itemsToScroll = 5; // Số lượng item bạn muốn cuộn
+
+        const scrollAmount = direction * cardWidth * visibleCards;
+
+        container.style.transition = 'transform 0.5s ease';
+        container.style.transform = `translateX(${-scrollAmount}px)`;
+
+        // setTimeout(() => {
+        //     container.style.transition = 'none';
+        //     if (direction > 0) {
+        //         container.appendChild(container.firstElementChild);
+        //     } else {
+        //         container.prepend(container.lastElementChild);
+        //     }
+        //     container.style.transform = 'translateX(0)';
+        //     setTimeout(() => {
+        //         container.style.transition = 'transform 0.5s ease';
+        //     }, 50);
+        // }, 500);
+        setTimeout(() => {
+            container.style.transition = 'none';
+
+            if (direction > 0) {
+                // Di chuyển 4 phần tử đầu tiên xuống cuối
+                for (let i = 0; i < itemsToScroll; i++) {
+                    container.appendChild(container.firstElementChild);
+                }
+            } else {
+                // Di chuyển 4 phần tử cuối lên đầu
+                for (let i = 0; i < itemsToScroll; i++) {
+                    container.prepend(container.lastElementChild);
+                }
+            }
+
+            container.style.transform = 'translateX(0)';
+
+            setTimeout(() => {
+                container.style.transition = 'transform 0.5s ease';
+            }, 50);
+        }, 500);
+    }
+</script>
 </body>
 </html>

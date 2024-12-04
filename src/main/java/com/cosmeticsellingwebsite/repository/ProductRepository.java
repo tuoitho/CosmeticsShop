@@ -19,6 +19,18 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findTop20ByOrderByCreatedDateDesc();
 
     //top 20 sản phẩm bán chạy nhất ( lấy giảm dần theo tỉ lệ, số lượng đã bán trong tháng)
+//    @Query(value = """
+//
+//            SELECT p.*
+//            FROM orderline ol
+//            JOIN `order` o ON ol.orderId = o.orderId
+//            JOIN product p ON ol.productId = p.productId
+//            WHERE o.orderDate >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+//            AND o.orderstatus='COMPLETED'
+//            GROUP BY p.productId , p.productName
+//            ORDER BY SUM(ol.quantity) DESC
+//            LIMIT 20
+//            """,nativeQuery = true)
     @Query(value = """
             
             SELECT p.*
@@ -26,7 +38,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             JOIN `order` o ON ol.orderId = o.orderId
             JOIN product p ON ol.productId = p.productId
             WHERE o.orderDate >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-            AND o.orderstatus='COMPLETED'
             GROUP BY p.productId , p.productName
             ORDER BY SUM(ol.quantity) DESC
             LIMIT 20
@@ -34,13 +45,21 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findTop20BestSellingProducts();
 
     //lấy ra số lượng sản phẩm đã bán trong 30 ngày qua bằng productId
+//    @Query(value = """
+//            SELECT SUM(ol.quantity) AS total_quantity_sold
+//            FROM orderline ol
+//            JOIN `order` o ON ol.orderId = o.orderId
+//            JOIN product p ON ol.productId = p.productId and p.productId = :productId
+//            WHERE o.orderDate >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+//            and o.orderstatus='COMPLETED'
+//            GROUP BY p.productId , p.productName
+//            """,nativeQuery = true)
     @Query(value = """
             SELECT SUM(ol.quantity) AS total_quantity_sold
             FROM orderline ol
             JOIN `order` o ON ol.orderId = o.orderId
             JOIN product p ON ol.productId = p.productId and p.productId = :productId
             WHERE o.orderDate >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-            and o.orderstatus='COMPLETED'
             GROUP BY p.productId , p.productName
             """,nativeQuery = true)
     Integer countSoldLast30DaysByProductId(Long productId);
