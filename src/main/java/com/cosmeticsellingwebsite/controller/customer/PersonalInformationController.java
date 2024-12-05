@@ -31,7 +31,7 @@ public class PersonalInformationController {
     public String getPersonalInfo(HttpSession session,Model model) {
         //User userEntity = (User) session.getAttribute("user"); // Lấy userID từ session
         //Long userID = userEntity.getUserId();
-        Long userID = 5L;
+        Long userID = 7L;
         UserDTO user = service.fetchPersonalInfo(userID); // Gọi Service để lấy thông tin người dùng
         if (user != null) {
             model.addAttribute("user", user); // Thêm thông tin người dùng vào model
@@ -45,10 +45,10 @@ public class PersonalInformationController {
         //User userEntity = (User) session.getAttribute("user"); // Lấy userID từ session
 
         //Long userID = userEntity.getUserId();
-        Long userID = 5L;
-        userModel.setUserID(userID);
+        Long userID = 7L;
+        userModel.setUserId(userID);
         // Lưu thông tin mới
-        if (service.savePersonalInfo(userModel, userModel.getUserID())) {
+        if (service.savePersonalInfo(userModel, userModel.getUserId())) {
             model.addAttribute("message", "Cập nhật thông tin cá nhân thành công!");
             return "redirect:/customer/personal-info?success"; // Chuyển hướng với trạng thái thành công
         } else {
@@ -63,7 +63,7 @@ public class PersonalInformationController {
         User userEntity = (User) session.getAttribute("user"); // Lấy userID từ session
 
         //Long userID = userEntity.getUserId();
-        Long userID = 5L;
+        Long userID = 7L;
         UserDTO user = service.fetchPersonalInfo(userID);
 
         AddressForOrderDTO existingAddress = user.getAddress();
@@ -86,7 +86,7 @@ public class PersonalInformationController {
     public String changePassword(HttpSession session, String currentPassword, String newPassword, String confirmNewPassword, Model model) {
         //User userEntity = (User) session.getAttribute("user"); // Lấy userID từ session
         //Long userID = userEntity.getUserId();
-        Long userID = 5L;
+        Long userID = 7L;
         // Lấy thông tin người dùng từ database
         UserDTO user = service.fetchPersonalInfo(userID);
 
@@ -110,7 +110,7 @@ public class PersonalInformationController {
 
         // Cập nhật mật khẩu mới
         user.setPassword(newPassword);
-        boolean status = service.savePersonalInfo(user, user.getUserID());
+        boolean status = service.savePersonalInfo(user, user.getUserId());
 
         if (status) {
             model.addAttribute("message", "Thay đổi mật khẩu thành công!");

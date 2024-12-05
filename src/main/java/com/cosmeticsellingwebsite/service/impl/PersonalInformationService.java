@@ -3,14 +3,19 @@ package com.cosmeticsellingwebsite.service.impl;
 import com.cosmeticsellingwebsite.dto.AddressForOrderDTO;
 import com.cosmeticsellingwebsite.dto.UserDTO;
 import com.cosmeticsellingwebsite.entity.Address;
+import com.cosmeticsellingwebsite.entity.Role;
 import com.cosmeticsellingwebsite.entity.User;
+import com.cosmeticsellingwebsite.enums.RoleEnum;
 import com.cosmeticsellingwebsite.repository.AddressRepository;
 import com.cosmeticsellingwebsite.repository.PersonalInformationRepository;
+import com.cosmeticsellingwebsite.repository.RoleRepository;
 import com.cosmeticsellingwebsite.service.interfaces.IPersonalInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PersonalInformationService implements IPersonalInformationService {
@@ -19,38 +24,36 @@ public class PersonalInformationService implements IPersonalInformationService {
 
     @Autowired
     private AddressRepository addressRepository;
-
-    // Lấy thông tin cá nhân từ cơ sở dữ liệu
+    @Autowired
+    private RoleRepository roleRepository;
     @Override
     public UserDTO fetchPersonalInfo(Long userID) {
         Optional<User> userEntityOpt = repository.findById(userID);
         if (userEntityOpt.isPresent()) {
             User userEntity = userEntityOpt.get();
-            Address addressEntity = userEntity.getAddresses().stream().findFirst().orElse(null);
 
-            AddressForOrderDTO addressDTO = null;
-            if (addressEntity != null) {
-                addressDTO = new AddressForOrderDTO(
-                        addressEntity.getAddressId(),
-                        addressEntity.getReceiverName(),
-                        addressEntity.getReceiverPhone(),
-                        addressEntity.getAddress(),
-                        addressEntity.getProvince(),
-                        addressEntity.getDistrict(),
-                        addressEntity.getWard()
-                );
-            }
+            // Chuyển đổi địa chỉ sang DTO
+            List<AddressForOrderDTO> addressDTOs = userEntity.getAddresses().stream()
+                    .map(address -> new AddressForOrderDTO(
+                            address.getAddressId(),
+                            address.getReceiverName(),
+                            address.getReceiverPhone(),
+                            address.getAddress(),
+                            address.getProvince(),
+                            address.getDistrict(),
+                            address.getWard()))
+                    .collect(Collectors.toList());
 
-            return new UserDTO(
-                    userEntity.getUserId(),
-                    userEntity.getFullname(),
-                    userEntity.getEmail(),
-                    userEntity.getPassword(),
-                    userEntity.getGender(),
-                    userEntity.getPhone(),
-                    userEntity.getRole(),
-                    addressDTO
-            );
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUserId(userEntity.getUserId());
+            userDTO.setName(userEntity.getFullname());
+            userDTO.setEmail(userEntity.getEmail());
+            userDTO.setPassword(userEntity.getPassword());
+            userDTO.setGender(userEntity.getGender());
+            userDTO.setPhone(userEntity.getPhone());
+            userDTO.setRole(userEntity.getRole());
+            userDTO.setAddresses(addressDTOs); // Gán danh sách địa chỉ
+            return userDTO;
         }
         return null;
     }
@@ -78,7 +81,14 @@ public class PersonalInformationService implements IPersonalInformationService {
                     ? userDTO.getPassword()
                     : existingUser.getPassword());
             existingUser.setGender(userDTO.getGender());
-            existingUser.setRole(userDTO.getRole());
+            Role role = roleRepository.findByRoleName(RoleEnum.CUSTOMER).orElseGet(() -> {
+                Role newRole = new Role();
+                newRole.setRoleName(RoleEnum.CUSTOMER);
+                return roleRepository.save(newRole);
+            });
+            existingUser.setRole(userDTO.getRole() != null ? userDTO.getRole() : role);
+
+
 
             // Xử lý thông tin địa chỉ
             AddressForOrderDTO addressDTO = userDTO.getAddress();
