@@ -111,7 +111,7 @@
                             </div>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
                                 th:if="${#authorization.expression('isAuthenticated()')}">
-                                <li><a class="dropdown-item" id="profileItem" href="/customer/profile">Profile</a></li>
+                                <li><a class="dropdown-item" id="profileItem" href="/customer/personal-info">Profile</a></li>
                                 <li><a class="dropdown-item" id="manageProductItem" href="/customer/order/order-history">Orders</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item"   href="/logout" id="logout">Logout</a></li>
