@@ -4,6 +4,7 @@ import com.cosmeticsellingwebsite.dto.*;
 import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.repository.*;
 import com.cosmeticsellingwebsite.service.interfaces.IPersonalInformationService;
+import com.cosmeticsellingwebsite.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class PersonalInformationService implements IPersonalInformationService {
         if (userEntityOpt.isPresent()) {
             Customer userEntity = (Customer) userEntityOpt.get();
             Address addressEntity = userEntity.getAddresses().stream().findFirst().orElse(null);
-
+            Logger.log("Address: " + addressEntity);
             AddressForOrderDTO addressDTO = null;
             if (addressEntity != null) {
                 addressDTO = new AddressForOrderDTO(

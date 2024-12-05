@@ -1,5 +1,6 @@
 package com.cosmeticsellingwebsite.controller.customer;
 
+import com.cosmeticsellingwebsite.config.AuthenticationHelper;
 import com.cosmeticsellingwebsite.dto.AddressForOrderDTO;
 import com.cosmeticsellingwebsite.dto.UserDTO;
 import com.cosmeticsellingwebsite.entity.User;
@@ -7,6 +8,7 @@ import com.cosmeticsellingwebsite.service.impl.AddressService;
 import com.cosmeticsellingwebsite.service.impl.PersonalInformationService;
 import com.cosmeticsellingwebsite.service.interfaces.IAddressService;
 import com.cosmeticsellingwebsite.service.interfaces.IPersonalInformationService;
+import com.cosmeticsellingwebsite.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,13 +28,16 @@ public class PersonalInformationController {
     private AddressService addressServiceImpl ;
     @Autowired
     private PersonalInformationService personalInfoServiceImpl;
+    @Autowired
+    private AuthenticationHelper authenticationHelper;
+
     // Lấy thông tin cá nhân và địa chỉ
     @GetMapping
     public String getPersonalInfo(HttpSession session,Model model) {
-        //User userEntity = (User) session.getAttribute("user"); // Lấy userID từ session
-        //Long userID = userEntity.getUserId();
-        Long userID = 5L;
-        UserDTO user = service.fetchPersonalInfo(userID); // Gọi Service để lấy thông tin người dùng
+        //lấy thông tin ng dùng đã đăng nhập
+        Long customerID = authenticationHelper.getUserId();
+        UserDTO user = service.fetchPersonalInfo(customerID); // Gọi Service để lấy thông tin người dùng
+        Logger.log("User: " + user);
         if (user != null) {
             model.addAttribute("user", user); // Thêm thông tin người dùng vào model
         }
