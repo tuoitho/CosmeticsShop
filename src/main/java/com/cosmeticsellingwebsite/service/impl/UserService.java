@@ -103,4 +103,14 @@ public class UserService implements IUserService, UserDetailsService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
 }

@@ -40,4 +40,8 @@ public class Order implements Serializable {
     @JsonManagedReference
     private ShippingAddress shippingAddress;
 
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    private Payment payment;
+
+
 }
