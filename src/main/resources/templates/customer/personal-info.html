@@ -71,6 +71,28 @@
         .alert {
             margin-top: 15px;
         }
+        .address-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .address-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            width: calc(33.333% - 15px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .address-card button {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+
     </style>
 </head>
 
@@ -105,6 +127,12 @@
                                             <h3>Thông tin cá nhân</h3>
                                             <form th:action="@{/customer/personal-info/profile}" method="post">
                                                 <div class="row">
+                                                    <div th:if="${message}" class="alert alert-success">
+                                                        <i class="fa fa-check-circle"></i> <span th:text="${message}"></span>
+                                                    </div>
+                                                    <div th:if="${error}" class="alert alert-danger">
+                                                        <i class="fa fa-exclamation-circle"></i> <span th:text="${error}"></span>
+                                                    </div>
                                                     <div class="col-lg-6 single-input-item">
                                                         <label for="name" class="required">Họ và tên</label>
                                                         <input type="text" id="name" name="name" th:value="${user.name}" placeholder="Nhập họ và tên">
@@ -138,69 +166,22 @@
                                     <div class="tab-pane fade" id="address-edit" role="tabpanel">
                                         <div class="myaccount-content">
                                             <h3>Thông tin địa chỉ</h3>
-                                            <form th:action="@{/customer/personal-info/address}" method="post">
-                                                <div class="row">
-                                                    <!-- Tỉnh/thành phố -->
-                                                    <div class="col-lg-6">
-                                                        <div class="single-input-item">
-                                                            <label for="province" class="required">Tỉnh/thành phố</label>
-                                                            <select id="province" name="province" class="form-control" onchange="updateDistricts()">
-                                                                <option th:value="${user.address.province}" th:text="${user.address.province != null ? user.address.province : 'Chọn Tỉnh/Thành phố'}">
-                                                                </option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <!-- Quận/Huyện -->
-                                                    <div class="col-lg-6">
-                                                        <div class="single-input-item">
-                                                            <label for="district" class="required">Quận/Huyện</label>
-                                                            <select id="district" name="district" class="form-control">
-                                                                <option th:value="${user.address.district}" th:text="${user.address.district != null ? user.address.district : 'Chọn Quận/Huyện'}">
-                                                                </option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
 
-                                                <div class="row">
-                                                    <!-- Xã/Phường/Thị trấn -->
-                                                    <div class="col-lg-6">
-                                                        <div class="single-input-item">
-                                                            <label for="ward" class="required">Xã/Phường/Thị trấn</label>
-                                                            <input type="text" id="ward" name="ward" class="form-control"
-                                                                   th:value="${user.address.ward}" placeholder="Nhập Xã/Phường/Thị trấn"/>
-                                                        </div>
-                                                    </div>
-                                                    <!-- Số nhà, tên đường -->
-                                                    <div class="col-lg-6">
-                                                        <div class="single-input-item">
-                                                            <label for="address" class="required">Số nhà, tên đường</label>
-                                                            <input type="text" id="address" name="address" class="form-control"
-                                                                   th:value="${user.address.address}" placeholder="Nhập số nhà, tên đường"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <!-- Hiển thị danh sách địa chỉ dạng thẻ -->
+                                            <div class="address-cards">
+                                                <div th:each="address : ${user.addresses}" class="address-card">
+                                                    <p><strong>Tên người nhận:</strong> <span th:text="${address.receiverName}"></span></p>
+                                                    <p><strong>Số điện thoại:</strong> <span th:text="${address.receiverPhone}"></span></p>
+                                                    <p><strong>Địa chỉ:</strong>
+                                                        <span th:text="${address.address} + ', ' + ${address.ward} + ', ' + ${address.district} + ', ' + ${address.province}"></span>
+                                                    </p>
+                                                    <a th:href="@{/customer/personal-info/address/edit/{id}(id=${address.addressId})}" class="btn btn-primary">Chỉnh sửa</a>
 
-                                                <div class="row">
-                                                    <!-- Tên người nhận -->
-                                                    <div class="col-lg-6">
-                                                        <div class="single-input-item">
-                                                            <label for="receiverName" class="required">Tên người nhận</label>
-                                                            <input type="text" id="receiverName" name="receiverName" class="form-control"
-                                                                   th:value="${user.address.receiverName}" placeholder="Nhập tên người nhận"/>
-                                                        </div>
-                                                    </div>
-                                                    <!-- Số điện thoại người nhận -->
-                                                    <div class="col-lg-6">
-                                                        <div class="single-input-item">
-                                                            <label for="receiverPhone" class="required">Số điện thoại người nhận</label>
-                                                            <input type="text" id="receiverPhone" name="receiverPhone" class="form-control"
-                                                                   th:value="${user.address.receiverPhone}" placeholder="Nhập số điện thoại người nhận"/>
-                                                        </div>
-                                                    </div>
                                                 </div>
-                                                <button type="submit">Lưu địa chỉ</button>
-                                            </form>
+                                            </div>
+
+                                            <!-- Nút thêm địa chỉ mới -->
+                                            <button th:onclick="'window.location.href=\'/customer/personal-info/address/new\''" class="btn btn-success mt-3">Thêm địa chỉ mới</button>
                                         </div>
                                     </div>
                                     <!-- Đổi mật khẩu -->
@@ -209,66 +190,22 @@
                                             <h3>Đổi mật khẩu</h3>
                                             <form th:action="@{/customer/personal-info/password}" method="post">
                                                 <div class="row">
-                                                    <div class="col-lg-6">
-                                                        <div class="single-input-item">
-                                                            <label for="currentPassword" class="required">Nhập Mật Khẩu
-                                                                Hiện
-                                                                Tại</label>
-                                                            <div class="input-group">
-                                                                <input type="password" id="currentPassword"
-                                                                       name="currentPassword" class="form-control"
-                                                                       placeholder="Nhập mật khẩu hiện tại" required/>
-                                                                <div class="input-group-append">
-                                                                          <span class="input-group-text" id="eyeIcon1"
-                                                                                onclick="togglePasswordVisibility('currentPassword', 'eyeIcon1')">
-                                                                            <i class="fa fa-eye"></i>
-                                                                         </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                    <div class="col-lg-6 single-input-item">
+                                                        <label for="currentPassword" class="required">Mật khẩu hiện tại</label>
+                                                        <input type="password" id="currentPassword" name="currentPassword" required/>
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-lg-6">
-                                                        <div class="single-input-item">
-                                                            <label for="newPassword" class="required">Nhập Mật Khẩu
-                                                                Mới</label>
-                                                            <div class="input-group">
-                                                                <input type="password" id="newPassword"
-                                                                       name="newPassword"
-                                                                       class="form-control"
-                                                                       placeholder="Nhập mật khẩu mới" required/>
-                                                                <div class="input-group-append">
-                                                                      <span class="input-group-text" id="eyeIcon2"
-                                                                            onclick="togglePasswordVisibility('newPassword', 'eyeIcon2')">
-                                                                        <i class="fa fa-eye"></i>
-                                                                     </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                    <div class="col-lg-6 single-input-item">
+                                                        <label for="newPassword" class="required">Mật khẩu mới</label>
+                                                        <input type="password" id="newPassword" name="newPassword" required/>
                                                     </div>
-
-                                                    <div class="col-lg-6">
-                                                        <div class="single-input-item">
-                                                            <label for="confirmNewPassword" class="required">Nhập Lại
-                                                                Mật Khẩu Mới</label>
-                                                            <div class="input-group">
-                                                                <input type="password" id="confirmNewPassword"
-                                                                       name="confirmNewPassword" class="form-control"
-                                                                       placeholder="Nhập lại mật khẩu mới" required/>
-                                                                <div class="input-group-append">
-                                                                      <span class="input-group-text" id="eyeIcon3"
-                                                                            onclick="togglePasswordVisibility('confirmNewPassword', 'eyeIcon3')">
-                                                                          <i class="fa fa-eye"></i>
-                                                                      </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                    <div class="col-lg-6 single-input-item">
+                                                        <label for="confirmNewPassword" class="required">Xác nhận mật khẩu mới</label>
+                                                        <input type="password" id="confirmNewPassword" name="confirmNewPassword" required/>
                                                     </div>
                                                 </div>
-                                                <div class="single-input-item">
-                                                    <button type="submit" class="btn btn-danger">Thay đổi</button>
-                                                </div>
+                                                <button type="submit" class="btn btn-danger">Thay đổi</button>
                                             </form>
                                         </div>
                                     </div>
