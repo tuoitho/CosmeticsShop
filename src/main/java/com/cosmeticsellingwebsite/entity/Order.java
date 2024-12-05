@@ -42,6 +42,7 @@ public class Order implements Serializable {
     private ShippingAddress shippingAddress;
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Payment payment;
 
 
