@@ -98,21 +98,21 @@
     </div><!-- Phần Đăng Ký -->
     <div class="form-section">
         <h2>Đăng Ký</h2>
-        <form id="registerForm">
+        <form id="registerForm" method="post" action="/auth/register" >
 <!--            fullname-->
             <div class="form-group">
                 <label for="regFullname">Fullname:</label> <input type="text" class="form-control"
-                                                                        id="regFullname" required>
+                                                                        id="regFullname" name="fullname" required>
             </div>
             <div class="form-group">
-                <label for="regEmail">Email:</label> <input type="email" class="form-control" id="regEmail" required>
+                <label for="regEmail">Email:</label> <input type="email" class="form-control" name="email" id="regEmail" required>
             </div>
             <div class="form-group">
                 <label for="regUsername">Username:</label> <input type="text" class="form-control"
-                                                                        id="regUsername" required>
+                                                                        id="regUsername" required name="username">
             </div>
             <div class="form-group">
-                <label for="regPassword">Mật khẩu:</label> <input type="password" class="form-control" id="regPassword"
+                <label for="regPassword">Mật khẩu:</label> <input type="password" class="form-control" id="regPassword" name="password"
                                                                   required>
             </div>
 
@@ -197,31 +197,33 @@
     // });
 
     // AJAX cho đăng ký
-    $("#registerForm").on("submit", function (event) {
-        event.preventDefault();
-        const regFullname = $("#regFullname").val();
-        const regUsername = $("#regUsername").val();
-        const regEmail = $("#regEmail").val();
-        const regPassword = $("#regPassword").val();
-
-        $.ajax({
-            url: contextPath+'auth/register', // Đường dẫn đến file xử lý đăng ký
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                fullname: regFullname,
-                email: regEmail,
-                username: regUsername,
-                password: regPassword
-            }),
-            success: function (response) {
-                showModalWithMessage(response); // Hiển thị phản hồi từ server
-            },
-            error: function (xhr, status, error) {
-                showModalWithMessage(xhr.responseText); // Hiển thị phản hồi lỗi từ server
-            }
-        });
-    });
+    // $("#registerForm").on("submit", function (event) {
+    //     event.preventDefault();
+    //     const regFullname = $("#regFullname").val();
+    //     const regUsername = $("#regUsername").val();
+    //     const regEmail = $("#regEmail").val();
+    //     const regPassword = $("#regPassword").val();
+    //     const gresponse = $("#g-recaptcha-response").val();
+    //     const formData = {
+    //         fullname: regFullname,
+    //         email: regEmail,
+    //         username: regUsername,
+    //         password: regPassword,
+    //         gresponse: gresponse
+    //     };
+    //
+    //     $.ajax({
+    //         url: contextPath+'auth/register', // Đường dẫn đến file xử lý đăng ký
+    //         type: 'POST',
+    //         data: formData,
+    //         success: function (response) {
+    //             showModalWithMessage(response); // Hiển thị phản hồi từ server
+    //         },
+    //         error: function (xhr, status, error) {
+    //             showModalWithMessage(xhr.responseText); // Hiển thị phản hồi lỗi từ server
+    //         }
+    //     });
+    // });
 </script>
 
 

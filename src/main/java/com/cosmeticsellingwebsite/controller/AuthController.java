@@ -60,7 +60,7 @@ public class AuthController {
     }
     @PostMapping("/register")
     @ResponseBody
-    public ResponseEntity<?> register(@RequestParam("g-recaptcha-response") String response, @RequestBody @Valid RegisterReq registerRequest) {
+    public ResponseEntity<?> register(@RequestParam("g-recaptcha-response") String response, @ModelAttribute @Valid RegisterReq registerRequest) {
         captchaService.processResponse(response);
         Logger.log("Register: " + registerRequest);
         userService.registerUser(registerRequest);
