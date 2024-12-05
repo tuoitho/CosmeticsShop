@@ -79,8 +79,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+//                .sessionManagement(session -> session
+//                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+//                )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                        .maximumSessions(1) // Chỉ cho phép 1 phiên đăng nhập cùng lúc
+                        .maxSessionsPreventsLogin(false) // Không cấm đăng nhập nếu đạt giới hạn
                 )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
@@ -105,7 +109,10 @@ public class SecurityConfig {
                 .rememberMe(remember -> remember
                         .key("yourSecretRememberMeKey") // Replace with a strong, unique key
                         .userDetailsService(userDetailsService()) // Cần thiết để lấy thông tin người dùng
-                        .tokenValiditySeconds(500))
+                        .tokenValiditySeconds(500)
+                        .useSecureCookie(true) // Chỉ gửi cookie qua HTTPS
+                         )
+
                 .authenticationProvider(authenticationProvider()) // Register the authentication provider
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/auth/login") // Custom login page
