@@ -45,16 +45,19 @@
 <body>
 <section class="row" layout:fragment="app-content">
     <div class="container mt-4">
+        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+        <div th:if="${message}" class="alert alert-success" role="alert" th:text="${message}"></div>
+
         <h2 class="mb-4">Chỉnh sửa Sản phẩm</h2>
 
         <!-- Form Chỉnh sửa Sản phẩm -->
-        <form th:action="@{/admin/products/update}" th:object="${product}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/admin/products/update}" th:object="${product}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
             <input type="hidden" th:field="*{productId}" />
 
             <!-- Mã sản phẩm -->
             <div class="form-group">
                 <label for="productCode">Mã sản phẩm</label>
-                <input type="text" id="productCode" th:field="*{productCode}" class="form-control" readonly>
+                <input type="text" id="productCode" th:field="*{productCode}" class="form-control" readonly required>
             </div>
 
             <!-- Tên sản phẩm -->
@@ -84,49 +87,49 @@
             <!-- Mô tả sản phẩm -->
             <div class="form-group">
                 <label for="description">Mô tả sản phẩm</label>
-                <textarea id="description" th:field="*{description}" class="form-control" rows="4"></textarea>
+                <textarea id="description" th:field="*{description}" class="form-control" rows="4" required></textarea>
             </div>
 
             <!-- Thương hiệu -->
             <div class="form-group">
                 <label for="brand">Thương hiệu</label>
-                <input type="text" id="brand" th:field="*{brand}" class="form-control">
+                <input type="text" id="brand" th:field="*{brand}" class="form-control" required>
             </div>
 
             <!-- Ngày sản xuất -->
             <div class="form-group">
                 <label for="manufactureDate">Ngày sản xuất</label>
-                <input type="date" id="manufactureDate" th:field="*{manufactureDate}" class="form-control">
+                <input type="date" id="manufactureDate" th:field="*{manufactureDate}" class="form-control" required>
             </div>
 
             <!-- Ngày hết hạn -->
             <div class="form-group">
                 <label for="expirationDate">Ngày hết hạn</label>
-                <input type="date" id="expirationDate" th:field="*{expirationDate}" class="form-control">
+                <input type="date" id="expirationDate" th:field="*{expirationDate}" class="form-control" required>
             </div>
 
             <!-- Thành phần -->
             <div class="form-group">
                 <label for="ingredient">Thành phần</label>
-                <textarea id="ingredient" th:field="*{ingredient}" class="form-control" rows="2"></textarea>
+                <textarea id="ingredient" th:field="*{ingredient}" class="form-control" rows="2" required></textarea>
             </div>
 
             <!-- Hướng dẫn sử dụng -->
             <div class="form-group">
                 <label for="how_to_use">Hướng dẫn sử dụng</label>
-                <textarea id="how_to_use" th:field="*{how_to_use}" class="form-control" rows="2"></textarea>
+                <textarea id="how_to_use" th:field="*{how_to_use}" class="form-control" rows="2" required></textarea>
             </div>
 
             <!-- Dung tích -->
             <div class="form-group">
                 <label for="volume">Dung tích</label>
-                <input type="text" id="volume" th:field="*{volume}" class="form-control">
+                <input type="text" id="volume" th:field="*{volume}" class="form-control" required>
             </div>
 
             <!-- Nơi sản xuất -->
             <div class="form-group">
                 <label for="origin">Nơi sản xuất</label>
-                <input type="text" id="origin" th:field="*{origin}" class="form-control">
+                <input type="text" id="origin" th:field="*{origin}" class="form-control" required>
             </div>
 
 <!--            &lt;!&ndash; Link hình ảnh &ndash;&gt;-->
@@ -217,6 +220,20 @@
                 this.value = ''; // Đặt lại input file về rỗng
             }, 0); // Đảm bảo thực hiện sau khi sự kiện click hoàn thành
         });
+
+        function validateForm() {
+        const manufactureDate = document.getElementById('manufactureDate').value;
+        const expirationDate = document.getElementById('expirationDate').value;
+
+        if (new Date(manufactureDate) >= new Date(expirationDate)) {
+        alert("Ngày sản xuất phải nhỏ hơn ngày hết hạn!");
+        return false;
+        }
+
+        return true;
+        }
+
+
     </script>
 </section>
 </body>

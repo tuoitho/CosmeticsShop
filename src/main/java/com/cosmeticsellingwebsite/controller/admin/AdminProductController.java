@@ -8,6 +8,7 @@ import com.cosmeticsellingwebsite.service.impl.CategoryService;
 import com.cosmeticsellingwebsite.service.impl.ProductService;
 import com.cosmeticsellingwebsite.service.interfaces.ICategoryService;
 import com.cosmeticsellingwebsite.service.interfaces.IProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,8 +18,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
@@ -63,18 +66,36 @@ public class AdminProductController {
     }
 
     @PostMapping("/save")
-    public String saveProduct(@ModelAttribute Product product, @RequestParam("imagePath") MultipartFile image ,@RequestParam("categoryId") Long categoryId) throws IOException {
+    public String saveProduct(@Valid @ModelAttribute Product product,
+                              BindingResult result,
+                              @RequestParam("imagePath") MultipartFile image,
+                              @RequestParam("categoryId") Long categoryId,
+                              RedirectAttributes redirectAttributes) throws IOException {
         // Kiểm tra xem productCode đã tồn tại trong cơ sở dữ liệu chưa
         if (productService.existsByProductCode(product.getProductCode())) {
             // Trả về thông báo lỗi nếu mã sản phẩm đã tồn tại
             return "redirect:/admin/products?error=duplicate_product_code";
         }
 
-        // Lấy đối tượng Category từ categoryId
-        Category category = categoryService.getCategoryById(categoryId);
-        if (category != null) {
-            product.setCategory(category);
+        // Kiểm tra ngày sản xuất và ngày hết hạn
+        if (product.getManufactureDate().isBefore(product.getExpirationDate())) {
+            redirectAttributes.addFlashAttribute("error", "Ngày sản xuất phải nhỏ hơn ngày hết hạn.");
+            return "redirect:/admin/products/new";
         }
+
+        // Kiểm tra mã sản phẩm đã tồn tại
+        if (productService.existsByProductCode(product.getProductCode())) {
+            redirectAttributes.addFlashAttribute("error", "Mã sản phẩm đã tồn tại.");
+            return "redirect:/admin/products/new";
+        }
+
+        // Lấy danh mục
+        Category category = categoryService.getCategoryById(categoryId);
+        if (category == null) {
+            redirectAttributes.addFlashAttribute("error", "Danh mục sản phẩm không hợp lệ.");
+            return "redirect:/admin/products/new";
+        }
+        product.setCategory(category);
 
 
         // Cập nhật trạng thái và số lượng mặc định
@@ -125,7 +146,13 @@ public class AdminProductController {
 
     // Xử lý cập nhật sản phẩm
     @PostMapping("/update")
-    public String updateProduct(@ModelAttribute("product") Product product,@RequestParam("imagePath") MultipartFile image) throws IOException {
+    public String updateProduct(@ModelAttribute("product") Product product,@RequestParam("imagePath") MultipartFile image, Model model) throws IOException {
+        // Kiểm tra ngày sản xuất và ngày hết hạn
+        if (product.getManufactureDate().isAfter(product.getExpirationDate())) {
+            model.addAttribute("error", "Ngày sản xuất phải nhỏ hơn ngày hết hạn!");
+            return "admin/admin-product-edit"; // Quay lại trang chỉnh sửa
+        }
+
         // Nếu người dùng không tải lên ảnh mới
         if (image == null || image.isEmpty()) {
             // Không thay đổi ảnh, giữ ảnh cũ
@@ -137,6 +164,8 @@ public class AdminProductController {
             product.setImage(newImageUrl);
         }
         productService.updateProduct(product);
+
+        model.addAttribute("message", "Cập nhật thông tin sản phẩm thành công");
         return "redirect:/admin/products"; // Quay lại danh sách sản phẩm
     }
 

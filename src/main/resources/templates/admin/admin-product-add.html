@@ -46,8 +46,11 @@
 <div class="container mt-4">
     <h2 class="mb-4">Thêm Sản phẩm</h2>
 
+    <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+    <div th:if="${message}" class="alert alert-success" role="alert" th:text="${message}"></div>
+
     <!-- Form Thêm Sản phẩm -->
-    <form action="/admin/products/save" method="post" enctype="multipart/form-data">
+    <form action="/admin/products/save" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
         <!-- Mã sản phẩm -->
         <div class="form-group">
             <label for="productCode">Mã sản phẩm</label>
@@ -80,49 +83,49 @@
         <!-- Mô tả sản phẩm -->
         <div class="form-group">
             <label for="description">Mô tả sản phẩm</label>
-            <textarea id="description" name="description" class="form-control" rows="4"></textarea>
+            <textarea id="description" name="description" class="form-control" rows="4" required></textarea>
         </div>
 
         <!-- Thương hiệu -->
         <div class="form-group">
             <label for="brand">Thương hiệu</label>
-            <input type="text" id="brand" name="brand" class="form-control">
+            <input type="text" id="brand" name="brand" class="form-control" required>
         </div>
 
         <!-- Ngày sản xuất -->
         <div class="form-group">
             <label for="manufactureDate">Ngày sản xuất</label>
-            <input type="date" id="manufactureDate" name="manufactureDate" class="form-control">
+            <input type="date" id="manufactureDate" name="manufactureDate" class="form-control" required>
         </div>
 
         <!-- Ngày hết hạn -->
         <div class="form-group">
             <label for="expirationDate">Ngày hết hạn</label>
-            <input type="date" id="expirationDate" name="expirationDate" class="form-control">
+            <input type="date" id="expirationDate" name="expirationDate" class="form-control" required>
         </div>
 
         <!-- Thành phần -->
         <div class="form-group">
             <label for="ingredient">Thành phần</label>
-            <textarea id="ingredient" name="ingredient" class="form-control" rows="2"></textarea>
+            <textarea id="ingredient" name="ingredient" class="form-control" rows="2" required></textarea>
         </div>
 
         <!-- Hướng dẫn sử dụng -->
         <div class="form-group">
             <label for="how_to_use">Hướng dẫn sử dụng</label>
-            <textarea id="how_to_use" name="how_to_use" class="form-control" rows="2"></textarea>
+            <textarea id="how_to_use" name="how_to_use" class="form-control" rows="2" required></textarea>
         </div>
 
         <!-- Dung tích -->
         <div class="form-group">
             <label for="volume">Dung tích</label>
-            <input type="text" id="volume" name="volume" class="form-control">
+            <input type="text" id="volume" name="volume" class="form-control" required>
         </div>
 
         <!-- Nơi sản xuất -->
         <div class="form-group">
             <label for="origin">Nơi sản xuất</label>
-            <input type="text" id="origin" name="origin" class="form-control">
+            <input type="text" id="origin" name="origin" class="form-control" required>
         </div>
 
 <!--        &lt;!&ndash; Link hình ảnh &ndash;&gt;-->
@@ -215,6 +218,18 @@
                 this.value = ''; // Đặt lại input file về rỗng
             }, 0); // Đảm bảo thực hiện sau khi sự kiện click hoàn thành
         });
+
+        function validateForm() {
+            const manufactureDate = new Date(document.getElementById('manufactureDate').value);
+            const expirationDate = new Date(document.getElementById('expirationDate').value);
+
+            if (manufactureDate >= expirationDate) {
+                alert('Ngày sản xuất phải nhỏ hơn ngày hết hạn.');
+                return false;
+            }
+
+            return true;
+        }
     </script>
 </section>
 </body>

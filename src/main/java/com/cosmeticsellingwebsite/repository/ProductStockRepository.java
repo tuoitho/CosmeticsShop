@@ -12,4 +12,6 @@ public interface ProductStockRepository extends JpaRepository<ProductStock, Long
     Optional<ProductStock> findByProduct_ProductCode(String productCode);
 
     void deleteByProduct(Product product);
+
+    Optional<ProductStock> findByProduct_ProductId(Long productId);
 }
