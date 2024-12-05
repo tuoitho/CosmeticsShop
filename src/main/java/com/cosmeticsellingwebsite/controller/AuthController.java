@@ -63,15 +63,6 @@ public class AuthController {
     public String alogin() {
         return "admin/alogin";
     }
-    //lấy thông tin user đã đăng nhập
-    @GetMapping("/info")
-    @ResponseBody
-    public String info(Principal principal){
-        Logger.log("Principal: " +principal.getName());
-        //gget role
-        Logger.log("Authorities: "+principal);
-        return ("Xem thông tin user thành công: "+principal.getName());
-    }
     @PostMapping("/register")
     @ResponseBody
     public ResponseEntity<?> register(@RequestParam("g-recaptcha-response") String response, @ModelAttribute @Valid RegisterReq registerRequest) {
