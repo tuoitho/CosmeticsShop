@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{admin/layout-admin.html}">
+<head>
+    <title>Quản lý kho</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Màu nền sáng nhẹ */
+        }
+
+        h2 {
+            font-weight: bold;
+            color: #343a40; /* Màu chữ đậm */
+            text-align: center;
+        }
+
+        .table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        thead th {
+            background-color: #f1f1f1; /* Nền sáng */
+            color: #343a40; /* Màu chữ đen */
+            text-align: center;
+            font-weight: bold;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1; /* Hiệu ứng hover */
+        }
+
+        .form-control {
+            border-radius: 4px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05); /* Phóng to nhẹ khi hover */
+        }
+
+        td, th {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        input[name="addedQuantity"] {
+            max-width: 120px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<section class="container mt-4" layout:fragment="app-content">
+    <h2 class="mb-4">Quản lý kho</h2>
+
+    <!-- Hiển thị thông báo lỗi -->
+    <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+    <!-- Hiển thị thông báo thành công -->
+    <div th:if="${message}" class="alert alert-success" role="alert" th:text="${message}"></div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>STT</th>
+            <th>Mã sản phẩm</th>
+            <th>Tên sản phẩm</th>
+            <th>Số lượng</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="productStock, iterStat : ${productStockPage.content}">
+            <td th:text="${iterStat.index + 1 + productStockPage.number * productStockPage.size}"></td>
+            <td th:text="${productStock.product.productCode}"></td>
+            <td th:text="${productStock.product.productName}"></td>
+            <td th:text="${productStock.quantity}"></td>
+            <td>
+                <form th:action="@{/admin/stock/update/{productId}(productId=${productStock.product.productId})}" method="post">
+                    <div class="form-group">
+                        <input type="number" name="addedQuantity" placeholder="Số lượng thêm" required class="form-control" min="0">
+                        <button type="submit" class="btn btn-primary btn-sm">Cập nhật</button>
+                    </div>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Phân trang -->
+    <div class="d-flex justify-content-center mt-3">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${productStockPage.hasPrevious()} ? '' : 'disabled'">
+                <a class="page-link" th:href="@{(page=${productStockPage.number - 1})}">Trước</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, productStockPage.totalPages - 1)}" th:classappend="${i == productStockPage.number} ? 'active'">
+                <a class="page-link" th:href="@{(page=${i})}" th:text="${i + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${productStockPage.hasNext()} ? '' : 'disabled'">
+                <a class="page-link" th:href="@{(page=${productStockPage.number + 1})}">Sau</a>
+            </li>
+        </ul>
+    </div>
+</section>
+<!-- Bootstrap JS và Popper.js -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

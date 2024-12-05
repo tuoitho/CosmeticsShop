@@ -38,5 +38,4 @@ public class User implements Serializable {
     @ManyToOne
     @JoinColumn(name = "roleId", referencedColumnName = "roleId")
     protected Role role;
-
 }
