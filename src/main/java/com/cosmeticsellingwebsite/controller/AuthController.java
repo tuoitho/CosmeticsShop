@@ -51,14 +51,11 @@ public class AuthController {
     public String login() {
         return "user/login-register";
     }
-
     @GetMapping({"/login-failure"})
     public String loginFailureHander(Model model) {
         model.addAttribute("messageLogin", "Sai tên đăng nhập hoặc mật khẩu");
         return "user/login-register";
     }
-
-
     @GetMapping("/alogin")
     public String alogin() {
         return "admin/alogin";
