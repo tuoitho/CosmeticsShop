@@ -108,4 +108,5 @@ public class UserService implements IUserService, UserDetailsService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
+
 }

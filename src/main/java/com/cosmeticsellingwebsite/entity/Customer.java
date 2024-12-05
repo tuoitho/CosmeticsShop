@@ -12,6 +12,7 @@ import java.util.*;
 @AllArgsConstructor
 @Data
 @Entity
+
 public class Customer extends User implements Serializable {
     private LocalDate birthDate;
     //    muốn mqh 2 chiều nên vầy có lẽ đc
