@@ -53,7 +53,7 @@ public class UserController {
         if (user != null) {
             model.addAttribute("user", user);
             model.addAttribute("roles", roleService.findAll());
-            return "admin/User/editUser";
+            return "admin/user/editUser";
         }
         return "redirect:/admin/user";
     }
