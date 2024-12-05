@@ -39,7 +39,4 @@ public class User implements Serializable {
     @JoinColumn(name = "roleId", referencedColumnName = "roleId")
     protected Role role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Address> addresses = new ArrayList<>();
 }

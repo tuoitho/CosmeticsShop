@@ -1,11 +1,8 @@
 package com.cosmeticsellingwebsite.service.impl;
 
-import com.cosmeticsellingwebsite.dto.AddressForOrderDTO;
-import com.cosmeticsellingwebsite.dto.UserDTO;
-import com.cosmeticsellingwebsite.entity.Address;
-import com.cosmeticsellingwebsite.entity.User;
-import com.cosmeticsellingwebsite.repository.AddressRepository;
-import com.cosmeticsellingwebsite.repository.PersonalInformationRepository;
+import com.cosmeticsellingwebsite.dto.*;
+import com.cosmeticsellingwebsite.entity.*;
+import com.cosmeticsellingwebsite.repository.*;
 import com.cosmeticsellingwebsite.service.interfaces.IPersonalInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +12,7 @@ import java.util.Optional;
 @Service
 public class PersonalInformationService implements IPersonalInformationService {
     @Autowired
-    private PersonalInformationRepository repository;
+    private UserRepositoty userRepositoty;
 
     @Autowired
     private AddressRepository addressRepository;
@@ -23,9 +20,9 @@ public class PersonalInformationService implements IPersonalInformationService {
     // Lấy thông tin cá nhân từ cơ sở dữ liệu
     @Override
     public UserDTO fetchPersonalInfo(Long userID) {
-        Optional<User> userEntityOpt = repository.findById(userID);
+        Optional<User> userEntityOpt = userRepositoty.findById(userID);
         if (userEntityOpt.isPresent()) {
-            User userEntity = userEntityOpt.get();
+            Customer userEntity = (Customer) userEntityOpt.get();
             Address addressEntity = userEntity.getAddresses().stream().findFirst().orElse(null);
 
             AddressForOrderDTO addressDTO = null;
@@ -63,12 +60,12 @@ public class PersonalInformationService implements IPersonalInformationService {
                 return false; // Không thể lưu nếu userID không tồn tại
             }
 
-            Optional<User> existingUserOpt = repository.findById(userID);
+            Optional<User> existingUserOpt = userRepositoty.findById(userID);
             if (!existingUserOpt.isPresent()) {
                 return false; // Không thể lưu nếu user không tồn tại
             }
 
-            User existingUser = existingUserOpt.get();
+            Customer existingUser = (Customer)existingUserOpt.get();
 
             // Cập nhật thông tin user
             existingUser.setFullname(userDTO.getName());
@@ -93,12 +90,12 @@ public class PersonalInformationService implements IPersonalInformationService {
                 addressEntity.setProvince(addressDTO.getProvince());
                 addressEntity.setDistrict(addressDTO.getDistrict());
                 addressEntity.setWard(addressDTO.getWard());
-                addressEntity.setUser(existingUser); // Liên kết với User hiện tại
+                addressEntity.setCustomer(existingUser); // Liên kết với User hiện tại
 
                 addressRepository.save(addressEntity); // Lưu địa chỉ mới hoặc cập nhật
             }
 
-            repository.save(existingUser); // Lưu hoặc cập nhật user
+            userRepositoty.save(existingUser); // Lưu hoặc cập nhật user
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,6 +105,6 @@ public class PersonalInformationService implements IPersonalInformationService {
 
     @Override
     public Optional<User> findUserById(Long userID) {
-        return repository.findById(userID);
+        return userRepositoty.findById(userID);
     }
 }

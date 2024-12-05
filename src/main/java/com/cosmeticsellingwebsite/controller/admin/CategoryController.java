@@ -36,7 +36,7 @@ public class CategoryController {
 
     @GetMapping("/edit/{id}")
     public String editCategoryForm(@PathVariable Long id, Model model) {
-        model.addAttribute("category", categoryService.getCategoryById(id).orElse(null));
+        model.addAttribute("category", categoryService.getCategoryById(id));
         return "admin/Categories/editCategory";
     }
 

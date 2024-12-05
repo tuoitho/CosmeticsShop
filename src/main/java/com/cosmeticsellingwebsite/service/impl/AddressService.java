@@ -3,7 +3,7 @@ package com.cosmeticsellingwebsite.service.impl;
 import com.cosmeticsellingwebsite.dto.AddressForOrderDTO;
 import com.cosmeticsellingwebsite.entity.Address;
 import com.cosmeticsellingwebsite.repository.AddressRepository;
-import com.cosmeticsellingwebsite.repository.PersonalInformationRepository;
+import com.cosmeticsellingwebsite.repository.UserRepositoty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 public class AddressService {
     @Autowired
     private AddressRepository addressRepository;
-    @Autowired
-    private PersonalInformationRepository personalInfoRepository;
     public boolean updateAddressForUser(AddressForOrderDTO addressModel, Long addressID) {
         try {
             // Tìm AddressEntity trong database theo AddressID
