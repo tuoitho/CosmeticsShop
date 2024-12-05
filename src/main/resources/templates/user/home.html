@@ -116,7 +116,7 @@
             <div class="container">
                 <h1 class="hero-title">Discover Your True Beauty</h1>
                 <p class="hero-subtitle">Explore our exquisite range of premium cosmetics</p>
-                <a href="/products" class="btn btn-custom btn-lg">Shop Now</a>
+                <button class="btn btn-custom btn-lg">Shop Now</button>
             </div>
         </section>
 
@@ -188,6 +188,9 @@
 </div>
 <!--    modal-->
 <!--<script src="/assets/js/showHide.js"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<!--jquery-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     function slide(sliderId, direction) {
         const slider = document.getElementById(sliderId);
@@ -235,6 +238,20 @@
             }, 50);
         }, 500);
     }
+
+    $(document).ready(function() {
+        $('.btn-custom.btn-lg').click(function(event) {
+            event.preventDefault(); // Prevent default link behavior
+
+            // Calculate target position (500px from the top)
+            var targetPosition = 500;
+
+            // Smooth scroll to the target position
+            $('html, body').animate({
+                scrollTop: targetPosition
+            }, 10); // Adjust animation duration as needed
+        });
+    });
 </script>
 </body>
 </html>
