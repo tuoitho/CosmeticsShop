@@ -32,6 +32,7 @@ public class HomeController {
     public String home(Model model) {
         model.addAttribute("top20BestSellingProducts", productService.getTop20BestSellingProducts());
         model.addAttribute("top20NewestProducts", productService.getTop20NewestProducts());
+        model.addAttribute("top20HighestRatingProducts", productService.getTop20HighestRatedProducts());
         return "user/home";
     }
 }

@@ -3,6 +3,7 @@ package com.cosmeticsellingwebsite.repository;
 import com.cosmeticsellingwebsite.entity.Product;
 import com.cosmeticsellingwebsite.entity.ProductFeedback;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,6 +12,9 @@ import java.util.Set;
 
 @Repository
 public interface ProductFeedbackRepository extends JpaRepository<ProductFeedback, Long> {
+
+    @Query("SELECT AVG(pf.rating) FROM ProductFeedback pf WHERE pf.product.productId = :productId")
+    Double findAverageRatingByProduct_ProductId(Long productId);
 
     List<ProductFeedback> findAllByProduct_productCode(String productCode);
     Set<ProductFeedback> findAllByProduct_ProductId(Long productId);

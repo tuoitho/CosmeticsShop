@@ -64,6 +64,18 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             """,nativeQuery = true)
     Integer countSoldLast30DaysByProductId(Long productId);
 
+    //lay top 20 san pham rating cao nhat
+    @Query(value = """
+            SELECT p.*
+            FROM product p
+            JOIN ProductFeedback pf ON p.productId = pf.productId
+            GROUP BY p.productId , p.productName
+            ORDER BY AVG(pf.rating) DESC
+            LIMIT 20
+            """,nativeQuery = true)
+    List<Product> findTop20HighestRatedProducts();
+
+
     Optional<Product> findByProductCode(String productCode);
 
     boolean existsByProductCode(String productCode);

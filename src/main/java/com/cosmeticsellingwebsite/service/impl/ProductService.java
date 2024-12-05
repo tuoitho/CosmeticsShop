@@ -92,6 +92,16 @@ public class ProductService implements IProductService {
                 })
                 .collect(Collectors.toList());
     }
+    public List<ProductHomeDTO> getTop20HighestRatedProducts() {
+        return productRepository.findTop20HighestRatedProducts().stream()
+                .map(product -> {
+                    ProductHomeDTO productHomeDTO = new ProductHomeDTO();
+                    BeanUtils.copyProperties(product, productHomeDTO);
+                    productHomeDTO.setAverageRating(productFeedbackRepository.findAverageRatingByProduct_ProductId(product.getProductId()));
+                    return productHomeDTO;
+                })
+                .collect(Collectors.toList());
+    }
 
 //    public ProductResponse addProduct(AddProductRequest createProductRequest) {
 //        if (productRepository.existsByProductCode(createProductRequest.getProductCode())) {

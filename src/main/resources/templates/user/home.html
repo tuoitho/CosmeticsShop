@@ -13,7 +13,19 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ... other styles ... */
 
+        .rating .star {
+            display: inline-block;
+            color: #ccc; /* Default star color (gray) */
+        }
+
+        .rating .star.gold .fa-star{
+            color: gold; /* Gold color for filled stars */
+        }
+        .rating .avg-rating {
+            margin-left: 5px; /* Space between stars and average rating */
+        }
         .numsold{
             color: #c81616;
             font-weight: bold;
@@ -130,7 +142,7 @@
     </main>
     <main class="container my-5">
         <section class="mb-5">
-            <h2 class="section-title">Top 20 Best Sellers</h2>
+            <h2 class="section-title">Top Bán Chạy</h2>
             <div class="product-slider" id="bestSellersSlider">
                 <button class="slider-button prev" onclick="slide('bestSellersSlider', -1)"><i class="fas fa-chevron-left"></i></button>
                 <div class="product-container">
@@ -147,7 +159,7 @@
                  "></h4>
                             <p th:text="${product.cost}" class="product-price"></p>
                             <p class="numsold">Đã mua trong 30 ngày: <span th:text="${product.totalSoldLast30Days}"></span></p>
-                            <a href="#" class="btn btn-custom">Add to Cart</a>
+                            <a href="#" class="btn btn-custom">Thêm vào giỏ hàng</a>
                         </div>
                     </div>
                 </div>
@@ -156,7 +168,7 @@
         </section>
 
         <section>
-            <h2 class="section-title">20 New Arrivals</h2>
+            <h2 class="section-title">Sản Phẩm Mới</h2>
             <div class="product-slider" id="newArrivalsSlider">
                 <button class="slider-button prev" onclick="slide('newArrivalsSlider', -1)"><i class="fas fa-chevron-left"></i></button>
                 <div class="product-container">
@@ -173,14 +185,47 @@
                             font-weight: bold;
                             "></h4>
                             <p th:text="${product.cost}" class="product-price"></p>
-                            <a href="#" class="btn btn-custom">Add to Cart</a>
+                            <p class="fas " style="color: red">New ! ! !</p>
+                            <br>
 
+                            <a href="#" class="btn btn-custom">Thêm vào giỏ hàng</a>
                         </div>
                     </div>
                 </div>
                 <button class="slider-button next" onclick="slide('newArrivalsSlider', 1)"><i class="fas fa-chevron-right"></i></button>
             </div>
         </section>
+
+    <section>
+        <br>
+        <br>
+        <br>
+        <h2 class="section-title">Top Sản Phẩm Đánh Giá Cao Nhât</h2>
+        <div class="product-slider" id="top20RatedProductsSlider">
+            <button class="slider-button prev" onclick="slide('top20RatedProductsSlider', -1)"><i class="fas fa-chevron-left"></i></button>
+            <div class="product-container">
+                <!-- Top 20 Rated Products -->
+                <div th:each="product : ${top20HighestRatingProducts}" class="product-card">
+                    <img th:src="@{/api/images(imageName=${product.image})}" th:alt="${product.productId}" class="product-image">
+                    <div class="product-info">
+                        <h4 th:text="${product.productName}" class="product-title" style="
+                            overflow: hidden;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;
+                            width: 100%;
+                            font-weight: bold;
+                            "></h4>
+                        <p th:text="${product.cost}" class="product-price"></p>
+<!--                        đánh giá-->
+                        <p class="numsold">Đánh giá: <i class="fas fa-star gold" style="color: gold"></i> <span th:text="${product.averageRating}"></span></p>
+                        <a href="#" class="btn btn-custom">Thêm vào giỏ hàng</a>
+                    </div>
+                </div>
+            </div>
+            <button class="slider-button next" onclick="slide('top20RatedProductsSlider', 1)"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </section>
     </main>
 
     <div class="footer" th:replace="~{user/fragments/footer::footer}">
