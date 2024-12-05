@@ -109,9 +109,10 @@ public class SecurityConfig {
                 .rememberMe(remember -> remember
                         .key("yourSecretRememberMeKey") // Replace with a strong, unique key
                         .userDetailsService(userDetailsService()) // Cần thiết để lấy thông tin người dùng
-                        .tokenValiditySeconds(500)
+                        .tokenValiditySeconds(7*24*60*60) // 7 days
                         .useSecureCookie(true) // Chỉ gửi cookie qua HTTPS
                          )
+                //nhớ tích chọn rememberMe lúc đăng nhập và hãy thử tắt trình duyệt đi rồi mở lại để xem kết quả nhé
 
                 .authenticationProvider(authenticationProvider()) // Register the authentication provider
                 .oauth2Login(oauth2 -> oauth2
