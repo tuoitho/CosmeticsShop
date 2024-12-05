@@ -42,8 +42,6 @@ public class SecurityConfig {
     @Autowired
     CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
     @Autowired
-    private CustomOAuth2UserService oauth2UserService; // Inject CustomOAuth2UserService
-    @Autowired
     private CustomOAuth2UserService customOAuth2UserService;
 
     public SecurityConfig(@Lazy OAuth2LoginSuccessHandler oauth2LoginSuccessHandler) {
@@ -104,6 +102,10 @@ public class SecurityConfig {
                         .successHandler(customAuthenticationSuccessHandler)
                         .failureUrl("/auth/login-failure")
                 )
+                .rememberMe(remember -> remember
+                        .key("yourSecretRememberMeKey") // Replace with a strong, unique key
+                        .userDetailsService(userDetailsService()) // Cần thiết để lấy thông tin người dùng
+                        .tokenValiditySeconds(500))
                 .authenticationProvider(authenticationProvider()) // Register the authentication provider
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/auth/login") // Custom login page
@@ -112,6 +114,7 @@ public class SecurityConfig {
                         )
                         .successHandler(oauth2LoginSuccessHandler) // Handle success
                 )
+
                 .build();
     }
 
