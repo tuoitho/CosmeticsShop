@@ -110,12 +110,23 @@
 <body>
 <div id="app">
     <header th:replace="~{user/fragments/header::header}"></header>
-    <div class="hero">
-        <div class="container">
-            <h1>Discover Your Beauty</h1>
-            <p class="lead">Explore our wide range of premium cosmetics</p>
-        </div>
-    </div>
+    <main>
+        <section class="hero-section">
+            <div class="container">
+                <h1 class="hero-title">Discover Your True Beauty</h1>
+                <p class="hero-subtitle">Explore our exquisite range of premium cosmetics</p>
+                <a href="/products" class="btn btn-custom btn-lg">Shop Now</a>
+            </div>
+        </section>
+
+        <section class="py-5">
+            <div class="container">
+                <h2 class="text-center mb-4">Featured Products</h2>
+                <div class="row">
+                </div>
+            </div>
+        </section>
+    </main>
     <main class="container my-5">
         <section class="mb-5">
             <h2 class="section-title">Top 20 Best Sellers</h2>
@@ -130,6 +141,7 @@
                             <p th:text="${product.cost}" class="product-price">$19.99</p>
 <!--                            num sold-->
                             <p class="numsold">Đã mua trong 30 ngày: <span th:text="${product.totalSoldLast30Days}" class="product-price"></span></p>
+                            <a href="#" class="btn btn-custom">Add to Cart</a>
                         </div>
                     </div>
                 </div>
