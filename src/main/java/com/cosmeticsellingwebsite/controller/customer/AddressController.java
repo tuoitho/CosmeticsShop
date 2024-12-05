@@ -1,5 +1,6 @@
 package com.cosmeticsellingwebsite.controller.customer;
 
+import com.cosmeticsellingwebsite.config.AuthenticationHelper;
 import com.cosmeticsellingwebsite.dto.AddressForOrderDTO;
 import com.cosmeticsellingwebsite.service.impl.AddressService;
 import jakarta.servlet.http.HttpSession;
@@ -16,11 +17,13 @@ public class AddressController {
 
     @Autowired
     private AddressService addressService;
+    @Autowired
+    private AuthenticationHelper authenticationHelper;
 
     // Hiển thị danh sách địa chỉ
     @GetMapping
     public String listAddresses(HttpSession session, Model model) {
-        Long userID = 7L; // Lấy userID từ session, tạm thời cố định là 5L
+        Long userID = authenticationHelper.getUserId();
         List<AddressForOrderDTO> addresses = addressService.getAddressesForUser(userID);
         model.addAttribute("addresses", addresses);
         return "customer/personal-info"; // Trả về giao diện danh sách
@@ -47,7 +50,7 @@ public class AddressController {
     // Lưu địa chỉ (thêm hoặc cập nhật)
     @PostMapping("/save")
     public String saveAddress(@ModelAttribute AddressForOrderDTO addressDTO, HttpSession session, Model model) {
-        Long userID = 7L; // Lấy userID từ session
+        Long userID = authenticationHelper.getUserId();
         boolean success = addressService.saveAddressForUser(addressDTO, userID);
         if (success) {
             return "redirect:/customer/personal-info";
