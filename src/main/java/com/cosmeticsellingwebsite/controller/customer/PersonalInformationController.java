@@ -85,7 +85,8 @@ public class PersonalInformationController {
     public String changePassword(HttpSession session, String currentPassword, String newPassword, String confirmNewPassword, Model model) {
         //User userEntity = (User) session.getAttribute("user"); // Lấy userID từ session
         //Long userID = userEntity.getUserId();
-        Long userID = 7L;
+//        Long userID = 7L;
+        Long userID = authenticationHelper.getUserId();
         // Lấy thông tin người dùng từ database
         UserDTO user = service.fetchPersonalInfo(userID);
 
