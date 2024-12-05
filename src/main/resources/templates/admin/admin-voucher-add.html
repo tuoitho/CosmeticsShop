@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{admin/layout-admin.html}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thêm mã giảm giá</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<section class="container mt-4" layout:fragment="app-content">
+  <!-- Thông báo lỗi nếu có -->
+  <div th:if="${errorMessage}" class="alert alert-danger">
+    <p th:text="${errorMessage}"></p>
+  </div>
+
+  <h2 class="mb-4">Thêm mã giảm giá mới</h2>
+
+  <!-- Form thêm mã giảm giá -->
+  <form th:action="@{/admin/vouchers/save}" th:method="post" onsubmit="return validateForm()">
+    <div class="form-group">
+      <label for="voucherCode">Code giảm giá</label>
+      <input type="text" id="voucherCode" name="voucherCode" class="form-control"
+             placeholder="Nhập code giảm giá" required onblur="checkDuplicateCode()">
+      <div id="codeError" class="text-danger" style="display: none;">Mã giảm giá đã tồn tại!</div>
+    </div>
+
+    <div class="form-group">
+      <label for="voucherValue">Giá trị giảm (%)</label>
+      <input type="number" id="voucherValue" name="voucherValue" class="form-control" placeholder="Nhập giá trị giảm" min="1" max="100" required>
+    </div>
+
+    <div class="form-group">
+      <label for="startDate">Ngày hiệu lực</label>
+      <input type="datetime-local" id="startDate" name="startDate" class="form-control" required>
+      <div id="startDateError" class="text-danger" style="display: none;">Ngày hiệu lực không được bỏ trống!</div>
+    </div>
+
+    <div class="form-group">
+      <label for="endDate">Ngày hết hạn</label>
+      <input type="datetime-local" id="endDate" name="endDate" class="form-control" required>
+      <div id="endDateError" class="text-danger" style="display: none;">Ngày hết hạn không được bỏ trống!</div>
+      <div id="dateError" class="text-danger" style="display: none;">Ngày hiệu lực phải nhỏ hơn ngày hết hạn!</div>
+    </div>
+
+    <!-- Các giá trị mặc định -->
+    <input type="hidden" name="used" value="false">
+
+    <button type="submit" class="btn btn-success">Lưu mã giảm giá</button>
+    <a href="/admin/vouchers" class="btn btn-secondary">Hủy</a>
+  </form>
+
+
+  <script>
+    // Kiểm tra mã giảm giá có trùng hay không
+    function checkDuplicateCode() {
+      const voucherCode = document.getElementById("voucherCode").value.trim();
+      const errorDiv = document.getElementById("codeError");
+
+      if (voucherCode === "") {
+        errorDiv.style.display = "none"; // Không cần kiểm tra nếu chưa nhập
+        return;
+      }
+
+      fetch(`/admin/vouchers/check-duplicate?code=${voucherCode}`)
+              .then(response => response.json())
+              .then(data => {
+                if (data.exists) {
+                  errorDiv.style.display = "block";
+                } else {
+                  errorDiv.style.display = "none";
+                }
+              });
+    }
+
+    // Kiểm tra các điều kiện trước khi gửi form
+    function validateForm() {
+      const startDate = document.getElementById("startDate").value;
+      const endDate = document.getElementById("endDate").value;
+      const startDateError = document.getElementById("startDateError");
+      const endDateError = document.getElementById("endDateError");
+      const dateError = document.getElementById("dateError");
+      const codeError = document.getElementById("codeError");
+
+      // Kiểm tra ngày hiệu lực không để trống
+      if (!startDate) {
+        startDateError.style.display = "block";
+        return false;
+      } else {
+        startDateError.style.display = "none";
+      }
+
+      // Kiểm tra ngày hết hạn không để trống
+      if (!endDate) {
+        endDateError.style.display = "block";
+        return false;
+      } else {
+        endDateError.style.display = "none";
+      }
+
+      // Kiểm tra ngày hiệu lực phải nhỏ hơn ngày hết hạn
+      if (new Date(startDate) >= new Date(endDate)) {
+        dateError.style.display = "block";
+        return false;
+      } else {
+        dateError.style.display = "none";
+      }
+
+      // Kiểm tra mã giảm giá trùng lặp
+      if (codeError.style.display === "block") {
+        alert("Mã giảm giá đã tồn tại! Vui lòng chọn mã khác.");
+        return false;
+      }
+
+      return true; // Dữ liệu hợp lệ
+    }
+  </script>
+
+
+
+</section>
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

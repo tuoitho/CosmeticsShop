@@ -29,13 +29,14 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th scope="col">STT</th>
-            <th scope="col">Hình ảnh</th>
-            <th scope="col">Mã sản phẩm</th>
-            <th scope="col">Tên sản phẩm</th>
-            <th scope="col">Danh mục</th>
-            <th scope="col">Giá</th>
-            <th scope="col">Số lượng</th>
+            <th th:scope="col">STT</th>
+            <th th:scope="col">Hình ảnh</th>
+            <th th:scope="col">Mã sản phẩm</th>
+            <th th:scope="col">Tên sản phẩm</th>
+            <th th:scope="col">Danh mục</th>
+            <th th:scope="col">Giá</th>
+            <th th:scope="col">Số lượng</th>
+            <th th:scope="col">Trạng thái</th>
             <th scope="col">Hành động</th>
         </tr>
         </thead>
@@ -51,6 +52,11 @@
             <td th:text="${product.category.categoryName}"></td>
             <td th:text="${product.cost}" class="formatted-price"></td> <!-- Thêm lớp để áp dụng định dạng -->
             <td th:text="${product.productStock.quantity}"></td>
+            <td>
+                <span th:text="${product.active ? 'Hoạt động' : 'Ngưng hoạt động'}"
+                      th:class="${product.active ? 'text-success' : 'text-danger'}"></span>
+            </td>
+
             <td>
                 <!-- Nút sửa sản phẩm -->
                 <a th:href="@{/admin/products/edit/{id}(id=${product.productId})}" class="btn btn-warning btn-sm">Sửa</a>
