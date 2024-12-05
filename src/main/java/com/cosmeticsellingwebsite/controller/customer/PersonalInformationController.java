@@ -33,7 +33,7 @@ public class PersonalInformationController {
 
     // Lấy thông tin cá nhân và địa chỉ
     @GetMapping
-    public String getPersonalInfo(HttpSession session,Model model) {
+    public String getPersonalInfo(Model model) {
         //lấy thông tin ng dùng đã đăng nhập
         Long customerID = authenticationHelper.getUserId();
         UserDTO user = service.fetchPersonalInfo(customerID); // Gọi Service để lấy thông tin người dùng
@@ -50,7 +50,8 @@ public class PersonalInformationController {
         //User userEntity = (User) session.getAttribute("user"); // Lấy userID từ session
 
         //Long userID = userEntity.getUserId();
-        Long userID = 7L;
+//        Long userID = 7L;
+        Long userID = authenticationHelper.getUserId();
         userModel.setUserId(userID);
         // Lưu thông tin mới
         if (service.savePersonalInfo(userModel, userModel.getUserId())) {
