@@ -161,7 +161,9 @@
                             "></a>
                             <p class="product-price">Giá: <span th:text="${#numbers.formatDecimal(product.cost, 0, 'COMMA', 2, 'POINT')}"></span> đ</p>
                             <p class="numsold">Đã mua trong 30 ngày: <span th:text="${product.totalSoldLast30Days}"></span></p>
-                            <a href="#" class="btn btn-custom">Thêm vào giỏ hàng</a>
+                            <a href="javascript:void(0)"
+                               class="btn btn-custom add-to-cart"
+                               th:data-product-code="${product.productCode}">Thêm vào giỏ hàng</a>
                         </div>
                     </div>
                 </div>
@@ -192,7 +194,9 @@
                             <p class="fas " style="color: red">New ! ! !</p>
                             <br>
 
-                            <a href="#" class="btn btn-custom">Thêm vào giỏ hàng</a>
+                            <a href="javascript:void(0)"
+                               class="btn btn-custom add-to-cart"
+                               th:data-product-code="${product.productCode}">Thêm vào giỏ hàng</a>
                         </div>
                     </div>
                 </div>
@@ -225,7 +229,9 @@
                         <p class="product-price">Giá: <span th:text="${#numbers.formatDecimal(product.cost, 0, 'COMMA', 2, 'POINT')}"></span> đ</p>
 <!--                        đánh giá-->
                         <p class="numsold">Đánh giá: <i class="fas fa-star gold" style="color: gold"></i> <span th:text="${product.averageRating}"></span></p>
-                        <a href="#" class="btn btn-custom">Thêm vào giỏ hàng</a>
+                        <a href="javascript:void(0)"
+                           class="btn btn-custom add-to-cart"
+                           th:data-product-code="${product.productCode}">Thêm vào giỏ hàng</a>
                     </div>
                 </div>
             </div>
@@ -301,6 +307,36 @@
             $('html, body').animate({
                 scrollTop: targetPosition
             }, 10); // Adjust animation duration as needed
+        });
+    });
+
+
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const addToCartButtons = document.querySelectorAll(".add-to-cart");
+
+        addToCartButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const productCode = this.getAttribute("data-product-code");
+
+                // Gửi yêu cầu AJAX đến API thêm vào giỏ hàng
+                $.ajax({
+                    url: '/customer/cart/add-to-cart',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        productCode: productCode,
+                        quantity: 1
+                    }),
+                    success: function (response) {
+                        alert(response);
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Error: " + xhr.responseText);
+                    }
+                });
+            });
         });
     });
 </script>
