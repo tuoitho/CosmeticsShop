@@ -212,6 +212,10 @@ public class OrderController {
     @GetMapping("/followOrder/{orderId}")
     public ModelAndView followOrder(@PathVariable("orderId") Long orderId,ModelMap model){
         Long userId = authenticationHelper.getUserId();
+        //kiem tra orderId co thuoc ve userId hay khong
+        if (orderService.getOrderById(orderId) == null || !orderService.getOrderById(orderId).getCustomerId().equals(userId)) {
+            return new ModelAndView("err/error");
+        }
         OrderHistoryDetailDTO order = orderService.getOrderHistoryDetailById(orderId);
         model.addAttribute("orderDetail", order);
         Logger.log(order.getOrderLines());

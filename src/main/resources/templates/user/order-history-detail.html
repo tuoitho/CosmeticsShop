@@ -14,7 +14,7 @@
           integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
           crossorigin="anonymous" referrerpolicy="no-referrer">
     <style>
-        
+
         .mb-4 {
             margin-bottom: 1rem;
         }
@@ -127,7 +127,7 @@
                             </a>
                         </td>
                         <td class="border border-neutral-300 p-2" th:text="${orderLine.quantity}"></td>
-                        <td class="border border-neutral-300 p-2" th:text="${orderLine.productSnapshot.cost}"></td>
+                        <td class="border border-neutral-300 p-2" th:text="${#numbers.formatDecimal(orderLine.productSnapshot.cost, 0, 'COMMA', 2, 'POINT')}"></td>
                     </tr>
                     </tbody>
                 </table>
