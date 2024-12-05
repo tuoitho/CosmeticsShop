@@ -77,5 +77,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByActiveTrue();
 
 
-
+    boolean existsByCategory_CategoryId(Long id);
 }

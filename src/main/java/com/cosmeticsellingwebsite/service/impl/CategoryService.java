@@ -105,6 +105,13 @@ public class CategoryService implements ICategoryService {
 
 
     public void deleteCategory(Long id) {
+        //neu ton tai sp thuoc category nay thi disable category
+        if (productRepository.existsByCategory_CategoryId(id)) {
+            Category category = categoryRepository.findById(id).orElseThrow(() -> new CustomException("Category not found"));
+            category.setActive(false);
+            categoryRepository.save(category);
+            return;
+        }
         categoryRepository.deleteById(id);
     }
 }
