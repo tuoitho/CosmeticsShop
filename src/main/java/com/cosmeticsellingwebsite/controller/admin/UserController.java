@@ -41,7 +41,7 @@ public class UserController {
     public String createUser(@ModelAttribute @Valid User user, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("roles", roleService.findAll());
-            return "admin/User/createUser";
+            return "admin/user/createUser";
         }
         userService.save(user);
         return "redirect:/admin/user";

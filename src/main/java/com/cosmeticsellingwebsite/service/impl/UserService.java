@@ -109,4 +109,13 @@ public class UserService implements IUserService, UserDetailsService {
         userRepository.save(user);
     }
 
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
 }
