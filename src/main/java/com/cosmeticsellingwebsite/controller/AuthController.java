@@ -56,6 +56,8 @@ public class AuthController {
     @ResponseBody
     public String info(Principal principal){
         Logger.log("Principal: " +principal.getName());
+        //gget role
+        Logger.log("Authorities: "+principal);
         return ("Xem thông tin user thành công: "+principal.getName());
     }
     @PostMapping("/register")

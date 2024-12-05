@@ -41,6 +41,8 @@ public class ProductController {
         }
         ObjectMapper objectMapper = new ObjectMapper();
         AddProductFeedbackReq addProductFeedbackReq = objectMapper.readValue(addProductFeedbackReqStr, AddProductFeedbackReq.class);
+        Logger.log(addProductFeedbackReq);
+
         addProductFeedbackReq.setImage(imageUrl);
         productService.addFeedback(customerId, addProductFeedbackReq);
         return ResponseEntity.ok("Review added successfully");

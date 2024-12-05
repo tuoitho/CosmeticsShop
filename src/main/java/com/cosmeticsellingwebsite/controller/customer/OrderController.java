@@ -172,6 +172,7 @@ public class OrderController {
     public String getOrderHistory(@RequestParam(value = "tab", required = false, defaultValue = "tat-ca-don-hang") String tab,Model model) {
         // Lấy thông tin người dùng từ session
         Long customerId = authenticationHelper.getUserId();
+        Logger.log("customerId: " + customerId);
 //        Set<PurchaseHistoryDTO> orders;
         Set<Order> orders = switch (tab) {
             case "tat-ca-don-hang" -> orderService.getAllOrders(customerId); // Lấy tất cả đơn hàng của người dùng

@@ -304,6 +304,10 @@ public class ProductService implements IProductService {
         if (!orderRepository.existsByOrderIdAndOrderLines_Product_ProductId(orderId, productId)) {
             throw new CustomException("You have not ordered this product on this order");
         }
+        // chỉ cho phép review 1 lần
+        if (productFeedbackRepository.existsByCustomerIdAndOrderIdAndProduct_ProductId(customerId, orderId, productId)) {
+            throw new CustomException("You have reviewed this product");
+        }
         ProductFeedback productFeedback = new ProductFeedback();
         productFeedback.setCustomerId(customerId);
         productFeedback.setOrderId(orderId);
