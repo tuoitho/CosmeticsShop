@@ -60,6 +60,11 @@
     <!-- Phần Đăng Nhập -->
     <div class="form-section">
         <h2>Đăng Nhập</h2>
+<!--        message-->
+        <div th:if = "${messageLogin}" class="alert alert-danger">
+            <p th:text="${messageLogin}"></p>
+        </div>
+
         <form id="loginForm" th:action="@{/login}" method="post">
             <div class="form-group">
                 <label for="username">Tên người dùng:</label>

@@ -2,6 +2,7 @@ package com.cosmeticsellingwebsite.security;
 
 
 //import com.cosmeticsellingwebsite.filter.JwtFilter;
+
 import com.cosmeticsellingwebsite.enums.RoleEnum;
 import com.cosmeticsellingwebsite.security.oauth.CustomOAuth2UserService;
 import com.cosmeticsellingwebsite.security.oauth.OAuth2LoginSuccessHandler;
@@ -36,16 +37,14 @@ import java.util.Arrays;
 @CrossOrigin
 public class SecurityConfig {
     //    @Autowired
-//    private JwtFilter jwtFilter;
-    @Autowired
-    private    CustomOAuth2UserService oauth2UserService; // Inject CustomOAuth2UserService
-
-    //    @Autowired
 //    @Lazy
     private final OAuth2LoginSuccessHandler oauth2LoginSuccessHandler;
-
     @Autowired
     CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    @Autowired
+    private CustomOAuth2UserService oauth2UserService; // Inject CustomOAuth2UserService
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
 
     public SecurityConfig(@Lazy OAuth2LoginSuccessHandler oauth2LoginSuccessHandler) {
         this.oauth2LoginSuccessHandler = oauth2LoginSuccessHandler;
@@ -56,14 +55,11 @@ public class SecurityConfig {
         return new OAuth2LoginSuccessHandler(passwordEncoder);
     }
 
-
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    @Autowired
-    private CustomOAuth2UserService customOAuth2UserService;
-    // Defines a UserDetailsService bean for user authentication
+
     @Bean
     public UserDetailsService userDetailsService() {
         return new UserService();
@@ -91,40 +87,28 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/assets/**","/showMsg.js","/notification.js","/error","/error/**"," /login").permitAll()
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/**").permitAll()
-                        .requestMatchers("/api/images/**","/auth/**",
-                                "/oauth2/**","/user/**","browser/**",
-                                "/about","/").permitAll()
-                        .requestMatchers("/customer/**","customer").hasRole("CUSTOMER")
+                        .requestMatchers("/assets/**", "/showMsg.js", "/notification.js", "/error", "/error/**", " /login").permitAll()
+                        .requestMatchers("/api/images/**", "/auth/**",
+                                "/oauth2/**", "/user/**", "browser/**",
+                                "/about", "/").permitAll()
+                        .requestMatchers("/customer/**", "customer").hasRole("CUSTOMER")
                         .requestMatchers("/shipper/**").hasRole("SHIPPER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/manager/**").hasRole("MANAGER")
                         .anyRequest().authenticated()) // Require authentication for all other requests
-                .formLogin(f->f.loginPage("/auth/login").permitAll()
+                .formLogin(f -> f.loginPage("/auth/login").permitAll()
                         .loginProcessingUrl("/login")
-//                        .defaultSuccessUrl("/")
                         .successHandler(customAuthenticationSuccessHandler)
-                        .failureUrl("/auth/login")
+                        .failureUrl("/auth/login-failure")
                 )
                 .authenticationProvider(authenticationProvider()) // Register the authentication provider
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/auth/login") // Custom login page
-
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService) // Custom OAuth2 user service
                         )
                         .successHandler(oauth2LoginSuccessHandler) // Handle success
                 )
-//                k có add fiter vào đây, vì project này không chuyên làm về api, nên không cần jwt, project này chủ yếu làm về view,
-//                role SHIPPER mới cần jwt
-//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Add the JWT filter before processing the request
-//                .oauth2Login(Customizer.withDefaults())
-//                .oauth2Login(oauth2 -> oauth2
-//                        .userInfoEndpoint(userInfo -> userInfo
-//                                .userService(oauth2UserService)) // Set the custom OAuth2UserService
-//                )
                 .build();
     }
 
@@ -139,16 +123,11 @@ public class SecurityConfig {
     }
 
 
-    // Defines a PasswordEncoder bean that uses bcrypt hashing by default for password encoding
-
-
-
     // Defines an AuthenticationManager bean to manage authentication processes
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
 
 
 }
