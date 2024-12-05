@@ -35,16 +35,35 @@
 
         <div class="form-group">
             <label for="startDate">Ngày hiệu lực</label>
+<!--            <input type="datetime-local" id="startDate" name="startDate" class="form-control"-->
+<!--                   th:value="${@dateTimeUtils.formatLocalDateTime(voucher.startDate, 'dd/MM/yyyy HH:mm:ss')}" required>-->
             <input type="datetime-local" id="startDate" name="startDate" class="form-control"
-                   th:value="${@dateTimeUtils.formatLocalDateTime(voucher.startDate, 'dd/MM/yyyy HH:mm:ss')}" required>
+                   th:value="${voucher.startDate}" required>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
         <div class="form-group">
             <label for="endDate">Ngày hết hạn</label>
             <input type="datetime-local" id="endDate" name="endDate" class="form-control"
-                   th:value="${@dateTimeUtils.formatLocalDateTime(voucher.startDate, 'dd/MM/yyyy HH:mm:ss')}" required>
+                   th:value="${voucher.startDate}" required>
         </div>
-
+        <script>
+            flatpickr("#startDate", {
+                enableTime: true,
+                time_24hr: true,
+                dateFormat: "d-m-Y H:i:S", // Định dạng với giây
+                //lay tu thymeleaf
+                defaultDate:  new Date(document.getElementById("startDate").value),
+                allowInput: true // Cho phép nhập liệu thủ công
+            });
+            flatpickr("#endDate", {
+                enableTime: true,
+                time_24hr: true,
+                dateFormat: "d-m-Y H:i:S", // Định dạng với giây
+                defaultDate:  new Date(document.getElementById("endDate").value),
+                allowInput: true // Cho phép nhập liệu thủ công
+            });
+        </script>
         <button type="submit" class="btn btn-primary">Cập nhật mã giảm giá</button>
         <a href="/admin/vouchers" class="btn btn-secondary">Hủy</a>
     </form>
