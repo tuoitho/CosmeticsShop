@@ -4,8 +4,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(135deg, #fce4ec, #f3e5f5, #e8eaf6);
+            background: linear-gradient(135deg, #d9aaff, #fadcff, #e8eaf6);
             min-height: 100vh;
+            font-family: 'Arial', sans-serif;
         }
         .navbar {
             background: rgba(255, 255, 255, 0.8);
@@ -14,7 +15,11 @@
         }
         .navbar-nav .nav-link {
             color: #6a1b9a;
-            font-weight: 500;
+            font-size: 1.2rem; /* Tăng kích thước chữ */
+            font-weight: 600; /* Chữ đậm hơn */
+            font-family: 'Poppins', sans-serif; /* Thêm kiểu chữ thanh lịch */
+            text-transform: capitalize; /* Viết hoa chữ cái đầu */
+            letter-spacing: 0.5px; /* Khoảng cách giữa các chữ */
             transition: all 0.3s ease;
             position: relative;
         }
@@ -40,7 +45,7 @@
             filter: drop-shadow(0 0 2px rgba(233, 30, 99, 0.5));
         }
         .cart-icon, .profile-menu {
-            font-size: 1.4rem;
+            font-size: 1.6rem; /* Tăng kích thước icon */
             color: #6a1b9a;
             transition: all 0.3s ease;
         }
@@ -55,6 +60,8 @@
         }
         .dropdown-item {
             color: #6a1b9a;
+            font-size: 1.1rem; /* Tăng kích thước chữ trong dropdown */
+            font-weight: 500;
             transition: all 0.3s ease;
         }
         .dropdown-item:hover {
@@ -70,56 +77,56 @@
         }
     </style>
 
-<header>
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <img src="https://via.placeholder.com/150x50?text=Glamour" alt="Glamour Cosmetics" class="logo">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/browser/products">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about">About Us</a>
-                    </li>
-                </ul>
-                <a href="/customer/cart" class="cart-icon me-3">
-                    <i class="fas fa-shopping-cart"></i>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <img src="https://via.placeholder.com/150x50?text=Glamour" alt="Glamour Cosmetics" class="logo">
                 </a>
-                <div class="d-flex align-items-center">
-                    <a href="#" class="cart-icon me-3">
-                        <i class="bi bi-bag-heart"></i>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/browser/products">Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/about">About Us</a>
+                        </li>
+                    </ul>
+                    <a href="/customer/cart" class="cart-icon me-3">
+                        <i class="fas fa-shopping-cart"></i>
                     </a>
-                    <div class="dropdown">
-                        <div class="profile-menu" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle"></i>
+                    <div class="d-flex align-items-center">
+                        <a href="#" class="cart-icon me-3">
+                            <i class="bi bi-bag-heart"></i>
+                        </a>
+                        <div class="dropdown">
+                            <div class="profile-menu" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
+                                th:if="${#authorization.expression('isAuthenticated()')}">
+                                <li><a class="dropdown-item" id="profileItem" href="/customer/profile">Profile</a></li>
+                                <li><a class="dropdown-item" id="manageProductItem" href="/customer/order/order-history">Orders</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item"   href="/logout" id="logout">Logout</a></li>
+                            </ul>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
+                                th:if="${#authorization.expression('!isAuthenticated()')}">
+                                <li><a class="dropdown-item" id="loginItem" href="/auth/login">Login</a></li>
+                                <li><a class="dropdown-item" id="registerItem" href="/auth/register">Register</a></li>
+                            </ul>
                         </div>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
-                            th:if="${#authorization.expression('isAuthenticated()')}">
-                            <li><a class="dropdown-item" id="profileItem" href="/customer/profile">Profile</a></li>
-                            <li><a class="dropdown-item" id="manageProductItem" href="/customer/order/order-history">Orders</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item"   href="/logout" id="logout">Logout</a></li>
-                        </ul>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
-                            th:if="${#authorization.expression('!isAuthenticated()')}">
-                            <li><a class="dropdown-item" id="loginItem" href="/auth/login">Login</a></li>
-                            <li><a class="dropdown-item" id="registerItem" href="/auth/register">Register</a></li>
-                        </ul>
                     </div>
                 </div>
             </div>
-        </div>
-    </nav>
-</header>
+        </nav>
+    </header>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </header>
