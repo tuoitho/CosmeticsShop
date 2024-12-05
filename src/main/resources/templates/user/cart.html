@@ -14,7 +14,7 @@
 </head>
 <body>
 <header th:replace="~{user/fragments/header::header}"></header>
-		
+
 <style>
 
     .main__cart {
@@ -137,27 +137,38 @@
             <div th:each="cartItem : ${cartItems}" class="row item text-center align-items-center py-2 border-bottom">
                 <div class="col-1">
                     <!-- Checkbox for selection -->
-                    <input type="checkbox" class="form-check-input item-checkbox" th:data-cart-item-id="${cartItem.cartItemId}" onchange="updateTotal()">
+                    <input type="checkbox" class="form-check-input item-checkbox"
+                           th:data-cart-item-id="${cartItem.cartItemId}" onchange="updateTotal()">
                 </div>
                 <div class="col-4 main__cart-product d-flex align-items-center">
                     <!-- Display product image -->
-                    <img th:src="@{${cartItem.product.image}}" alt="Product Image" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                    <img th:src="@{${cartItem.product.image}}" alt="Product Image" class="img-thumbnail"
+                         style="width: 60px; height: 60px; object-fit: cover;">
                     <span class="name ml-3" th:text="${cartItem.product.productName}">Áo sơ mi caro</span>
                 </div>
-                <div class="col-2 main__cart-price text-primary font-weight-bold" th:text="${cartItem.product.cost} + ' ₫'">45,000 ₫</div>
+                <div class="col-2 main__cart-price text-primary font-weight-bold"
+                     th:text="${cartItem.product.cost} + ' ₫'">45,000 ₫
+                </div>
                 <div class="col-2">
-                    <input type="number" th:value="${cartItem.quantity}" class="form-control text-center input-qty" min="1"
+                    <input type="number" th:value="${cartItem.quantity}" class="form-control text-center input-qty"
+                           min="1"
                            th:data-cart-item-id="${cartItem.cartItemId}">
                 </div>
-                <div class="col-2 main__cart-price text-success font-weight-bold" th:text="${cartItem.product.cost * cartItem.quantity} + ' ₫'">45,000 ₫</div>
+                <div class="col-2 main__cart-price text-success font-weight-bold"
+                     th:text="${cartItem.product.cost * cartItem.quantity} + ' ₫'">45,000 ₫
+                </div>
                 <div class="col-1">
-                    <button class="btn btn-danger btn-sm remove" th:onclick="'removeItem(' + ${cartItem.cartItemId} + ')'">Xóa</button>
+                    <button class="btn btn-danger btn-sm remove"
+                            th:onclick="'removeItem(' + ${cartItem.cartItemId} + ')'">Xóa
+                    </button>
                 </div>
             </div>
             <!-- End iterate -->
 
             <!-- Display total -->
-            <div class="total-money text-right font-weight-bold mt-3 text-primary" th:text="'Tổng cộng: ' + ${total} + ' ₫'">Tổng cộng: 45,000 ₫</div>
+            <div class="total-money text-right font-weight-bold mt-3 text-primary"
+                 th:text="'Tổng cộng: ' + ${total} + ' ₫'">Tổng cộng: 45,000 ₫
+            </div>
 
             <!-- Payment button -->
             <div class="text-right mt-3">
@@ -195,21 +206,21 @@
         document.body.appendChild(form);
         form.submit();
     }
+
     // Function to handle the removal of cart items
-    // function removeItem(cartItemId) {
-    //     $.ajax({
-    //         url: '/remove-item',  // URL to handle the request
-    //         type: 'POST',
-    //         data: {cartItemId: cartItemId},  // Sending cart item ID to backend
-    //         success: function (response) {
-    //             alert(response); // Show response message from backend
-    //             location.reload(); // Reload the page to reflect changes
-    //         },
-    //         error: function () {
-    //             alert("Có lỗi xảy ra");
-    //         }
-    //     });
-    // }
+    function removeItem(cartItemId) {
+        $.ajax({
+            url: '/customer/cart/remove-from-cart',  // URL to handle the request
+            type: 'POST',
+            data: {cartItemId: cartItemId},  // Sending cart item ID to backend
+            success: function (response) {
+                location.reload(); // Reload the page to reflect changes
+            },
+            error: function (xhr, status, error) {
+                alert(xhr.responseText); // Show error message
+            }
+        });
+    }
 
     // Function to update the total after any changes
     function updateTotal() {
@@ -244,15 +255,18 @@
 
             // Update quantity via AJAX
             $.ajax({
-                url: '/update-quantity', // URL to handle the update request
+                url: '/customer/cart/update-quantity', // URL to handle the update request
                 type: 'POST',
-                data: {cartItemId: cartItemId, quantity: quantity},
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    cartItemId: cartItemId,
+                    quantity: quantity
+                }),
                 success: function (response) {
-                    alert(response); // Show success message
                     updateTotal(); // Update the total price
                 },
-                error: function () {
-                    alert("Có lỗi xảy ra!");
+                error: function (xhr, status, error) {
+                    alert(xhr.responseText); // Show error message
                 }
             });
         });

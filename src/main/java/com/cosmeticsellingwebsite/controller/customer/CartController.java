@@ -6,6 +6,7 @@ import com.cosmeticsellingwebsite.dto.ProductSimpleDTO;
 import com.cosmeticsellingwebsite.entity.CartItem;
 import com.cosmeticsellingwebsite.entity.Product;
 import com.cosmeticsellingwebsite.payload.request.AddProductToCartRequest;
+import com.cosmeticsellingwebsite.payload.request.UpdateCartReq;
 import com.cosmeticsellingwebsite.service.impl.CartService;
 import com.cosmeticsellingwebsite.service.impl.ProductService;
 import com.cosmeticsellingwebsite.util.Logger;
@@ -61,6 +62,18 @@ public class CartController {
         Long userId = authenticationHelper.getUserId();
         cartService.addToCart(userId, addProductToCartRequest);
         return ResponseEntity.ok("Added to cart");
+    }
+    @PostMapping("/remove-from-cart")
+    public ResponseEntity<?> removeFromCart(@RequestParam Long cartItemId) {
+        Long userId = authenticationHelper.getUserId();
+        cartService.removeFromCart(userId, cartItemId);
+        return ResponseEntity.ok("Removed from cart");
+    }
+    @PostMapping("/update-quantity")
+    public ResponseEntity<?> updateCart(@RequestBody UpdateCartReq updateCartReq) {
+        Long userId = authenticationHelper.getUserId();
+        cartService.updateProductQuantityInCart(userId, updateCartReq);
+        return ResponseEntity.ok().build();
     }
 
 }
