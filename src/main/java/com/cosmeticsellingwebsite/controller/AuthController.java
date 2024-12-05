@@ -51,6 +51,11 @@ public class AuthController {
     public String login() {
         return "user/login-register";
     }
+
+    @GetMapping("/alogin")
+    public String alogin() {
+        return "admin/alogin";
+    }
     //lấy thông tin user đã đăng nhập
     @GetMapping("/info")
     @ResponseBody
