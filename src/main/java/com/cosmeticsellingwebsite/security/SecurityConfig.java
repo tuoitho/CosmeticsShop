@@ -42,8 +42,6 @@ public class SecurityConfig {
     @Autowired
     CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
     @Autowired
-    private CustomOAuth2UserService oauth2UserService; // Inject CustomOAuth2UserService
-    @Autowired
     private CustomOAuth2UserService customOAuth2UserService;
 
     public SecurityConfig(@Lazy OAuth2LoginSuccessHandler oauth2LoginSuccessHandler) {
@@ -81,8 +79,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+//                .sessionManagement(session -> session
+//                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+//                )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                        .maximumSessions(1) // Chỉ cho phép 1 phiên đăng nhập cùng lúc
+                        .maxSessionsPreventsLogin(false) // Không cấm đăng nhập nếu đạt giới hạn
                 )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
@@ -104,6 +106,14 @@ public class SecurityConfig {
                         .successHandler(customAuthenticationSuccessHandler)
                         .failureUrl("/auth/login-failure")
                 )
+                .rememberMe(remember -> remember
+                        .key("yourSecretRememberMeKey") // Replace with a strong, unique key
+                        .userDetailsService(userDetailsService()) // Cần thiết để lấy thông tin người dùng
+                        .tokenValiditySeconds(7*24*60*60) // 7 days
+                        .useSecureCookie(true) // Chỉ gửi cookie qua HTTPS
+                         )
+                //nhớ tích chọn rememberMe lúc đăng nhập và hãy thử tắt trình duyệt đi rồi mở lại để xem kết quả nhé
+
                 .authenticationProvider(authenticationProvider()) // Register the authentication provider
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/auth/login") // Custom login page
@@ -112,6 +122,7 @@ public class SecurityConfig {
                         )
                         .successHandler(oauth2LoginSuccessHandler) // Handle success
                 )
+
                 .build();
     }
 
