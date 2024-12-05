@@ -44,6 +44,9 @@ public class SecurityConfig {
 //    @Lazy
     private final OAuth2LoginSuccessHandler oauth2LoginSuccessHandler;
 
+    @Autowired
+    CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+
     public SecurityConfig(@Lazy OAuth2LoginSuccessHandler oauth2LoginSuccessHandler) {
         this.oauth2LoginSuccessHandler = oauth2LoginSuccessHandler;
     }
@@ -101,7 +104,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()) // Require authentication for all other requests
                 .formLogin(f->f.loginPage("/auth/login").permitAll()
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/")
+//                        .defaultSuccessUrl("/")
+                        .successHandler(customAuthenticationSuccessHandler)
                         .failureUrl("/auth/login")
                 )
                 .authenticationProvider(authenticationProvider()) // Register the authentication provider
