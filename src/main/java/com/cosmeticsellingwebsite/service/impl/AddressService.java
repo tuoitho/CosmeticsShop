@@ -2,10 +2,10 @@ package com.cosmeticsellingwebsite.service.impl;
 
 import com.cosmeticsellingwebsite.dto.AddressForOrderDTO;
 import com.cosmeticsellingwebsite.entity.Address;
+import com.cosmeticsellingwebsite.entity.Customer;
 import com.cosmeticsellingwebsite.entity.User;
 import com.cosmeticsellingwebsite.repository.AddressRepository;
 import com.cosmeticsellingwebsite.repository.UserRepositoty;
-import com.cosmeticsellingwebsite.repository.PersonalInformationRepository;
 import com.cosmeticsellingwebsite.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,8 +17,6 @@ import java.util.Optional;
 public class AddressService {
     @Autowired
     private AddressRepository addressRepository;
-    @Autowired
-    private PersonalInformationRepository personalInfoRepository;
     @Autowired
     private UserRepository userRepository;
 
@@ -47,7 +45,7 @@ public class AddressService {
     }
     // Lấy danh sách địa chỉ của người dùng
     public List<AddressForOrderDTO> getAddressesForUser(Long userId) {
-        List<Address> addresses = addressRepository.findAllByUser_UserId(userId);
+        List<Address> addresses = addressRepository.findByCustomer_UserId(userId);
         return addresses.stream().map(address -> new AddressForOrderDTO(
                 address.getAddressId(),
                 address.getReceiverName(),
@@ -95,7 +93,7 @@ public class AddressService {
             address.setProvince(addressDTO.getProvince());
             address.setDistrict(addressDTO.getDistrict());
             address.setWard(addressDTO.getWard());
-            address.setUser(userOpt.get());
+            address.setCustomer((Customer) userOpt.get());
 
             addressRepository.save(address);
             return true;

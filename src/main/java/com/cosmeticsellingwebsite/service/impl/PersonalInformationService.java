@@ -10,7 +10,6 @@ import com.cosmeticsellingwebsite.entity.Role;
 import com.cosmeticsellingwebsite.entity.User;
 import com.cosmeticsellingwebsite.enums.RoleEnum;
 import com.cosmeticsellingwebsite.repository.AddressRepository;
-import com.cosmeticsellingwebsite.repository.PersonalInformationRepository;
 import com.cosmeticsellingwebsite.repository.RoleRepository;
 import com.cosmeticsellingwebsite.service.interfaces.IPersonalInformationService;
 import com.cosmeticsellingwebsite.util.Logger;
@@ -34,7 +33,7 @@ public class PersonalInformationService implements IPersonalInformationService {
     public UserDTO fetchPersonalInfo(Long userID) {
         Optional<User> userEntityOpt = userRepositoty.findById(userID);
         if (userEntityOpt.isPresent()) {
-            User userEntity = (Customer)userEntityOpt.get();
+            Customer userEntity = (Customer)userEntityOpt.get();
 
             // Chuyển đổi địa chỉ sang DTO
             List<AddressForOrderDTO> addressDTOs = userEntity.getAddresses().stream()
