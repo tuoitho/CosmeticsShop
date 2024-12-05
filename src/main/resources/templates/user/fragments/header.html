@@ -171,21 +171,22 @@
                                     <div class="profile-menu" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-person-circle"></i>
                                     </div>
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
-                                        th:if="${#authorization.expression('isAuthenticated()')}">
-                                        <li><a class="dropdown-item" id="profileItem" href="/customer/personal-info">Profile</a></li>
-                                        <li><a class="dropdown-item" id="manageProductItem" href="/customer/order/order-history">Orders</a>
-                                        </li>
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        <li><a class="dropdown-item" href="/logout" id="logout">Logout</a></li>
-                                    </ul>
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
-                                        th:if="${#authorization.expression('!isAuthenticated()')}">
-                                        <li><a class="dropdown-item" id="loginItem" href="/auth/login">Login</a></li>
-                                        <li><a class="dropdown-item" id="registerItem" href="/auth/register">Register</a></li>
-                                    </ul>
+
+                                </div>
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
+                                    th:if="${#authorization.expression('isAuthenticated()')}">
+                                    <li><a class="dropdown-item" id="profileItem" href="/customer/personal-info">Profile</a></li>
+                                    <li><a class="dropdown-item" id="manageProductItem" href="/customer/order/order-history">Orders</a>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="/logout" id="logout">Logout</a></li>
+                                </div>
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
+                                    th:if="${#authorization.expression('!isAuthenticated()')}">
+                                    <li><a class="dropdown-item" id="loginItem" href="/auth/login">Login</a></li>
+                                    <li><a class="dropdown-item" id="registerItem" href="/auth/register">Register</a></li>
                                 </div>
                             </div>
                         </li>
