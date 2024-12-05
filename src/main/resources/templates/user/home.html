@@ -13,6 +13,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+
         .numsold{
             color: #c81616;
             font-weight: bold;
@@ -74,7 +75,7 @@
 
         .product-image {
             width: 100%;
-            height: 200px;
+            height: 270px;
             object-fit: cover;
         }
         .product-info {
@@ -133,14 +134,19 @@
             <div class="product-slider" id="bestSellersSlider">
                 <button class="slider-button prev" onclick="slide('bestSellersSlider', -1)"><i class="fas fa-chevron-left"></i></button>
                 <div class="product-container">
-                    <!-- Best Sellers Products -->
                     <div th:each="product : ${top20BestSellingProducts}" class="product-card">
                         <img th:src="@{/api/images(imageName=${product.image})}" th:alt="${product.productId}" class="product-image">
                         <div class="product-info">
-                            <h3 th:text="${product.productName}" class="product-title">1</h3>
-                            <p th:text="${product.cost}" class="product-price">$19.99</p>
-<!--                            num sold-->
-                            <p class="numsold">Đã mua trong 30 ngày: <span th:text="${product.totalSoldLast30Days}" class="product-price"></span></p>
+                            <h4 class="product-title" th:text="${product.productName}" style="
+                      overflow: hidden;
+                      display: -webkit-box;
+                      -webkit-line-clamp: 3; /* Number of lines to show */
+                      -webkit-box-orient: vertical;
+                      width: 100%;
+                      font-weight: bold;
+                 "></h4>
+                            <p th:text="${product.cost}" class="product-price"></p>
+                            <p class="numsold">Đã mua trong 30 ngày: <span th:text="${product.totalSoldLast30Days}"></span></p>
                             <a href="#" class="btn btn-custom">Add to Cart</a>
                         </div>
                     </div>
@@ -158,12 +164,19 @@
                     <div th:each="product : ${top20NewestProducts}" class="product-card">
                         <img th:src="@{/api/images(imageName=${product.image})}" th:alt="${product.productId}" class="product-image">
                         <div class="product-info">
-                            <h3 th:text="${product.productName}" class="product-title">1</h3>
-                            <p th:text="${product.cost}" class="product-price">$19.99</p>
+                            <h4 th:text="${product.productName}" class="product-title" style="
+                                overflow: hidden;
+                                display: -webkit-box;
+                                -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;
+                            width: 100%;
+                            font-weight: bold;
+                            "></h4>
+                            <p th:text="${product.cost}" class="product-price"></p>
+                            <a href="#" class="btn btn-custom">Add to Cart</a>
+
                         </div>
                     </div>
-
-                    <!-- Add more product cards here to reach 20 -->
                 </div>
                 <button class="slider-button next" onclick="slide('newArrivalsSlider', 1)"><i class="fas fa-chevron-right"></i></button>
             </div>
