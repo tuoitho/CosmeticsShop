@@ -16,11 +16,13 @@ import java.util.*;
 public class Customer extends User implements Serializable {
     private LocalDate birthDate;
     //    muốn mqh 2 chiều nên vầy có lẽ đc
+
+
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private Set<Address> addresses;
+    private List<Address> addresses;
 
 
 }

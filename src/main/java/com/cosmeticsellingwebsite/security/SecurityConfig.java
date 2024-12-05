@@ -95,6 +95,9 @@ public class SecurityConfig {
                         .requestMatchers("/shipper/**").hasRole("SHIPPER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/manager/**").hasRole("MANAGER")
+
+                        .requestMatchers("/api/revenue/**").hasAnyRole("ADMIN", "MANAGER")
+
                         .anyRequest().authenticated()) // Require authentication for all other requests
                 .formLogin(f -> f.loginPage("/auth/login").permitAll()
                         .loginProcessingUrl("/login")

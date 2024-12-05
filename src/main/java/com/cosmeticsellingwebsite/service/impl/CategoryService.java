@@ -102,4 +102,9 @@ public class CategoryService implements ICategoryService {
     public Integer countProducts(Long categoryId) {
         return productRepository.countByCategory_CategoryId(categoryId);
     }
+
+
+    public void deleteCategory(Long id) {
+        categoryRepository.deleteById(id);
+    }
 }

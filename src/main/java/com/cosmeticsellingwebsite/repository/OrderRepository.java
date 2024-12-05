@@ -12,6 +12,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.Set;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -47,4 +50,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 
     Set<Order> findAllByCustomerIdAndOrderStatus(Long customerId, OrderStatus orderStatus);
+    @Query("SELECT o FROM Order o WHERE o.orderStatus = 'COMPLETED' AND o.payment.paymentDate BETWEEN :startDate AND :endDate")
+    List<Order> findOrdersWithShippingStatusAndReceiveDate(
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
+
 }

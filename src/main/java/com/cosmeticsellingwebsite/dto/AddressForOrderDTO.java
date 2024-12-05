@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class AddressForOrderDTO {
+    private Long addressId;
     private String receiverName;
     private String receiverPhone;
     private String address;

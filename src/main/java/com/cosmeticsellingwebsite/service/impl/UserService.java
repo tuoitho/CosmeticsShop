@@ -49,7 +49,7 @@ public class UserService implements IUserService, UserDetailsService {
         if (!userRepository.existsById(userId)) {
             throw new CustomException("User not found");
         }
-        return addressRepository.findAllByCustomer_UserId(userId);
+        return addressRepository.findByCustomer_UserId(userId);
     }
 
     public List<User> list() {
@@ -106,6 +106,15 @@ public class UserService implements IUserService, UserDetailsService {
     public void resetPassword(String email, String newPassword) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException("Email not found"));
         user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+
+    public void save(User user) {
         userRepository.save(user);
     }
 
