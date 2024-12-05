@@ -46,11 +46,7 @@ public class PersonalInformationController {
 
     // Cập nhật thông tin cá nhân
     @PostMapping("/profile")
-    public String updatePersonalInfo(HttpSession session, UserDTO userModel, Model model) {
-        //User userEntity = (User) session.getAttribute("user"); // Lấy userID từ session
-
-        //Long userID = userEntity.getUserId();
-//        Long userID = 7L;
+    public String updatePersonalInfo(UserDTO userModel, Model model) {
         Long userID = authenticationHelper.getUserId();
         userModel.setUserId(userID);
         // Lưu thông tin mới
@@ -66,10 +62,7 @@ public class PersonalInformationController {
 
     @PostMapping("/address")
     public String updateAddress(HttpSession session, @ModelAttribute AddressForOrderDTO addressModel, Model model) {
-        User userEntity = (User) session.getAttribute("user"); // Lấy userID từ session
-
-        //Long userID = userEntity.getUserId();
-        Long userID = 7L;
+        Long userID = authenticationHelper.getUserId();
         UserDTO user = service.fetchPersonalInfo(userID);
 
         AddressForOrderDTO existingAddress = user.getAddress();
