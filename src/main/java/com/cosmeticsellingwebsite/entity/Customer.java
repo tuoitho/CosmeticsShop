@@ -19,7 +19,7 @@ public class Customer extends User implements Serializable {
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private Set<Address> addresses;
+    private List<Address> addresses;
 
 
 }

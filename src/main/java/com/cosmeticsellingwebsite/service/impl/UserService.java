@@ -108,4 +108,13 @@ public class UserService implements IUserService, UserDetailsService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
 }

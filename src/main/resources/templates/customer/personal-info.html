@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý tài khoản</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        .wrapper {
+            padding: 20px;
+        }
+
+        .myaccount-page-wrapper {
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border-radius: 8px;
+        }
+
+        .myaccount-tab-menu a {
+            display: block;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            background: #f8f8f8;
+            border-radius: 5px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .myaccount-tab-menu a:hover, .myaccount-tab-menu a.active {
+            background: #007bff;
+            color: #fff;
+        }
+
+        .single-input-item label {
+            font-weight: bold;
+        }
+
+        .single-input-item input,
+        .single-input-item select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .single-input-item button {
+            background: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .single-input-item button:hover {
+            background: #0056b3;
+        }
+
+        .alert {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="wrapper">
+    <div class="my-account-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="myaccount-page-wrapper">
+                        <div class="row">
+                            <!-- Tab Menu -->
+                            <div class="col-lg-3 col-md-4">
+                                <div class="myaccount-tab-menu nav" role="tablist">
+                                    <a th:href="@{#info-edit}" class="active" data-toggle="tab">
+                                        <i class="fa fa-user"></i> Thông tin cá nhân
+                                    </a>
+                                    <a th:href="@{#address-edit}" data-toggle="tab">
+                                        <i class="fa fa-map-marker"></i> Địa chỉ
+                                    </a>
+                                    <a th:href="@{#change-password}" data-toggle="tab">
+                                        <i class="fa fa-lock"></i> Đổi mật khẩu
+                                    </a>
+                                </div>
+                            </div>
+                            <!-- Tab Content -->
+                            <div class="col-lg-9 col-md-8">
+                                <div class="tab-content">
+                                    <!-- Thông tin cá nhân -->
+                                    <div class="tab-pane fade show active" id="info-edit" role="tabpanel">
+                                        <div class="myaccount-content">
+                                            <h3>Thông tin cá nhân</h3>
+                                            <form th:action="@{/customer/personal-info/profile}" method="post">
+                                                <div class="row">
+                                                    <div class="col-lg-6 single-input-item">
+                                                        <label for="name" class="required">Họ và tên</label>
+                                                        <input type="text" id="name" name="name" th:value="${user.name}" placeholder="Nhập họ và tên">
+                                                    </div>
+                                                    <div class="col-lg-6 single-input-item">
+                                                        <label for="email" class="required">Email</label>
+                                                        <input type="email" id="email" name="email" th:value="${user.email}" placeholder="Nhập email">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-6 single-input-item">
+                                                        <label for="gender" class="required">Giới tính</label>
+                                                        <select id="gender" name="gender">
+                                                            <option th:value="${T(com.cosmeticsellingwebsite.enums.Gender).MALE.name()}"
+                                                                    th:selected="${user.gender == 'MALE'}">Nam</option>
+                                                            <option th:value="${T(com.cosmeticsellingwebsite.enums.Gender).FEMALE.name()}"
+                                                                    th:selected="${user.gender == 'FEMALE'}">Nữ</option>
+                                                        </select>
+
+                                                    </div>
+                                                    <div class="col-lg-6 single-input-item">
+                                                        <label for="phone" class="required">Số điện thoại</label>
+                                                        <input type="text" id="phone" name="phone" th:value="${user.phone}" placeholder="Nhập số điện thoại">
+                                                    </div>
+                                                </div>
+                                                <button type="submit">Lưu</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!-- Địa chỉ -->
+                                    <div class="tab-pane fade" id="address-edit" role="tabpanel">
+                                        <div class="myaccount-content">
+                                            <h3>Thông tin địa chỉ</h3>
+                                            <form th:action="@{/customer/personal-info/address}" method="post">
+                                                <div class="row">
+                                                    <!-- Tỉnh/thành phố -->
+                                                    <div class="col-lg-6">
+                                                        <div class="single-input-item">
+                                                            <label for="province" class="required">Tỉnh/thành phố</label>
+                                                            <select id="province" name="province" class="form-control" onchange="updateDistricts()">
+                                                                <option th:value="${user.address.province}" th:text="${user.address.province != null ? user.address.province : 'Chọn Tỉnh/Thành phố'}">
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Quận/Huyện -->
+                                                    <div class="col-lg-6">
+                                                        <div class="single-input-item">
+                                                            <label for="district" class="required">Quận/Huyện</label>
+                                                            <select id="district" name="district" class="form-control">
+                                                                <option th:value="${user.address.district}" th:text="${user.address.district != null ? user.address.district : 'Chọn Quận/Huyện'}">
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <!-- Xã/Phường/Thị trấn -->
+                                                    <div class="col-lg-6">
+                                                        <div class="single-input-item">
+                                                            <label for="ward" class="required">Xã/Phường/Thị trấn</label>
+                                                            <input type="text" id="ward" name="ward" class="form-control"
+                                                                   th:value="${user.address.ward}" placeholder="Nhập Xã/Phường/Thị trấn"/>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Số nhà, tên đường -->
+                                                    <div class="col-lg-6">
+                                                        <div class="single-input-item">
+                                                            <label for="address" class="required">Số nhà, tên đường</label>
+                                                            <input type="text" id="address" name="address" class="form-control"
+                                                                   th:value="${user.address.address}" placeholder="Nhập số nhà, tên đường"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <!-- Tên người nhận -->
+                                                    <div class="col-lg-6">
+                                                        <div class="single-input-item">
+                                                            <label for="receiverName" class="required">Tên người nhận</label>
+                                                            <input type="text" id="receiverName" name="receiverName" class="form-control"
+                                                                   th:value="${user.address.receiverName}" placeholder="Nhập tên người nhận"/>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Số điện thoại người nhận -->
+                                                    <div class="col-lg-6">
+                                                        <div class="single-input-item">
+                                                            <label for="receiverPhone" class="required">Số điện thoại người nhận</label>
+                                                            <input type="text" id="receiverPhone" name="receiverPhone" class="form-control"
+                                                                   th:value="${user.address.receiverPhone}" placeholder="Nhập số điện thoại người nhận"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button type="submit">Lưu địa chỉ</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!-- Đổi mật khẩu -->
+                                    <div class="tab-pane fade" id="change-password" role="tabpanel">
+                                        <div class="myaccount-content">
+                                            <h3>Đổi mật khẩu</h3>
+                                            <form th:action="@{/customer/personal-info/password}" method="post">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="single-input-item">
+                                                            <label for="currentPassword" class="required">Nhập Mật Khẩu
+                                                                Hiện
+                                                                Tại</label>
+                                                            <div class="input-group">
+                                                                <input type="password" id="currentPassword"
+                                                                       name="currentPassword" class="form-control"
+                                                                       placeholder="Nhập mật khẩu hiện tại" required/>
+                                                                <div class="input-group-append">
+                                                                          <span class="input-group-text" id="eyeIcon1"
+                                                                                onclick="togglePasswordVisibility('currentPassword', 'eyeIcon1')">
+                                                                            <i class="fa fa-eye"></i>
+                                                                         </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="single-input-item">
+                                                            <label for="newPassword" class="required">Nhập Mật Khẩu
+                                                                Mới</label>
+                                                            <div class="input-group">
+                                                                <input type="password" id="newPassword"
+                                                                       name="newPassword"
+                                                                       class="form-control"
+                                                                       placeholder="Nhập mật khẩu mới" required/>
+                                                                <div class="input-group-append">
+                                                                      <span class="input-group-text" id="eyeIcon2"
+                                                                            onclick="togglePasswordVisibility('newPassword', 'eyeIcon2')">
+                                                                        <i class="fa fa-eye"></i>
+                                                                     </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-6">
+                                                        <div class="single-input-item">
+                                                            <label for="confirmNewPassword" class="required">Nhập Lại
+                                                                Mật Khẩu Mới</label>
+                                                            <div class="input-group">
+                                                                <input type="password" id="confirmNewPassword"
+                                                                       name="confirmNewPassword" class="form-control"
+                                                                       placeholder="Nhập lại mật khẩu mới" required/>
+                                                                <div class="input-group-append">
+                                                                      <span class="input-group-text" id="eyeIcon3"
+                                                                            onclick="togglePasswordVisibility('confirmNewPassword', 'eyeIcon3')">
+                                                                          <i class="fa fa-eye"></i>
+                                                                      </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="single-input-item">
+                                                    <button type="submit" class="btn btn-danger">Thay đổi</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Thông báo -->
+                        <div th:if="${message}" class="alert alert-success">
+                            <i class="fa fa-check-circle"></i> <span th:text="${message}"></span>
+                        </div>
+                        <div th:if="${error}" class="alert alert-danger">
+                            <i class="fa fa-exclamation-circle"></i> <span th:text="${error}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS -->
+<script>
+    async function fetchAddressData() {
+        const response = await fetch('/assets/data/Address.json');
+        const data = await response.json();
+        populateProvinces(data);
+    }
+
+    function populateProvinces(data) {
+        const provinceSelect = document.getElementById("province");
+        for (const province in data) {
+            const option = document.createElement("option");
+            option.value = province;
+            option.textContent = province;
+            provinceSelect.appendChild(option);
+        }
+        window.addressData = data;
+    }
+
+    function updateDistricts() {
+        const province = document.getElementById("province").value;
+        const districts = window.addressData[province] || [];
+        const districtSelect = document.getElementById("district");
+        districtSelect.innerHTML = "";
+        districts.forEach(district => {
+            const option = document.createElement("option");
+            option.value = district;
+            option.textContent = district;
+            districtSelect.appendChild(option);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", fetchAddressData);
+</script>
+</body>
+</html>
