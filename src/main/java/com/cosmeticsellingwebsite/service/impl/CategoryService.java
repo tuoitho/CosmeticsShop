@@ -14,6 +14,7 @@ import com.cosmeticsellingwebsite.repository.ProductRepository;
 import com.cosmeticsellingwebsite.service.interfaces.ICategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -115,11 +116,11 @@ public class CategoryService implements ICategoryService {
         categoryRepository.deleteById(id);
     }
 
-    public List<Category> searchCategory(String search) {
-        return categoryRepository.findByCategoryNameContaining(search);
+    public Page<Category> searchCategory(String search, Pageable pageable) {
+        return categoryRepository.findByCategoryNameContaining(search, pageable);
     }
 
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
+    public Page<Category> findAll(Pageable pageable) {
+        return categoryRepository.findAll(pageable);
     }
 }
