@@ -26,52 +26,54 @@ Easily determine if a user is authenticated using a single method call.
 ### **Example Usage:
 ### Injecting and Using `AuthenticationHelper` in a Controller:  
 
-    @Service
-    public class AuthenticationHelper {
-        private final UserRepository userRepository;
-        public AuthenticationHelper(UserRepository userRepository) {this.userRepository = userRepository;}
-        public Long getUserId() {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null) {
-                switch (authentication) {
-                    case UsernamePasswordAuthenticationToken authenticationToken -> {
-                        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-                        return userPrincipal.getUserId();
-                    }
-                    case OAuth2AuthenticationToken oauthToken -> {
-                        OAuth2User oauthUser = oauthToken.getPrincipal();
-                        if (oauthUser instanceof CustomOAuth2User customOAuth2User) {
-                            return customOAuth2User.getUserId();
-                        } else {
-                            // Trường hợp OAuth2User không phải là CustomOAuth2User,
-                            // bạn cần lấy userId từ attributes của oauthUser
-                            return oauthUser.getAttribute("id"); // Hoặc key tương ứng với userId
-                        }
-                    }
-                    case RememberMeAuthenticationToken rememberMeAuthenticationToken -> {
-                        UserPrincipal userPrincipal = (UserPrincipal) rememberMeAuthenticationToken.getPrincipal();
-                        return userPrincipal.getUserId();
-                    }
-                    default -> {
-                        return null;
+
+```java
+@Service
+public class AuthenticationHelper {
+    private final UserRepository userRepository;
+    public AuthenticationHelper(UserRepository userRepository) {this.userRepository = userRepository;}
+    public Long getUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            switch (authentication) {
+                case UsernamePasswordAuthenticationToken authenticationToken -> {
+                    UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+                    return userPrincipal.getUserId();
+                }
+                case OAuth2AuthenticationToken oauthToken -> {
+                    OAuth2User oauthUser = oauthToken.getPrincipal();
+                    if (oauthUser instanceof CustomOAuth2User customOAuth2User) {
+                        return customOAuth2User.getUserId();
+                    } else {
+                        // Trường hợp OAuth2User không phải là CustomOAuth2User,
+                        // bạn cần lấy userId từ attributes của oauthUser
+                        return oauthUser.getAttribute("id"); // Hoặc key tương ứng với userId
                     }
                 }
+                case RememberMeAuthenticationToken rememberMeAuthenticationToken -> {
+                    UserPrincipal userPrincipal = (UserPrincipal) rememberMeAuthenticationToken.getPrincipal();
+                    return userPrincipal.getUserId();
+                }
+                default -> {
+                    return null;
+                }
             }
-            return null;
         }
+        return null;
     }
-
-###
-
-    @RestController
-    public class TestController {
-        @Autowired
-        AuthenticationHelper authenticationHelper;
-        @GetMapping("/test")
-        public String test() {
-            return "UserId : " + authenticationHelper.getUserId();
-        }
+}
+```
+```java
+@RestController
+public class TestController {
+    @Autowired
+    AuthenticationHelper authenticationHelper;
+    @GetMapping("/test")
+    public String test() {
+        return "UserId : " + authenticationHelper.getUserId();
     }
+}
+```
 ## Installation and Setup 🚀
 
 To set up the **Cosmetics Shop** locally, follow these steps:
