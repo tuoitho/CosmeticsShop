@@ -303,6 +303,11 @@ public class ProductService implements IProductService {
                 .getImage();
     }
 
+    @Override
+    public Optional<Product> findById(Long id) {
+        return productRepository.findById(id);
+    }
+
     public void addFeedback(Long customerId, AddProductFeedbackReq addProductFeedbackReq) {
         Long orderId = addProductFeedbackReq.getOrderId();
         Long productId = addProductFeedbackReq.getProductId();

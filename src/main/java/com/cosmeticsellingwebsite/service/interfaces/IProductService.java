@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface IProductService {
@@ -21,4 +22,6 @@ public interface IProductService {
     List<Category> getAllCategories();
 
     String getExistingImage(Long productId);
+
+    Optional<Product> findById(Long id);
 }
