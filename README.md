@@ -108,4 +108,4 @@ Create a new database (e.g., cosmetics_shop)
     ```
 
 
-5. The application should be accessible at http://localhost:8080.
+5. The application should be accessible at http://localhost:8081.
