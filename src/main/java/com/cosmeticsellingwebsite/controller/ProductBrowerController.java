@@ -69,18 +69,7 @@ public class ProductBrowerController {
 
 
     @GetMapping("/vouchers")
-    public String ShowVoucher(ModelMap model) {
-        Page<Voucher> vouchers = voucherService.getVouchersWithPagination(0, 10);
-        //bien doi dto
-        Page<VoucherDTO> voucherDTOPage = vouchers.map(voucher -> {
-            VoucherDTO voucherDTO = new VoucherDTO();
-            BeanUtils.copyProperties(voucher, voucherDTO);
-            voucherDTO.setQuantity(voucherService.countByVoucherCode(voucher.getVoucherCode()));
-            voucherDTO.setQuantityUsed(voucherService.countByUsedTrueAndVoucherCode(voucher.getVoucherCode()));
-            voucherDTO.setQuantityAvailable(voucherService.countByUsedFalseAndVoucherCode(voucher.getVoucherCode()));
-            return voucherDTO;
-        });
-        model.addAttribute("listVoucher", voucherDTOPage);
+    public String ShowVoucher() {
         return "user/voucher";
     }
 
