@@ -24,7 +24,9 @@
             <th>Giá trị (%)</th>
             <th>Ngày hiệu lực</th>
             <th>Ngày hết hạn</th>
-            <th>Tình trạng</th>
+            <th>Số lượng</th>
+            <th>Đã dùng</th>
+            <th>Còn lại</th>
             <th>Hành động</th>
         </tr>
         </thead>
@@ -35,22 +37,28 @@
             <td th:text="${voucher.voucherValue}"></td>
             <td th:text="${@dateTimeUtils.formatLocalDateTime(voucher.startDate, 'dd/MM/yyyy HH:mm:ss')}"></td>
             <td th:text="${@dateTimeUtils.formatLocalDateTime(voucher.endDate, 'dd/MM/yyyy HH:mm:ss')}"></td>
+            <td th:text="${voucher.quantity}"></td>
+            <td th:text="${voucher.quantityUsed}"></td>
+            <td th:text="${voucher.quantityAvailable}"></td>
+
             <td>
-                <span th:if="${voucher.used}" class="badge badge-success">Đã sử dụng</span>
-                <span th:if="${!voucher.used}" class="badge badge-info">Chưa sử dụng</span>
-            </td>
-            <td>
+<!--                &lt;!&ndash; Nếu mã đã sử dụng hoặc liên kết với đơn hàng, không hiển thị nút chỉnh sửa và xoá &ndash;&gt;-->
+<!--                <a th:if="${!voucher.used && voucher.order == null}"-->
+<!--                   th:href="@{/admin/vouchers/edit/{id}(id=${voucher.voucherId})}"-->
+<!--                   class="btn btn-warning btn-sm">Chỉnh sửa</a>-->
+
+<!--                <a th:if="${!voucher.used && voucher.order == null}"-->
+<!--                   th:href="@{/admin/vouchers/delete/{id}(id=${voucher.voucherId})}"-->
+<!--                   class="btn btn-danger btn-sm"-->
+<!--                   onclick="return confirm('Bạn có chắc chắn muốn xoá mã giảm giá này không?')">Xoá</a>-->
+<!--                <span th:if="${voucher.order != null}" class="text-muted">Mã đang được áp dụng</span>-->
                 <!-- Nếu mã đã sử dụng hoặc liên kết với đơn hàng, không hiển thị nút chỉnh sửa và xoá -->
-                <a th:if="${!voucher.used && voucher.order == null}"
-                   th:href="@{/admin/vouchers/edit/{id}(id=${voucher.voucherId})}"
+                <a th:href="@{/admin/vouchers/edit/{id}(id=${voucher.voucherId})}"
                    class="btn btn-warning btn-sm">Chỉnh sửa</a>
 
-                <a th:if="${!voucher.used && voucher.order == null}"
-                   th:href="@{/admin/vouchers/delete/{id}(id=${voucher.voucherId})}"
+                <a th:href="@{/admin/vouchers/delete/{id}(id=${voucher.voucherId})}"
                    class="btn btn-danger btn-sm"
                    onclick="return confirm('Bạn có chắc chắn muốn xoá mã giảm giá này không?')">Xoá</a>
-
-                <span th:if="${voucher.order != null}" class="text-muted">Mã đang được áp dụng</span>
             </td>
         </tr>
         </tbody>
