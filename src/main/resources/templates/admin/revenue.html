@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý doanh thu</title>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{admin/layout-admin.html}">
+<section layout:fragment="app-content">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Google Font -->
@@ -122,8 +121,6 @@
             animation: fadeIn 0.5s ease-out;
         }
     </style>
-</head>
-<body>
 <div class="breadcrumb-area">
     <div class="container">
         <ul class="breadcrumb">
@@ -254,5 +251,4 @@
             console.error('Có lỗi khi lấy dữ liệu doanh thu 12 tháng:', error);
         });
 </script>
-</body>
-</html>
+</section>
