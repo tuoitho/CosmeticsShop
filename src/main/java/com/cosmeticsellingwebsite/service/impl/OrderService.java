@@ -19,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -349,5 +350,13 @@ public class OrderService implements IOrderService {
         productSnapshotDTO.setOrigin((String) productSnapshot.get("origin"));
         productSnapshotDTO.setImage((String) productSnapshot.get("image"));
         return productSnapshotDTO;
+    }
+
+    public List<Order> getTop5OrdersRecently() {
+        return orderRepository.findTop5ByOrderByOrderDateDesc();
+    }
+
+    public Long countPendingOrders() {
+        return orderRepository.countByOrderStatus(OrderStatus.PENDING);
     }
 }

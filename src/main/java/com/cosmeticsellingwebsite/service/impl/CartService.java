@@ -156,4 +156,9 @@ public class CartService implements ICartService {
         cartRepository.save(cart);
     }
 
+
+    public Long countProductInCart(){
+        return cartItemRepository.count();
+    }
+
 }

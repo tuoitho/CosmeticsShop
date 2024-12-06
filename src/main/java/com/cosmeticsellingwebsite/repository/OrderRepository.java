@@ -55,4 +55,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate);
 
+
+
+    @Query("SELECT o FROM Order o ORDER BY o.orderDate DESC limit 5")
+    List<Order> findTop5ByOrderByOrderDateDesc();
+
+    Long countByOrderStatus(OrderStatus orderStatus);
 }
