@@ -92,6 +92,10 @@ public class CartService implements ICartService {
 
     public void addToCart(Long userId, AddProductToCartRequest addProductToCartRequest) {
         Product product = productRepository.findByProductCode(addProductToCartRequest.getProductCode()).orElseThrow(() -> new RuntimeException("Product not found"));
+        //check if product is active
+        if (!product.getActive()) {
+            throw new CustomException("Product is not active");
+        }
         Logger.log(product.toString());
         Cart cart = cartRepository.findByCustomer_UserId(userId).orElseGet(() -> {
             Cart newCart = new Cart();

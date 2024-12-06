@@ -70,6 +70,10 @@ public class OrderService implements IOrderService {
         for (var cartItem : cartItemForOrderDTOS) {
             Product product = Optional.ofNullable(productMap.get(cartItem.getProductCode()))
                     .orElseThrow(() -> new CustomException("Product " + cartItem.getProductCode() + " not found"));
+            //only active product can be ordered
+            if (!product.getActive()) {
+                throw new CustomException("Product " + product.getProductCode() + " is not active");
+            }
 //check quantity
             if (productService.getStockByProductCode(product.getProductCode()) < cartItem.getQuantity()) {
                 throw new CustomException("Product " + product.getProductCode() + " out of stock");
