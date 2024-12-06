@@ -13,6 +13,58 @@ The **Cosmetics Shop** aims to provide an online platform where users can browse
 - **Database**: MySQL 🗄️
 - **ORM**: JPA (Java Persistence API) 🔄
 - **Version Control**: Git, GitHub 🌐
+### 🔐 **Supports Multiple Authentication Types**  
+- **Default Spring Security login**  
+- **OAuth2 login** (e.g., Google login)  
+- **Remember-me login using cookies**  
+
+### ✅ **Check Authentication Status**  
+Easily determine if a user is authenticated using a single method call.  
+
+---
+
+## **Example Usage**
+
+### Injecting and Using `AuthHelper` in a Controller:  
+
+```java
+@Service
+public class AuthenticationHelper {
+    private final UserRepository userRepository;
+    public AuthenticationHelper(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+    public Long getUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            switch (authentication) {
+                case UsernamePasswordAuthenticationToken authenticationToken -> {
+                    UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+                    return userPrincipal.getUserId();
+                }
+                case OAuth2AuthenticationToken oauthToken -> {
+                    OAuth2User oauthUser = oauthToken.getPrincipal();
+                    if (oauthUser instanceof CustomOAuth2User customOAuth2User) {
+                        return customOAuth2User.getUserId();
+                    } else {
+                        // Trường hợp OAuth2User không phải là CustomOAuth2User,
+                        // bạn cần lấy userId từ attributes của oauthUser
+                        return oauthUser.getAttribute("id"); // Hoặc key tương ứng với userId
+                    }
+                }
+                case RememberMeAuthenticationToken rememberMeAuthenticationToken -> {
+                    UserPrincipal userPrincipal = (UserPrincipal) rememberMeAuthenticationToken.getPrincipal();
+                    return userPrincipal.getUserId();
+                }
+                default -> {
+                    return null;
+                }
+            }
+        }
+        return null; // Hoặc xử lý trường hợp không tìm thấy userId
+    }
+}
+```
 
 ## Installation and Setup 🚀
 
