@@ -7,11 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     Category findByCategoryName(String categoryName);
     @Query("SELECT p.category FROM Product p WHERE p.productCode = :productCode")
     Category findCategoryByProductCode(@Param("productCode") String productCode);
 
+    List<Category> findByCategoryNameContaining(String search);
 
 }

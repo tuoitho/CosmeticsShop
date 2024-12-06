@@ -1,10 +1,13 @@
 package com.cosmeticsellingwebsite.controller.admin;
 
 import com.cosmeticsellingwebsite.entity.Category;
+import com.cosmeticsellingwebsite.entity.User;
 import com.cosmeticsellingwebsite.service.impl.CategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin/categories")
@@ -15,12 +18,20 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    //@GetMapping
+    //public String listCategories(Model model) {
+    //    model.addAttribute("categories", categoryService.getAllCategories());
+    //    return "admin/Categories/categories";
+    //}
     @GetMapping
-    public String listCategories(Model model) {
-        model.addAttribute("categories", categoryService.getAllCategories());
+    public String getCategoryList(@RequestParam(value = "search", required = false) String search, Model model) {
+        List<Category> categories = (search != null && !search.isEmpty())
+                ? categoryService.searchCategory(search)
+                : categoryService.findAll();
+        model.addAttribute("categories", categories);
+        model.addAttribute("search", search);
         return "admin/Categories/categories";
     }
-
     @GetMapping("/add")
     public String addCategoryForm(Model model) {
         model.addAttribute("category", new Category());

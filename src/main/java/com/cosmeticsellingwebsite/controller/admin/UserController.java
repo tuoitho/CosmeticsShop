@@ -24,9 +24,12 @@ public class UserController {
     private RoleService roleService;
 
     @GetMapping
-    public String getUserList(Model model) {
-        List<User> users = userService.findAll();
+    public String getUserList(@RequestParam(value = "search", required = false) String search, Model model) {
+        List<User> users = (search != null && !search.isEmpty())
+                ? userService.searchUsers(search)
+                : userService.findAll();
         model.addAttribute("users", users);
+        model.addAttribute("search", search);
         return "admin/user/listUser";
     }
 
@@ -50,12 +53,13 @@ public class UserController {
     @GetMapping("/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model) {
         User user = userService.findById(id);
-        if (user != null) {
-            model.addAttribute("user", user);
-            model.addAttribute("roles", roleService.findAll());
-            return "admin/user/editUser";
+        if (user == null) {
+            model.addAttribute("error", "User not found!");
+            return "redirect:/admin/user";
         }
-        return "redirect:/admin/user";
+        model.addAttribute("user", user);
+        model.addAttribute("roles", roleService.findAll());
+        return "admin/user/editUser";
     }
 
     @PostMapping("/edit/{id}")
@@ -64,14 +68,18 @@ public class UserController {
             model.addAttribute("roles", roleService.findAll());
             return "admin/user/editUser";
         }
-        user.setUserId(id); // Set the ID to ensure correct user is updated
+        user.setUserId(id); // Set the ID explicitly
         userService.save(user);
         return "redirect:/admin/user";
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
-        userService.delete(id);
+    public String deleteUser(@PathVariable Long id, Model model) {
+        try {
+            userService.delete(id);
+        } catch (Exception e) {
+            model.addAttribute("error", "Unable to delete user. They may be referenced elsewhere.");
+        }
         return "redirect:/admin/user";
     }
 }
