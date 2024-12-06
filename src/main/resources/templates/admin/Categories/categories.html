@@ -127,6 +127,8 @@
                 <tr>
                     <th>#</th>
                     <th>Category Name</th>
+                    <th>Number of products</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -134,6 +136,11 @@
                 <tr th:each="category : ${categories}">
                     <td th:text="${category.categoryId}"></td>
                     <td th:text="${category.categoryName}"></td>
+                    <td th:text="${category.products.size()}"></td>
+                    <td>
+                        <span th:if="${category.active}" class="badge bg-success">Active</span>
+                        <span th:if="${!category.active}" class="badge bg-danger">Inactive</span>
+                    </td>
                     <td>
                         <a th:href="@{/admin/categories/edit/{id}(id=${category.categoryId})}" class="btn btn-warning btn-sm">Edit</a>
                         <a th:href="@{/admin/categories/delete/{id}(id=${category.categoryId})}"
