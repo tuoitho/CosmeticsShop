@@ -5,7 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/admin/revenue")
+//@RequestMapping("/admin/revenue")
+@RequestMapping({"/admin/revenue", "/manager/revenue"})
 public class RevenueViewController {
 
     @GetMapping("/page")

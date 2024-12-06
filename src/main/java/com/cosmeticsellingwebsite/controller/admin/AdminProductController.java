@@ -27,8 +27,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin/products")
-//@PreAuthorize("hasRole('ADMIN')")
+@RequestMapping({"/admin/products", "/manager/products"})
 public class AdminProductController {
     @Autowired
     IProductService productService = new ProductService();
@@ -39,6 +38,7 @@ public class AdminProductController {
     private ImageService imageService;
 
     @GetMapping("")
+//    @PreAuthorize("hasRole('ADMIN')")
     public String getAllProducts(@RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "5") int size,
                                  Model model) {

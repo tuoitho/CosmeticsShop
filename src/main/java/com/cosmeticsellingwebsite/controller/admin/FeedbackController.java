@@ -20,7 +20,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/admin/feedbacks")
+//@RequestMapping("/admin/feedbacks")
+@RequestMapping({"/admin/feedbacks", "/manager/feedbacks"})
 public class FeedbackController {
     @Autowired
     private ProductFeedbackService productFeedbackService;

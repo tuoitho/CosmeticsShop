@@ -10,7 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/admin/categories")
+//@RequestMapping("/admin/categories")
+@RequestMapping({"/admin/categories", "/manager/categories"})
 public class CategoryController {
     private final CategoryService categoryService;
 

@@ -82,53 +82,53 @@
 </head>
 <body>
 <div class="container-fluid">
-    <div class="row">
+    <div class="row" th:with="pathPrefix=${#authorization.expression('hasRole(''ROLE_ADMIN'')')} ? '/admin' : '/manager'">
         <!-- Sidebar -->
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse" th:with="pathPrefix=${#authorization.expression('hasRole(''ROLE_ADMIN'')')} ? '/admin' : '/manager'">
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/admin/report">
+                        <a class="nav-link active" th:href="@{${pathPrefix} + '/report'}">
                             <i class="fas fa-home me-2"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/products">
+                        <a class="nav-link" th:href="@{${pathPrefix} + '/products'}">
                             <i class="fas fa-box me-2"></i> Products
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/orders">
+                        <a class="nav-link" th:href="@{${pathPrefix} + '/orders'}">
                             <i class="fas fa-shopping-cart me-2"></i> Orders
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/user">
+                        <a th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}" class="nav-link" th:href="@{${pathPrefix} + '/user'}">
                             <i class="fas fa-users me-2"></i> Users
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/revenue/page">
+                        <a class="nav-link" th:href="@{${pathPrefix} + '/revenue/page'}">
                             <i class="fas fa-chart-bar me-2"></i> Revenue
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/categories">
+                        <a class="nav-link" th:href="@{${pathPrefix} + '/categories'}">
                             <i class="fas fa-list me-2"></i> Categories
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/vouchers">
+                        <a class="nav-link" th:href="@{${pathPrefix} + '/vouchers'}">
                             <i class="fas fa-gift me-2"></i> Vouchers
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/feedbacks">
+                        <a class="nav-link" th:href="@{${pathPrefix} + '/feedbacks'}">
                             <i class="fas fa-comment-dots me-2"></i> Feedbacks
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/stock">
+                        <a class="nav-link" th:href="@{${pathPrefix} + '/stock'}">
                             <i class="fas fa-box me-2"></i> Stock
                         </a>
                     </li>

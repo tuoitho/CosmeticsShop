@@ -15,7 +15,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin/customers")
+//@RequestMapping("/admin/customers")
+@RequestMapping({"/admin/customers", "/manager/customers"})
 public class CustomerController {
 //
 //    @Autowired

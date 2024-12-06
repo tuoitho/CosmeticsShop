@@ -91,15 +91,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/assets/**", "/showMsg.js", "/notification.js", "/error", "/error/**", " /login").permitAll()
                         .requestMatchers("/api/images/**", "/auth/**",
-                                "/oauth2/**", "/user/**", "browser/**",
+                                "/oauth2/**", "/user/**", "/browser/**",
                                 "/about", "/").permitAll()
-                        .requestMatchers("/customer/**", "customer").hasRole("CUSTOMER")
+                        .requestMatchers("/customer/**").hasRole("CUSTOMER")
                         .requestMatchers("/shipper/**").hasRole("SHIPPER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/manager/**").hasRole("MANAGER")
-
                         .requestMatchers("/api/revenue/**").hasAnyRole("ADMIN", "MANAGER")
-
                         .anyRequest().authenticated()) // Require authentication for all other requests
                 .formLogin(f -> f.loginPage("/auth/login").permitAll()
                         .loginProcessingUrl("/login")

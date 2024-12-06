@@ -18,7 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/admin/vouchers")
+//@RequestMapping("/admin/vouchers")
+@RequestMapping({"/admin/vouchers", "/manager/vouchers"})
 public class AdminVoucherController {
     @Autowired
     private VoucherService voucherService;
