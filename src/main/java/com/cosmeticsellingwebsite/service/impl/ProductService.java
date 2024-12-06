@@ -353,4 +353,9 @@ public class ProductService implements IProductService {
         BeanUtils.copyProperties(productFeedback, feedbackDTO);
         return feedbackDTO;
     }
+
+    public Product getProductByProductCode(String productCode) {
+        return productRepository.findByProductCode(productCode)
+                .orElseThrow(() -> new CustomException("Product not found"));
+    }
 }

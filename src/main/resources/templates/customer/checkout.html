@@ -312,6 +312,8 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script th:inline="javascript">
     const addresses = /*[[${addresses}]]*/ [];
+    const isSingleProduct = /*[[${isSingleProduct}]]*/ 0;
+
 </script>
 <script>
     $("#applyButton").on("click", function () {
@@ -383,16 +385,16 @@
         };
         console.log(createOrderRequest);
         //     ajax
-        // ... Lấy dữ liệu cho createOrderRequest ...
-
-        // Chuyển đổi createOrderRequest sang JSON và đặt vào trường ẩn
-        // document.getElementById('createOrderRequestInput').value = JSON.stringify(createOrderRequest);
-        //
-        // // Submit form
-        // document.getElementById('orderForm').submit();
+        const url = () => {
+            if (isSingleProduct === false) {
+                return "/customer/order/create";
+            } else {
+                return "/customer/order/create-single-product";
+            }
+        };
 
         $.ajax({
-            url: "/customer/order/create",
+            url: url(),
             type: "POST",
             headers: {
                 'Content-Type': 'application/json',
