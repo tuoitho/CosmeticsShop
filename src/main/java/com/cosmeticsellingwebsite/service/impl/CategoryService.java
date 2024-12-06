@@ -114,4 +114,12 @@ public class CategoryService implements ICategoryService {
         }
         categoryRepository.deleteById(id);
     }
+
+    public List<Category> searchCategory(String search) {
+        return categoryRepository.findByCategoryNameContaining(search);
+    }
+
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
 }

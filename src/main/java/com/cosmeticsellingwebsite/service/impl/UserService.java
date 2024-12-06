@@ -118,4 +118,8 @@ public class UserService implements IUserService, UserDetailsService {
         userRepository.save(user);
     }
 
+    public List<User> searchUsers(String keyword) {
+        return userRepository.findByUsernameContainingOrEmailContaining(keyword, keyword);
+    }
+
 }

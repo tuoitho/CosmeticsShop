@@ -74,16 +74,33 @@
         <!-- Main content -->
         <main class="content">
             <h1 class="h2">Users</h1>
-            <a th:href="@{/admin/user/create}" class="btn btn-primary mb-3">Add New User</a>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <!-- Search Form -->
+                <form th:action="@{/admin/user}" method="get" class="d-flex">
+                    <input type="text" name="search" class="form-control me-2" placeholder="Search by username or email"
+                           th:value="${search}" />
+                    <button type="submit" class="btn btn-outline-primary">Search</button>
+                </form>
+                <!-- Add New User Button -->
+                <a th:href="@{/admin/user/create}" class="btn btn-primary">Add New User</a>
+            </div>
+
+            <!-- Display Error Messages -->
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- User Table -->
             <table class="table table-bordered table-striped table-hover">
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>User Name</th>
+                    <th>Username</th>
                     <th>Email</th>
-                    <th>Role</th>
+                    <th>Full Name</th>
                     <th>Phone</th>
                     <th>Gender</th>
+                    <th>Role</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -97,8 +114,10 @@
                     <td th:text="${user.gender}"></td>
                     <td th:text="${user.role.roleName}"></td>
                     <td>
-                        <a th:href="@{/admin/user/edit/{id}(id=${user.userId})}">Edit</a> |
-                        <a th:href="@{'/admin/user/delete/' + ${user.userId}}" onclick="return confirm('Are you sure?')">Delete</a>
+                        <a th:href="@{/admin/user/edit/{id}(id=${user.userId})}" class="btn btn-sm btn-warning">Edit</a>
+                        <a th:href="@{'/admin/user/delete/' + ${user.userId}}"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('Are you sure?')">Delete</a>
                     </td>
                 </tr>
                 </tbody>
