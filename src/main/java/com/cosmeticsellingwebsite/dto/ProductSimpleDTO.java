@@ -6,6 +6,7 @@ import lombok.*;
 @AllArgsConstructor
 @Data
 public class ProductSimpleDTO {
+    private Long productId;
     private String productCode;
     private String productName;
     private Double cost;

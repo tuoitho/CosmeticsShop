@@ -240,6 +240,10 @@ public class OrderController {
         return ResponseEntity.ok().body("Đã hủy đơn hàng thành công");
     }
 
+    @GetMapping("/success")
+    public String success() {
+        return "customer/ordersuccess";
+    }
 
 
 }

@@ -44,9 +44,9 @@ public class VNPayController {
         if (paymentStatus == 1) {
             Logger.log(orderId.toString());
             orderService.updateOrderStatusPaymentTime(orderId, paymentTime);
-            return "user/ordersuccess";
+            return "customer/ordersuccess";
         } else {
-            return "user/orderfail";
+            return "customer/orderfail";
         }
     }
 

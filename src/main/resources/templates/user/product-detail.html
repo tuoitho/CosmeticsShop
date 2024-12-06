@@ -170,24 +170,29 @@
 
 <script th:inline="javascript">
     const productCode = [[${product.productCode}]];
-    const quantity = document.getElementById('inputQuantity').value;
     document.addEventListener('DOMContentLoaded', function () {
         const addToCartButton = document.getElementById('add-cart');
         addToCartButton.addEventListener('click', function () {
-            console.log('Add to cart button clicked');
             $.ajax({
                 url: '/customer/cart/add-to-cart',
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
                     productCode: productCode,
-                    quantity: quantity
+                    quantity: document.getElementById('inputQuantity').value
                 }),
-                success: function (response) {
-                    alert(response)
+                success: function (response,status,xhr) {
+                    // Check for a redirect in the response headers
+                    if (response.indexOf('loginForm')>0) {
+                        // Chuyển hướng đến trang đăng nhập
+                        window.location.href = '/auth/login';}
+                    else {
+                        alert(response);
+                    }
+                    // alert(response)
                 },
                 error: function (xhr, status, error) {
-                    alert(xhr.responseText);
+                    alert(xhr.responseText); // Handle other errors
                 }
             });
         });

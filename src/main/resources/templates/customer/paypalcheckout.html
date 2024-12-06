@@ -86,11 +86,12 @@
                             const transaction =
                                 orderData?.purchase_units?.[0]?.payments?.captures?.[0] ||
                                 orderData?.purchase_units?.[0]?.payments?.authorizations?.[0];
-                            resultMessage(
-                                `Transaction ${transaction.status}: ${transaction.id}<br>'
-                              <p>Your order has been placed successfully.</p>
-                                 <a href="/customer">Back to Home</a>`
-                            );
+                                resultMessage(
+                                    `Transaction ${transaction.status}: ${transaction.id}<br>'
+                                     <p>Your order has been placed successfully.</p>
+                                     <a href="/customer">Back to Home</a>`
+                                );
+                                window.location.href = "/customer/order/success";
                             console.log(
                                 "Capture result",
                                 orderData,
