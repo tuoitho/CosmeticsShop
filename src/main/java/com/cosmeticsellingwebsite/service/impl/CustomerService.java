@@ -45,4 +45,10 @@ public class CustomerService implements ICustomerService {
         user.setActive(status);
         userRepository.save(user); // Lưu thay đổi
     }
+
+
+    @Override
+    public Optional<Customer> findById(Long id) {
+        return customerRepository.findById(id);
+    }
 }

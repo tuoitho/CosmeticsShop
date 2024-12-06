@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{admin/layout-admin.html}">
+<head>
+    <title>Quản lý đánh giá sản phẩm</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        h2 {
+            text-align: center;
+            color: #343a40;
+            margin-top: 20px;
+        }
+        .table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        thead th {
+            background-color: #f8f9fa;
+            color: #343a40;
+            text-align: center;
+            font-weight: bold;
+        }
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        td, th {
+            vertical-align: middle;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<section class="container mt-4" layout:fragment="app-content">
+    <h2>Quản lý đánh giá sản phẩm</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>STT</th>
+            <th>Mã đơn hàng</th>
+            <th>Tên khách hàng</th>
+            <th>Ngày đánh giá</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="feedback, iterStat : ${productFeedbacks}">
+            <td th:text="${iterStat.index + 1}"></td>
+            <td th:text="${feedback.orderId}"></td>
+            <td th:text="${feedback.customerName}"></td>
+            <td th:text="${@dateTimeUtils.formatLocalDateTime(feedback.feedbackDate, 'dd/MM/yyyy HH:mm:ss')}"></td>
+
+            <td>
+                <a th:href="@{/admin/feedbacks/respond/{id}(id=${feedback.productFeedbackId})}"
+                   th:text="${feedback.feedbackResponse == null ? 'Phản hồi đánh giá' : 'Xem/Chỉnh sửa phản hồi'}"
+                   class="btn btn-sm"
+                   th:classappend="${feedback.feedbackResponse == null ? 'btn-primary' : 'btn-secondary'}"></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
