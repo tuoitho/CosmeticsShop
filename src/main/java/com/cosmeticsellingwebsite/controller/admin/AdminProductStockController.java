@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-//@RequestMapping("/admin/stock")
-@RequestMapping({"/admin/stock", "/manager/stock"})
+@RequestMapping("/admin/stock")
 public class AdminProductStockController {
     @Autowired
     private ProductStockService productStockService;

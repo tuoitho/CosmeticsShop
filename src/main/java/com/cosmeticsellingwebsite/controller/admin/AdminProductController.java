@@ -27,7 +27,8 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-@RequestMapping({"/admin/products", "/manager/products"})
+@RequestMapping("/admin/products")
+//@RequestMapping({"/admin/products", "/manager/products"})
 public class AdminProductController {
     @Autowired
     IProductService productService = new ProductService();
