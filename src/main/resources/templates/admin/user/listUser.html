@@ -95,23 +95,33 @@
                 <thead>
                 <tr>
                     <th>#</th>
+                    <th>Image</th>
                     <th>Username</th>
                     <th>Email</th>
                     <th>Full Name</th>
                     <th>Phone</th>
                     <th>Gender</th>
                     <th>Role</th>
+                    <th>Active</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="user : ${users}">
                     <td th:text="${user.userId}"></td>
+                    <td>
+                        <img th:if="${user.image != null}" th:src="@{'/api/images?imageName=' + ${user.image}}" alt="User Image" width="50" height="50">
+                        <img th:if="${user.image == null}" src="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" alt="User Image" width="50" height="50">
+                    </td>
                     <td th:text="${user.username}"></td>
                     <td th:text="${user.email}"></td>
                     <td th:text="${user.fullname}"></td>
                     <td th:text="${user.phone}"></td>
                     <td th:text="${user.gender}"></td>
+                    <td>
+                        <span th:if="${user.active}" class="badge bg-success">Active</span>
+                        <span th:if="${!user.active}" class="badge bg-danger">Inactive</span>
+                    </td>
                     <td th:text="${user.role.roleName}"></td>
                     <td>
                         <a th:href="@{/admin/user/edit/{id}(id=${user.userId})}" class="btn btn-sm btn-warning">Edit</a>
