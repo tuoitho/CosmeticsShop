@@ -6,6 +6,7 @@ import com.cosmeticsellingwebsite.service.impl.RoleService;
 import com.cosmeticsellingwebsite.service.impl.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,14 +25,26 @@ public class UserController {
     private RoleService roleService;
 
     @GetMapping
-    public String getUserList(@RequestParam(value = "search", required = false) String search, Model model) {
-        List<User> users = (search != null && !search.isEmpty())
-                ? userService.searchUsers(search)
-                : userService.findAll();
-        model.addAttribute("users", users);
+    public String listUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(value = "search", required = false) String search,
+            Model model) {
+        int pageSize = 7; // 7 dòng mỗi trang
+        Page<User> userPage;
+
+        if (search != null && !search.isEmpty()) {
+            userPage = userService.searchUsers(search, page, pageSize);
+        } else {
+            userPage = userService.getUsers(page, pageSize);
+        }
+
+        model.addAttribute("users", userPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", userPage.getTotalPages());
         model.addAttribute("search", search);
         return "admin/user/listUser";
     }
+
 
     @GetMapping("/create")
     public String createUserForm(Model model) {
