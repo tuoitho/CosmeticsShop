@@ -170,7 +170,6 @@
 
 <script th:inline="javascript">
     const productCode = [[${product.productCode}]];
-    const quantity = document.getElementById('inputQuantity').value;
     document.addEventListener('DOMContentLoaded', function () {
         const addToCartButton = document.getElementById('add-cart');
         addToCartButton.addEventListener('click', function () {
@@ -180,7 +179,7 @@
                 contentType: 'application/json',
                 data: JSON.stringify({
                     productCode: productCode,
-                    quantity: quantity
+                    quantity: document.getElementById('inputQuantity').value
                 }),
                 success: function (response,status,xhr) {
                     // Check for a redirect in the response headers
@@ -193,11 +192,7 @@
                     // alert(response)
                 },
                 error: function (xhr, status, error) {
-                    // if (xhr.status === 302) {
-                    //     window.location.href = xhr.getResponseHeader('Location'); // Redirect to the login page
-                    // } else {
-                    //     alert(xhr.responseText); // Handle other errors
-                    // }
+                    alert(xhr.responseText); // Handle other errors
                 }
             });
         });

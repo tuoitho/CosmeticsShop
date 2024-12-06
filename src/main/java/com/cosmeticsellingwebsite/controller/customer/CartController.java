@@ -56,9 +56,6 @@ public class CartController {
     @PostMapping("/add-to-cart")
     public ResponseEntity<?> addProductToCart(@RequestBody AddProductToCartRequest addProductToCartRequest) {
         Long userId = authenticationHelper.getUserId();
-        if (userId == null) {
-            return ResponseEntity.badRequest().body("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
-        }
         cartService.addToCart(userId, addProductToCartRequest);
         return ResponseEntity.ok("Added to cart");
     }
