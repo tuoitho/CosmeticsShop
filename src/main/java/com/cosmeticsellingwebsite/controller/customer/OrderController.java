@@ -170,7 +170,7 @@ public class OrderController {
             // Kiểm tra phương thức thanh toán
             if (createOrderRequest.getPaymentMethod().equals(PaymentMethod.COD)) {
                 orderService.updateOrderStatus(orderResponse.getOrderId());
-                redirectUrl = "/order/payment-return?orderId=" + orderId;
+                redirectUrl = "/customer/order/payment-return?orderId=" + orderId;
             } else if (createOrderRequest.getPaymentMethod().equals(PaymentMethod.VNPAY)) {
                 // Tạo liên kết thanh toán VNPay
                 String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
@@ -178,7 +178,7 @@ public class OrderController {
                 redirectUrl = vnpayUrl;
             } else if (createOrderRequest.getPaymentMethod().equals(PaymentMethod.PAYPAL)) {
                 // Tạo liên kết thanh toán Paypal
-                redirectUrl = "/paypal/checkout?orderId=" + orderId;
+                redirectUrl = "/customer/paypal/checkout?orderId=" + orderId;
             } else {
                 return ResponseEntity.badRequest().body("Invalid payment method");
             }
