@@ -161,4 +161,11 @@ public class CartService implements ICartService {
         return cartItemRepository.count();
     }
 
+    @Override
+    public Optional<Cart> findCartByCustomer(Customer customer) {
+        return cartRepository.findByCustomer(customer);
+    }
+
+
+
 }

@@ -359,4 +359,7 @@ public class OrderService implements IOrderService {
     public Long countPendingOrders() {
         return orderRepository.countByOrderStatus(OrderStatus.PENDING);
     }
+    public List<Order> findByCustomerId(Long customerId) {
+        return orderRepository.findByCustomerId(customerId);
+    }
 }
