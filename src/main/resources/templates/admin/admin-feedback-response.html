@@ -46,7 +46,7 @@
                 <!-- Hiển thị hình ảnh đánh giá nếu có -->
                 <div th:if="${productFeedback.image != null}">
                     <p><strong>Hình ảnh đánh giá:</strong></p>
-                    <img th:src="@{${productFeedback.image}}" class="img-thumbnail" style="max-width: 200px;"
+                    <img th:src="@{/api/images(imageName=${productFeedback.image})}" class="img-thumbnail" style="max-width: 200px;"
                          alt="Feedback Image">
                 </div>
                 <div th:if="${productFeedback.image == null}">
