@@ -1,12 +1,10 @@
 package com.cosmeticsellingwebsite.controller.customer;
 
 import com.cosmeticsellingwebsite.config.AuthenticationHelper;
-import com.cosmeticsellingwebsite.dto.CartItemDTO;
 import com.cosmeticsellingwebsite.dto.CartItemForCheckoutDTO;
 import com.cosmeticsellingwebsite.dto.OrderHistoryDetailDTO;
 import com.cosmeticsellingwebsite.dto.ProductSnapshotDTO;
 import com.cosmeticsellingwebsite.entity.Address;
-import com.cosmeticsellingwebsite.entity.Cart;
 import com.cosmeticsellingwebsite.entity.CartItem;
 import com.cosmeticsellingwebsite.entity.Order;
 import com.cosmeticsellingwebsite.enums.OrderStatus;
@@ -19,18 +17,14 @@ import com.cosmeticsellingwebsite.service.impl.PaymentService;
 import com.cosmeticsellingwebsite.service.impl.UserService;
 import com.cosmeticsellingwebsite.service.vnpay.VNPAYService;
 import com.cosmeticsellingwebsite.util.Logger;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,7 +32,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.time.Duration;
 import java.util.*;
 
 // VNPAY
@@ -103,7 +96,7 @@ public class OrderController {
         Logger.log(addresses);
         model.addAttribute("addresses", addresses);
 //        return "customer/checkout";
-        return "user/checkout";
+        return "customer/checkout";
     }
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody @Valid CreateOrderRequest createOrderRequest, HttpSession session, HttpServletRequest request) {
@@ -164,7 +157,7 @@ public class OrderController {
             return "err/error";
         }
         model.addAttribute("order", order);
-        return "user/ordersuccess";
+        return "customer/ordersuccess";
     }
 
 
@@ -192,7 +185,7 @@ public class OrderController {
         // Gửi thông tin đến view
         model.addAttribute("orders", orders);
         model.addAttribute("tab", tab);
-        return "user/order-history";
+        return "customer/order-history";
     }
 
     @GetMapping("/order-history-search")
@@ -206,7 +199,7 @@ public class OrderController {
     @GetMapping("/search")
     public String searchOrderHistory(@RequestParam String keyword, Model model) {
         model.addAttribute("keyword", keyword);
-        return "user/order-history-search";
+        return "customer/order-history-search";
     }
 
     @GetMapping("/followOrder/{orderId}")
@@ -219,7 +212,7 @@ public class OrderController {
         OrderHistoryDetailDTO order = orderService.getOrderHistoryDetailById(orderId);
         model.addAttribute("orderDetail", order);
         Logger.log(order.getOrderLines());
-        return new ModelAndView("user/order-history-detail",model);
+        return new ModelAndView("customer/order-history-detail",model);
     }
     @GetMapping("/{orderId}/product-detail-snapshot/{productId}")
     public String productDetailSnapshot(@PathVariable("orderId") Long orderId, @PathVariable("productId") Long productId, Model model) {
@@ -231,7 +224,7 @@ public class OrderController {
         }
         ProductSnapshotDTO productSnapshot = orderService.getProductSnapshot(orderId, productId);
         model.addAttribute("productSnapshot", productSnapshot);
-        return "user/product-snapshot";
+        return "customer/product-snapshot";
     }
 
 

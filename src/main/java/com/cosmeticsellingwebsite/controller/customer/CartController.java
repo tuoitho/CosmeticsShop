@@ -3,14 +3,12 @@ package com.cosmeticsellingwebsite.controller.customer;
 import com.cosmeticsellingwebsite.config.AuthenticationHelper;
 import com.cosmeticsellingwebsite.dto.CartItemDTO;
 import com.cosmeticsellingwebsite.dto.ProductSimpleDTO;
-import com.cosmeticsellingwebsite.entity.CartItem;
 import com.cosmeticsellingwebsite.entity.Product;
 import com.cosmeticsellingwebsite.payload.request.AddProductToCartRequest;
 import com.cosmeticsellingwebsite.payload.request.UpdateCartReq;
 import com.cosmeticsellingwebsite.service.impl.CartService;
 import com.cosmeticsellingwebsite.service.impl.ProductService;
 import com.cosmeticsellingwebsite.util.Logger;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/customer/cart")
@@ -53,7 +49,7 @@ public class CartController {
         }
         Logger.log(total);
         model.addAttribute("total", total);
-        return "user/cart";
+        return "customer/cart";
     }
 
 
