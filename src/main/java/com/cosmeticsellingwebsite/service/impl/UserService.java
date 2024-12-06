@@ -122,8 +122,11 @@ public class UserService implements IUserService, UserDetailsService {
 
     public List<User> searchUsers(String keyword) {
         return userRepository.findByFullnameContainingOrUsernameContainingOrEmailContaining(keyword, keyword, keyword);
+    }
     public Page<User> searchUsers(String keyword, int page, int size) {
+//        return userRepository.search(keyword, PageRequest.of(page, size));
         return userRepository.search(keyword, PageRequest.of(page, size));
+
     }
 
     public Page<User> getUsers(int page, int size) {

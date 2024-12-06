@@ -23,8 +23,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     List<User> findByFullnameContainingOrUsernameContainingOrEmailContaining(String fullname, String username, String email);
-    @Query("SELECT u FROM User u WHERE u.username LIKE %:keyword% OR u.email LIKE %:keyword%")
+
+    @Query("SELECT u FROM User u WHERE u.username LIKE %:keyword% OR u.email LIKE %:keyword% or u.fullname LIKE %:keyword%")
     Page<User> search(String keyword, Pageable pageable);
+
 
     Page<User> findAll(Pageable pageable);
 }
