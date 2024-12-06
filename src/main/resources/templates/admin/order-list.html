@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý đơn hàng</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<section>
+
+    <div class="container mt-3">
+        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <span th:text="${errorMessage}"></span>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <h1 class="text-center">Quản lý đơn hàng</h1>
+
+        <!-- Thanh tìm kiếm và lọc -->
+        <div class="row mt-4 mb-3">
+            <form th:action="@{/admin/orders}" method="get" class="d-flex justify-content-between align-items-center">
+                <div class="col-md-6">
+                    <input type="text" name="search" placeholder="Tìm kiếm mã đơn hàng"
+                           class="form-control" th:value="${searchKeyword}">
+                </div>
+                <div class="col-md-4">
+                    <select name="status" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option th:each="status : ${T(com.cosmeticsellingwebsite.enums.OrderStatus).values()}"
+                                th:value="${status}" th:text="${status}"
+                                th:selected="${status == selectedStatus}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-search"></i> Tìm kiếm
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Hiển thị danh sách đơn hàng -->
+        <table class="table table-bordered table-striped text-center">
+            <thead class="table-custom-header bg-dark text-light">
+            <tr>
+                <th>STT</th>
+                <th>Mã</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order, stat : ${orders}">
+                <td th:text="${stat.index + 1 + (orders.number * orders.size)}">1</td>
+                <td th:text="${order.orderId}">ORD12345</td>
+                <td th:text="${order.orderStatus}">PENDING</td>
+                <td>
+                    <form th:action="@{/admin/orders/{id}/update-status(id=${order.orderId})}" method="post" class="d-inline">
+                        <select name="newStatus" class="form-select form-select-sm d-inline w-auto">
+                            <option th:each="status : ${T(com.cosmeticsellingwebsite.enums.OrderStatus).values()}"
+                                    th:value="${status}" th:text="${status}"
+                                    th:selected="${status == order.orderStatus}"></option>
+                        </select>
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <i class="fa fa-sync"></i> Cập nhật
+                        </button>
+                    </form>
+
+                    <a th:href="@{/admin/orders/{id}/details(id=${order.orderId})}" class="btn btn-info btn-sm">
+                        <i class="fa fa-eye"></i> Chi tiết
+                    </a>
+
+                    <form th:action="@{/admin/orders/{id}/delete(id=${order.orderId})}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?');">
+                            <i class="fa fa-trash"></i> Xóa
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${orders.content.isEmpty()}">
+                <td colspan="4" class="text-center">Không có đơn hàng nào!</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- Phân trang -->
+        <nav aria-label="Pagination">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${orders.first} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/orders(page=${orders.number - 1}, size=${orders.size}, search=${searchKeyword}, status=${selectedStatus})}">
+                        Trước
+                    </a>
+                </li>
+                <li class="page-item" th:each="page : ${#numbers.sequence(0, orders.totalPages - 1)}"
+                    th:classappend="${page == orders.number} ? 'active'">
+                    <a class="page-link" th:href="@{/admin/orders(page=${page}, size=${orders.size}, search=${searchKeyword}, status=${selectedStatus})}"
+                       th:text="${page + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${orders.last} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/orders(page=${orders.number + 1}, size=${orders.size}, search=${searchKeyword}, status=${selectedStatus})}">
+                        Sau
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</section>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+

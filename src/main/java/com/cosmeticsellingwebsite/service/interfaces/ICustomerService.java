@@ -7,9 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
-
 public interface ICustomerService {
-    List<Customer> searchCustomers(String keyword);
 
     List<Customer> getAllCustomers();
 
@@ -18,7 +16,6 @@ public interface ICustomerService {
     void updateActiveStatus(Long userId, boolean status);
 
     Optional<Customer> findById(Long id);
-
 
     List<Customer> findAll();
 

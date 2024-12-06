@@ -29,14 +29,6 @@ public class CustomerService implements ICustomerService {
     private OrderService orderService;
 
     @Override
-    public List<Customer> searchCustomers(String keyword) {
-        if (keyword == null || keyword.isEmpty()) {
-            return customerRepository.findAllCustomers();
-        }
-        return customerRepository.findByFullnameOrEmail(keyword, keyword);
-    }
-
-    @Override
     public List<Customer> getAllCustomers() {
         return customerRepository.findAllCustomers();
     }

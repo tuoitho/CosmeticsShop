@@ -9,19 +9,16 @@ import com.cosmeticsellingwebsite.payload.request.CreateOrderRequest;
 import com.cosmeticsellingwebsite.payload.response.OrderResponse;
 import com.cosmeticsellingwebsite.repository.*;
 import com.cosmeticsellingwebsite.service.interfaces.IOrderService;
-import com.cosmeticsellingwebsite.util.JsonToMapConverter;
 import com.cosmeticsellingwebsite.util.Logger;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -361,5 +358,33 @@ public class OrderService implements IOrderService {
     }
     public List<Order> findByCustomerId(Long customerId) {
         return orderRepository.findByCustomerId(customerId);
+    }
+
+    public List<Order> getOrdersByStatus(OrderStatus status) {
+        if (status == null) {
+            return orderRepository.findAll();
+        }
+        return orderRepository.findByOrderStatus(status);
+    }
+
+    public Order updateOrderStatus(Long orderId, OrderStatus newStatus) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng với ID: " + orderId));
+        order.setOrderStatus(newStatus);
+        return orderRepository.save(order);
+    }
+
+    public Page<Order> getPaginatedOrders(int page, int size, String searchKeyword, OrderStatus selectedStatus) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        if (searchKeyword != null && !searchKeyword.isEmpty()) {
+            if (selectedStatus != null) {
+                return orderRepository.findByOrderIdContainingAndOrderStatus(searchKeyword, selectedStatus, pageable);
+            }
+            return orderRepository.findByOrderIdContaining(searchKeyword, pageable);
+        } else if (selectedStatus != null) {
+            return orderRepository.findByOrderStatus(selectedStatus, pageable);
+        }
+        return orderRepository.findAll(pageable);
     }
 }
