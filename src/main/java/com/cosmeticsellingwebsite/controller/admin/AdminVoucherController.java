@@ -50,7 +50,7 @@ public class AdminVoucherController {
     }
 
     @PostMapping("/save")
-    public String addVoucher(@ModelAttribute Voucher voucher, BindingResult result, Model model) {
+    public String addVoucher(@ModelAttribute VoucherDTO voucher, BindingResult result, Model model) {
 
         // Kiểm tra lỗi từ Hibernate Validator
         if (result.hasErrors()) {
@@ -75,8 +75,7 @@ public class AdminVoucherController {
             return "admin/admin-voucher-list";
         }
 
-        voucher.setOrder(null);
-        voucherService.saveVoucher(voucher);
+        voucherService.addVoucher(voucher);
         return "redirect:/admin/vouchers";
     }
 

@@ -36,6 +36,18 @@ public class VoucherService implements IVoucherService {
         return voucherRepository.save(voucher);
     }
 
+    public void addVoucher(VoucherDTO voucher) {
+        Long quantity = voucher.getQuantity();
+        for (int i = 0; i < quantity; i++) {
+            Voucher voucherEntity = new Voucher();
+            voucherEntity.setVoucherCode(voucher.getVoucherCode());
+            voucherEntity.setVoucherValue(voucher.getVoucherValue());
+            voucherEntity.setStartDate(voucher.getStartDate());
+            voucherEntity.setEndDate(voucher.getEndDate());
+            voucherRepository.save(voucherEntity);
+        }
+    }
+
     @Override
     public Voucher updateVoucher(Long id, Voucher updatedVoucher) {
         Voucher voucher = voucherRepository.findById(id)
