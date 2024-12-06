@@ -10,4 +10,5 @@ public class ProductSimpleDTO {
     private String productName;
     private Double cost;
     private String image;
+    private Boolean active;
 }

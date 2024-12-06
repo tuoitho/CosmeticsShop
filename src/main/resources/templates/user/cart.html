@@ -134,36 +134,79 @@
             </div>
 
             <!-- Iterate over cartItems -->
-            <div th:each="cartItem : ${cartItems}" class="row item text-center align-items-center py-2 border-bottom">
-                <div class="col-1">
-                    <!-- Checkbox for selection -->
-                    <input type="checkbox" class="form-check-input item-checkbox"
-                           th:data-cart-item-id="${cartItem.cartItemId}" onchange="updateTotal()">
-                </div>
-                <div class="col-4 main__cart-product d-flex align-items-center">
-                    <!-- Display product image -->
-                    <img th:src="@{${cartItem.product.image}}" alt="Product Image" class="img-thumbnail"
-                         style="width: 60px; height: 60px; object-fit: cover;">
-                    <span class="name ml-3" th:text="${cartItem.product.productName}">Áo sơ mi caro</span>
-                </div>
-                <div class="col-2 main__cart-price text-primary font-weight-bold"
-                     th:text="${cartItem.product.cost} + ' ₫'">45,000 ₫
-                </div>
-                <div class="col-2">
-                    <input type="number" th:value="${cartItem.quantity}" class="form-control text-center input-qty"
-                           min="1"
-                           th:data-cart-item-id="${cartItem.cartItemId}">
-                </div>
-                <div class="col-2 main__cart-price text-success font-weight-bold"
-                     th:text="${cartItem.product.cost * cartItem.quantity} + ' ₫'">45,000 ₫
-                </div>
-                <div class="col-1">
-                    <button class="btn btn-danger btn-sm remove"
-                            th:onclick="'removeItem(' + ${cartItem.cartItemId} + ')'">Xóa
-                    </button>
+<!--            list product active-->
+            <div th:each="cartItem : ${cartItems}">
+                <div class="row item text-center align-items-center py-2 border-bottom" th:if="${cartItem.product.active}">
+                    <div class="col-1">
+                        <!-- Checkbox for selection -->
+                        <input type="checkbox" class="form-check-input item-checkbox" style="font-size: 33px"
+                               th:data-cart-item-id="${cartItem.cartItemId}" onchange="updateTotal()">
+                    </div>
+                    <div class="col-4 main__cart-product d-flex align-items-center">
+                        <!-- Display product image -->
+                        <img th:src="@{${cartItem.product.image}}" alt="Product Image" class="img-thumbnail"
+                             style="width: 100px; height: 100px; object-fit: cover;">
+                        <span class="name ml-3" th:text="${cartItem.product.productName}">Áo sơ mi caro</span>
+                    </div>
+                    <div class="col-2 main__cart-price text-primary font-weight-bold"
+                         th:text="${#numbers.formatDecimal(cartItem.product.cost, 0, 'COMMA', 2, 'POINT')} + ' ₫'">45,000 ₫
+                    </div>
+                    <div class="col-2">
+                        <input type="number" th:value="${cartItem.quantity}" class="form-control text-center input-qty"
+                               min="1"
+                               th:data-cart-item-id="${cartItem.cartItemId}">
+                    </div>
+                    <div class="col-2 main__cart-price text-success font-weight-bold"
+                        th:text="${#numbers.formatDecimal(cartItem.product.cost * cartItem.quantity, 0, 'COMMA', 2, 'POINT')} + ' ₫'">45,000 ₫
+                    </div>
+                    <div class="col-1">
+                        <button class="btn btn-danger btn-sm remove"
+                                th:onclick="'removeItem(' + ${cartItem.cartItemId} + ')'">Xóa
+                        </button>
+                    </div>
                 </div>
             </div>
             <!-- End iterate -->
+<!--            list product inactive-->
+            <br>
+            <div class="row title font-weight-bold text-center mb-3 text-danger">
+                <div class="col-12">
+                    <span class="name ml-3">Danh sách sản phẩm không hoạt động</span>
+                </div>
+            </div>
+            <div th:each="cartItem : ${cartItems}">
+                <div class="row item text-center align-items-center py-2 border-bottom" th:if="${!cartItem.product.active}">
+                    <div class="col-1">
+<!--                        &lt;!&ndash; Checkbox for selection &ndash;&gt;-->
+<!--                        <input type="checkbox" class="form-check-input item-checkbox"-->
+<!--                               th:data-cart-item-id="${cartItem.cartItemId}" onchange="updateTotal()">-->
+<!--                        icon danger-->
+                        <i class="fas fa-exclamation-triangle text-danger" style="font-size: 44px"></i>
+                    </div>
+                    <div class="col-4 main__cart-product d-flex align-items-center">
+                        <!-- Display product image -->
+                        <img th:src="@{${cartItem.product.image}}" alt="Product Image" class="img-thumbnail"
+                             style="width: 60px; height: 60px; object-fit: cover;">
+                        <span class="name ml-3" th:text="${cartItem.product.productName}">Áo sơ mi caro</span>
+                    </div>
+                    <div class="col-2 main__cart-price text-primary font-weight-bold"
+                         th:text="${#numbers.formatDecimal(cartItem.product.cost, 0, 'COMMA', 2, 'POINT')} + ' ₫'">45,000 ₫
+                    </div>
+                    <div class="col-2">
+                        <input type="number" th:value="${cartItem.quantity}" class="form-control text-center input-qty"
+                               min="1"
+                               th:data-cart-item-id="${cartItem.cartItemId}">
+                    </div>
+                    <div class="col-2 main__cart-price text-success font-weight-bold"
+                         th:text="${#numbers.formatDecimal(cartItem.product.cost * cartItem.quantity, 0, 'COMMA', 2, 'POINT')} + ' ₫'">45,000 ₫
+                    </div>
+                    <div class="col-1">
+                        <button class="btn btn-danger btn-sm remove"
+                                th:onclick="'removeItem(' + ${cartItem.cartItemId} + ')'">Xóa
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <!-- Display total -->
             <div class="total-money text-right font-weight-bold mt-3 text-primary"
