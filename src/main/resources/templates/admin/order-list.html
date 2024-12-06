@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{admin/layout-admin.html}">
 <head>
     <meta charset="UTF-8">
     <title>Quản lý đơn hàng</title>
@@ -9,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-<section>
+<section class="container mt-4" layout:fragment="app-content">
 
     <div class="container mt-3">
         <div th:if="${successMessage}" class="alert alert-success" role="alert">
