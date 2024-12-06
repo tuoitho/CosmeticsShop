@@ -119,7 +119,7 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
     public List<User> searchUsers(String keyword) {
-        return userRepository.findByUsernameContainingOrEmailContaining(keyword, keyword);
+        return userRepository.findByFullnameContainingOrUsernameContainingOrEmailContaining(keyword, keyword, keyword);
     }
 
 }
