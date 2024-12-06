@@ -61,6 +61,17 @@ Easily determine if a user is authenticated using a single method call.
         }
     }
 
+###
+
+    @RestController
+    public class TestController {
+        @Autowired
+        AuthenticationHelper authenticationHelper;
+        @GetMapping("/test")
+        public String test() {
+            return "UserId : " + authenticationHelper.getUserId();
+        }
+    }
 ## Installation and Setup 🚀
 
 To set up the **Cosmetics Shop** locally, follow these steps:
