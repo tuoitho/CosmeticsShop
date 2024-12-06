@@ -113,6 +113,7 @@ public class OrderService implements IOrderService {
                 Voucher voucher = voucherRepository.findFirstByVoucherCodeAndUsedFalseAndStartDateBeforeAndEndDateAfter(voucherCode, LocalDateTime.now(), LocalDateTime.now())
                         .orElseThrow(() -> new CustomException("Voucher " + voucherCode + " is not available"));
                 voucher.setUsed(true);
+                voucher.setOrder(order);
                 voucherRepository.save(voucher);
                 total -= voucher.getVoucherValue();
             }
