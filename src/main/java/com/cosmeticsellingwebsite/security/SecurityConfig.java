@@ -4,6 +4,7 @@ package com.cosmeticsellingwebsite.security;
 //import com.cosmeticsellingwebsite.filter.JwtFilter;
 
 import com.cosmeticsellingwebsite.enums.RoleEnum;
+import com.cosmeticsellingwebsite.security.oauth.CustomAuthenticationFailureHandler;
 import com.cosmeticsellingwebsite.security.oauth.CustomOAuth2UserService;
 import com.cosmeticsellingwebsite.security.oauth.OAuth2LoginSuccessHandler;
 import com.cosmeticsellingwebsite.service.impl.UserService;
@@ -114,7 +115,8 @@ public class SecurityConfig {
                 .formLogin(f -> f.loginPage("/auth/login").permitAll()
                         .loginProcessingUrl("/login")
                         .successHandler(customAuthenticationSuccessHandler)
-                        .failureUrl("/auth/login-failure")
+//                        .failureUrl("/auth/login-failure")
+                                .failureHandler(new CustomAuthenticationFailureHandler())
                 )
                 .rememberMe(remember -> remember
                         .key("yourSecretRememberMeKey") // Replace with a strong, unique key

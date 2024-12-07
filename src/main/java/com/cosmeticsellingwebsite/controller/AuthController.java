@@ -10,6 +10,7 @@ import com.cosmeticsellingwebsite.service.mail.MailService;
 import com.cosmeticsellingwebsite.util.Logger;
 import com.cosmeticsellingwebsite.dto.gooogle.GooglePojo;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -48,7 +50,11 @@ public class AuthController {
     private RedisTemplate<String, String> redisTemplate;
 
     @GetMapping({"/login", "/register"})
-    public String login() {
+    public String login(@RequestParam(value = "error", required = false) String error, Model model) {
+        //get from RedirectAttributes
+        if (error != null) {
+            model.addAttribute("messageLogin", error);
+        }
         return "user/login-register";
     }
     @GetMapping({"/login-failure"})
