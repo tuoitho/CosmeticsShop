@@ -50,7 +50,7 @@ public class UserController {
     @GetMapping("/create")
     public String createUserForm(Model model) {
         model.addAttribute("user", new User());
-        model.addAttribute("roles", roleService.findAll());
+        model.addAttribute("roles", roleService.findByRoleNames(List.of("MANAGER", "CUSTOMER")));
         return "admin/user/createUser";
     }
 
@@ -72,7 +72,7 @@ public class UserController {
             return "redirect:/admin/user";
         }
         model.addAttribute("user", user);
-        model.addAttribute("roles", roleService.findAll());
+        model.addAttribute("roles", roleService.findByRoleNames(List.of("MANAGER", "CUSTOMER")));
         return "admin/user/editUser";
     }
 
