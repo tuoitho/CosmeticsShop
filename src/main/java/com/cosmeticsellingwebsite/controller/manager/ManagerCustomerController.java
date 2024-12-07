@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/manager/customers")
-public class CustomerController {
+public class ManagerCustomerController {
     @Autowired
     private CustomerService customerService;
 
@@ -84,7 +84,6 @@ public class CustomerController {
         return "redirect:/manager/customers";
     }
 
-    // Hàm hỗ trợ kiểm tra giỏ hàng
     @PostMapping("/check-cart-empty")
     @ResponseBody
     public boolean isCartEmpty(@RequestParam Long customerId) {
@@ -99,6 +98,5 @@ public class CustomerController {
                 .map(cart -> cart.getCartItems().isEmpty()) // Nếu tìm thấy giỏ hàng, kiểm tra rỗng
                 .orElse(true); // Nếu không tìm thấy giỏ hàng, coi như giỏ hàng rỗng
     }
+
 }
-
-
