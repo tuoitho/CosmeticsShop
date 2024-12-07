@@ -78,7 +78,25 @@
                     <option th:each="role : ${roles}" th:value="${role.roleId}" th:text="${role.roleName}"></option>
                 </select>
             </div>
-
+            <div class="mb-3">
+                <label for="active" class="form-label">Status:</label>
+                <select id="active" name="active" class="form-control">
+                    <option value="true" th:selected="${user.active}">Active</option>
+                    <option value="false" th:selected="${!user.active}">Inactive</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block font-semibold mb-2">Hình ảnh đại diện:</label>
+                <div class="flex items-center gap-2">
+                    <button id="customButton" type="button" class="choose-file-button">Choose File</button>
+                    <span id="fileName" class="text-gray-500">No file chosen</span>
+                </div>
+                <input type="file" id="imageInput" name="imagePath" accept="image/*" hidden>
+                <img id="imagePreview" th:src="@{'/api/images?imageName=' + ${user.image}}" alt="Image Preview"
+                     style="width: 200px; height: 200px;  border-radius: 50%; margin-top: 10px;
+                                               object-fit: cover;
+                                                object-position: center;">
+            </div>
             <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>

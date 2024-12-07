@@ -28,7 +28,6 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/admin/products")
-//@RequestMapping({"/admin/products", "/manager/products"})
 public class AdminProductController {
     @Autowired
     IProductService productService = new ProductService();

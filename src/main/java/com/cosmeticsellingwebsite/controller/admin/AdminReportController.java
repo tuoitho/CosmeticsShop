@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Arrays;
 import java.util.List;
 
-@RequestMapping("/admin/report")
+@RequestMapping({"/admin/report","/admin"})
 @Controller
 public class AdminReportController {
     @Autowired
