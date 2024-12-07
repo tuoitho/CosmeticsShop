@@ -37,12 +37,11 @@ public class ProductController {
         Long customerId = authenticationHelper.getUserId();
         String imageUrl = null;
         if (image != null) {
-            imageUrl = imageService.saveImage(image);  // Giả sử bạn có dịch vụ lưu trữ ảnh
+//            imageUrl = imageService.saveImage(image);  // Giả sử bạn có dịch vụ lưu trữ ảnh
+            imageUrl = imageService.uploadCloudinary(image);  // Giả sử bạn có dịch vụ lưu trữ ảnh
         }
         ObjectMapper objectMapper = new ObjectMapper();
         AddProductFeedbackReq addProductFeedbackReq = objectMapper.readValue(addProductFeedbackReqStr, AddProductFeedbackReq.class);
-        Logger.log(addProductFeedbackReq);
-
         addProductFeedbackReq.setImage(imageUrl);
         productService.addFeedback(customerId, addProductFeedbackReq);
         return ResponseEntity.ok("Review added successfully");
