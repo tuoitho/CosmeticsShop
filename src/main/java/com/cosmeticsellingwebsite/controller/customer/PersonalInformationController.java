@@ -4,6 +4,7 @@ import com.cosmeticsellingwebsite.config.AuthenticationHelper;
 import com.cosmeticsellingwebsite.dto.AddressForOrderDTO;
 import com.cosmeticsellingwebsite.dto.UserDTO;
 import com.cosmeticsellingwebsite.entity.User;
+import com.cosmeticsellingwebsite.service.image.ImageService;
 import com.cosmeticsellingwebsite.service.impl.AddressService;
 import com.cosmeticsellingwebsite.service.impl.PersonalInformationService;
 import com.cosmeticsellingwebsite.service.interfaces.IAddressService;
@@ -38,6 +39,8 @@ public class PersonalInformationController {
     private PersonalInformationService personalInfoServiceImpl;
     @Autowired
     private AuthenticationHelper authenticationHelper;
+    @Autowired
+    ImageService imageService;
 
     // Lấy thông tin cá nhân và địa chỉ
     @GetMapping
@@ -53,13 +56,15 @@ public class PersonalInformationController {
     }
 
     @PostMapping("/profile")
-    public String updatePersonalInfo(@RequestParam("profileImage") MultipartFile imageFile,
+    public String updatePersonalInfo(@RequestParam("imagePath") MultipartFile imageFile,
                                      @RequestParam("birthDate") String birthDateStr,
                                      UserDTO userModel, RedirectAttributes redirectAttributes) {
         try {
             if (!imageFile.isEmpty()) {
-                String imagePath = saveImage(imageFile);
-                userModel.setImage(imagePath);
+//                String imagePath = saveImage(imageFile);
+                String img=imageService.saveImage(imageFile);
+
+                userModel.setImage(img);
             }
             if (birthDateStr != null && !birthDateStr.isEmpty()) {
                 LocalDate birthDate = LocalDate.parse(birthDateStr);

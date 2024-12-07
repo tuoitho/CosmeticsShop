@@ -68,6 +68,11 @@ public class AddressController {
     public ResponseEntity<?> deleteAddress(@PathVariable Long id) {
         try {
             // Gọi service để xóa địa chỉ
+            //Kiểm tra xem địa chỉ có thuộc về user đang đăng nhập không
+            Long userID = authenticationHelper.getUserId();
+            if (!addressService.checkAddressBelongToUser(id, userID)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Địa chỉ không thuộc về bạn.");
+            }
             addressService.deleteAddressById(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
