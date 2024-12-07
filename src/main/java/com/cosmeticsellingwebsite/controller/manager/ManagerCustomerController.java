@@ -29,8 +29,16 @@ public class ManagerCustomerController {
     @Autowired
     private OrderService orderService;
 
-    @GetMapping
-    public String getAllCustomers(@RequestParam(defaultValue = "0") int page, Model model) {
+    @GetMapping("/search")
+    public String searchCustomersFilter(@RequestParam String keyword, Model model) {
+        List<Customer> customers = customerService.searchByKeyword(keyword);
+        model.addAttribute("customers", customers);
+        model.addAttribute("keyword", keyword);
+        return "manager/customer-list"; // Tên file HTML
+    }
+
+    @GetMapping("")
+    public String getAllOfCustomers(@RequestParam(defaultValue = "0") int page, Model model) {
         // Tạo Pageable với trang hiện tại và số lượng khách hàng mỗi trang
         Pageable pageable = PageRequest.of(page, 5); // 5 khách hàng mỗi trang
         Page<Customer> customerPage = customerService.findAll(pageable);
@@ -41,31 +49,6 @@ public class ManagerCustomerController {
         return "manager/customer-list"; // Tên file HTML
     }
 
-    @GetMapping("/search")
-    public String searchCustomers(@RequestParam String keyword, Model model) {
-        List<Customer> customers = customerService.searchByKeyword(keyword);
-        model.addAttribute("customers", customers);
-        model.addAttribute("keyword", keyword);
-        return "manager/customer-list"; // Tên file HTML
-    }
-
-    @GetMapping("/{id}")
-    public String getCustomerDetails(@PathVariable Long id, Model model) {
-        // Lấy thông tin khách hàng
-        Customer customer = customerService.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng."));
-
-        // Lấy danh sách đơn hàng của khách hàng
-        List<Order> orders = orderService.findByCustomerId(id);
-
-        // Thêm thông tin vào model
-        model.addAttribute("customer", customer);
-        model.addAttribute("orders", orders);
-
-        return "manager/customer-detail"; // Tên view
-
-    }
-
     @PostMapping("/{id}/delete")
     public String deleteCustomer(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
@@ -74,6 +57,13 @@ public class ManagerCustomerController {
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
+        return "redirect:/manager/customers";
+    }
+
+    @PostMapping("/{id}/toggle-active")
+    public String toggleCustomerActive(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        customerService.toggleActiveStatus(id);
+        redirectAttributes.addFlashAttribute("success", "Thay đổi trạng thái thành công.");
         return "redirect:/manager/customers";
     }
 
@@ -92,11 +82,21 @@ public class ManagerCustomerController {
                 .orElse(true); // Nếu không tìm thấy giỏ hàng, coi như giỏ hàng rỗng
     }
 
-    @PostMapping("/{id}/toggle-active")
-    public String toggleCustomerActive(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        customerService.toggleActiveStatus(id);
-        redirectAttributes.addFlashAttribute("success", "Thay đổi trạng thái thành công.");
-        return "redirect:/manager/customers";
+    @GetMapping("/{id}")
+    public String getCustomerDetails(@PathVariable Long id, Model model) {
+        // Lấy thông tin khách hàng
+        Customer customer = customerService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng."));
+
+        // Lấy danh sách đơn hàng của khách hàng
+        List<Order> orders = orderService.findByCustomerId(id);
+
+        // Thêm thông tin vào model
+        model.addAttribute("customer", customer);
+        model.addAttribute("orders", orders);
+
+        return "manager/customer-detail"; // Tên view
+
     }
 
 }
