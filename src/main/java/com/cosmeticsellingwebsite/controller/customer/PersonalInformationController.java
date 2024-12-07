@@ -10,13 +10,21 @@ import com.cosmeticsellingwebsite.service.interfaces.IAddressService;
 import com.cosmeticsellingwebsite.service.interfaces.IPersonalInformationService;
 import com.cosmeticsellingwebsite.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/customer/personal-info")
@@ -44,19 +52,33 @@ public class PersonalInformationController {
         return "customer/personal-info"; // Hiển thị trang personal-info
     }
 
-    // Cập nhật thông tin cá nhân
     @PostMapping("/profile")
-    public String updatePersonalInfo(UserDTO userModel, Model model) {
-        Long userID = authenticationHelper.getUserId();
-        userModel.setUserId(userID);
-        // Lưu thông tin mới
-        if (service.savePersonalInfo(userModel, userModel.getUserId())) {
-            model.addAttribute("message", "Cập nhật thông tin cá nhân thành công!");
-            return "redirect:/customer/personal-info?success"; // Chuyển hướng với trạng thái thành công
-        } else {
-            model.addAttribute("error", "Có lỗi xảy ra khi cập nhật thông tin cá nhân!");
-            return "redirect:/customer/personal-info?error"; // Chuyển hướng với trạng thái thất bại
+    public String updatePersonalInfo(@RequestParam("profileImage") MultipartFile imageFile,
+                                     @RequestParam("birthDate") String birthDateStr,
+                                     UserDTO userModel, RedirectAttributes redirectAttributes) {
+        try {
+            if (!imageFile.isEmpty()) {
+                String imagePath = saveImage(imageFile);
+                userModel.setImage(imagePath);
+            }
+            if (birthDateStr != null && !birthDateStr.isEmpty()) {
+                LocalDate birthDate = LocalDate.parse(birthDateStr);
+                userModel.setBirthDate(birthDate);
+            }
+
+            Long userID = authenticationHelper.getUserId();
+            userModel.setUserId(userID);
+
+            if (service.savePersonalInfo(userModel, userID)) {
+                redirectAttributes.addFlashAttribute("message", "Cập nhật thông tin thành công!");
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi cập nhật thông tin!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Dữ liệu không hợp lệ!");
         }
+        return "redirect:/customer/personal-info";
     }
 
 
@@ -80,41 +102,64 @@ public class PersonalInformationController {
         }
     }
 
-
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
     @PostMapping("/password")
-    public String changePassword(HttpSession session, String currentPassword, String newPassword, String confirmNewPassword, Model model) {
-        Long userID = authenticationHelper.getUserId();
-        // Lấy thông tin người dùng từ database
-        UserDTO user = service.fetchPersonalInfo(userID);
+    public String changePassword(@RequestParam("currentPassword") String currentPassword,
+                                 @RequestParam("newPassword") String newPassword,
+                                 @RequestParam("confirmPassword") String confirmPassword,
+                                 Model model, RedirectAttributes redirectAttributes) {
+        try {
+            // Lấy thông tin người dùng hiện tại
+            Long userId = authenticationHelper.getUserId();
+            UserDTO user = service.fetchPersonalInfo(userId); // Fetch user info from DB
 
-        // Kiểm tra nếu không tìm thấy người dùng
-        if (user == null) {
-            model.addAttribute("error", "Người dùng không tồn tại!");
+            // Kiểm tra mật khẩu hiện tại có hợp lệ không
+            if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+                redirectAttributes.addFlashAttribute("error", "Mật khẩu hiện tại không chính xác!");
+                return "redirect:/customer/personal-info";
+            }
+
+            // Kiểm tra khớp giữa mật khẩu mới và xác nhận mật khẩu
+            if (!newPassword.equals(confirmPassword)) {
+                redirectAttributes.addFlashAttribute("error", "Mật khẩu mới và xác nhận mật khẩu không khớp!");
+                return "redirect:/customer/personal-info";
+            }
+
+            // Mã hóa mật khẩu mới
+            String encodedNewPassword = passwordEncoder.encode(newPassword);
+
+            // Lưu mật khẩu mới
+            if (service.updatePassword(userId, encodedNewPassword)) {
+                redirectAttributes.addFlashAttribute("message", "Thay đổi mật khẩu thành công!");
+                return "redirect:/customer/personal-info";
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi thay đổi mật khẩu!");
+                return "redirect:/customer/personal-info";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Dữ liệu không hợp lệ!");
             return "redirect:/customer/personal-info";
-        }
-
-        // Kiểm tra mật khẩu hiện tại
-        if (!currentPassword.equals(user.getPassword())) {
-            model.addAttribute("error", "Mật khẩu hiện tại không đúng!");
-            return "redirect:/customer/personal-info";
-        }
-
-        // Kiểm tra mật khẩu mới có khớp với xác nhận mật khẩu không
-        if (!newPassword.equals(confirmNewPassword)) {
-            model.addAttribute("error", "Mật khẩu mới và xác nhận mật khẩu không khớp!");
-            return "redirect:/customer/personal-info";
-        }
-
-        // Cập nhật mật khẩu mới
-        user.setPassword(newPassword);
-        boolean status = service.savePersonalInfo(user, user.getUserId());
-
-        if (status) {
-            model.addAttribute("message", "Thay đổi mật khẩu thành công!");
-            return "redirect:/customer/personal-info?success";
-        } else {
-            model.addAttribute("error", "Có lỗi xảy ra khi thay đổi mật khẩu!");
-            return "customer/personal-info";
         }
     }
+
+    private String saveImage(MultipartFile imageFile) {
+        String folderPath = "src/main/resources/static/assets/img/customer/";
+        String fileName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
+        Path filePath = Paths.get(folderPath + fileName);
+
+        try {
+            // Tạo thư mục nếu chưa tồn tại
+            Files.createDirectories(filePath.getParent());
+            Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            return "/assets/img/customer/" + fileName + "?v=" + System.currentTimeMillis();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
 }

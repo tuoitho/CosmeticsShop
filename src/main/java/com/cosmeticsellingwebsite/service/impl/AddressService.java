@@ -102,4 +102,8 @@ public class AddressService {
             return false;
         }
     }
+    public void deleteAddressById(Long id) {
+        addressRepository.deleteById(id); // Gọi repository để xóa
+    }
+
 }
