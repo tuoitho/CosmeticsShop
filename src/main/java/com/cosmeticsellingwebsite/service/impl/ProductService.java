@@ -3,6 +3,7 @@ package com.cosmeticsellingwebsite.service.impl;
 
 import com.cosmeticsellingwebsite.dto.FeedbackDTO;
 import com.cosmeticsellingwebsite.dto.ProductHomeDTO;
+import com.cosmeticsellingwebsite.dto.ProductSearchDTO;
 import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.enums.OrderStatus;
 import com.cosmeticsellingwebsite.exception.CustomException;
@@ -102,68 +103,6 @@ public class ProductService implements IProductService {
                 })
                 .collect(Collectors.toList());
     }
-
-//    public ProductResponse addProduct(AddProductRequest createProductRequest) {
-//        if (productRepository.existsByProductCode(createProductRequest.getProductCode())) {
-//            throw new CustomException("Product code already exists");
-//        }
-//        Product product = new Product();
-//        Long quantity = createProductRequest.getStock();
-//        BeanUtils.copyProperties(createProductRequest, product);
-//        Category category = categoryRepository.findById(createProductRequest.getCategoryId())
-//                .orElseThrow(() -> new CustomException("Category not found"));
-//        product.setCategory(category);
-//
-//
-//        Product product1=productRepository.save(product);
-//        ProductStock productStock = new ProductStock();
-//        productStock.setQuantity(quantity);
-//        productStock.setProduct(product1);
-//        productStockRepository.save(productStock);
-//        ProductResponse productResponse = new ProductResponse();
-//        BeanUtils.copyProperties(product, productResponse);
-//        productResponse.setStock(quantity);
-//        productResponse.setCategory(categoryRepository.findById(createProductRequest.getCategoryId()).get().getCategoryName());
-//        return productResponse;
-//    }
-//    @Transactional
-//    public void deleteProduct(Long id) {
-//        Optional<Product> productOptional = productRepository.findById(id);
-//        if (productOptional.isEmpty()) {
-//            throw new CustomException("Product not found");
-//        }
-//        Product product = productOptional.get();
-////        kiem tra xem product co trong order hay cart hay khong
-//        if (orderLineRepository.existsByProduct(product) || cartItemRepository.existsByProduct(product)) {
-//            product.setActive(false);
-//            productRepository.save(product);
-//            return;
-//        }
-
-    /// /        delete stock
-//        productStockRepository.deleteByProduct(product);
-//        productRepository.delete(product);
-//    }
-//
-//    public ProductResponse updateProduct(AddProductRequest addProductRequest) {
-//        Product product = productRepository.findByProductCode(addProductRequest.getProductCode())
-//                .orElseThrow(() -> new CustomException("Product not found"));
-//        Long quantity = addProductRequest.getStock();
-//        BeanUtils.copyProperties(addProductRequest, product);
-//        Category category = categoryRepository.findById(addProductRequest.getCategoryId())
-//                .orElseThrow(() -> new CustomException("Category not found"));
-//        product.setCategory(category);
-//        Product product1=productRepository.save(product);
-//        ProductStock productStock = productStockRepository.findByProduct_ProductCode(product1.getProductCode())
-//                .orElseThrow(() -> new CustomException("ProductStock not found"));
-//        productStock.setQuantity(quantity);
-//        productStockRepository.save(productStock);
-//        ProductResponse productResponse = new ProductResponse();
-//        BeanUtils.copyProperties(product, productResponse);
-//        productResponse.setStock(quantity);
-//        productResponse.setCategory(categoryRepository.findById(addProductRequest.getCategoryId()).get().getCategoryName());
-//        return productResponse;
-//    }
     public ProductDetailResponse getProductDetail(String productCdoe) {
         Product product = productRepository.findByProductCode(productCdoe)
                 .orElseThrow(() -> new CustomException("Product not found"));
@@ -368,5 +307,18 @@ public class ProductService implements IProductService {
         } else {
             return productRepository.findByProductNameContaining(searchKeyword, pageable);
         }
+    }
+
+
+    public Page<ProductSearchDTO> searchProducts(String keywords, Double minPrice, Double maxPrice, String brand, String origin, String category, Pageable pageable) {
+        Page<Product> products= productRepository.searchProductsWithFilter(keywords, minPrice, maxPrice, brand, origin, category, pageable);
+        //anh xa tu product sang productSearchDTO
+        return products.map(product -> {
+            ProductSearchDTO productSearchDTO = new ProductSearchDTO();
+            BeanUtils.copyProperties(product, productSearchDTO);
+            productSearchDTO.setRatingAverage(productFeedbackRepository.findAverageRatingByProduct_ProductId(product.getProductId()));
+            productSearchDTO.setSellCount(orderRepository.findTotalQuantitySoldByProductId(product.getProductId()).orElse(0L));
+            return productSearchDTO;
+        });
     }
 }
