@@ -66,13 +66,6 @@ public class ManagerCustomerController {
 
     }
 
-    @PostMapping("/{id}/toggle-active")
-    public String toggleCustomerActive(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        customerService.toggleActiveStatus(id);
-        redirectAttributes.addFlashAttribute("success", "Thay đổi trạng thái thành công.");
-        return "redirect:/manager/customers";
-    }
-
     @PostMapping("/{id}/delete")
     public String deleteCustomer(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
@@ -97,6 +90,13 @@ public class ManagerCustomerController {
         return cartService.findCartByCustomer(customer)
                 .map(cart -> cart.getCartItems().isEmpty()) // Nếu tìm thấy giỏ hàng, kiểm tra rỗng
                 .orElse(true); // Nếu không tìm thấy giỏ hàng, coi như giỏ hàng rỗng
+    }
+
+    @PostMapping("/{id}/toggle-active")
+    public String toggleCustomerActive(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        customerService.toggleActiveStatus(id);
+        redirectAttributes.addFlashAttribute("success", "Thay đổi trạng thái thành công.");
+        return "redirect:/manager/customers";
     }
 
 }
