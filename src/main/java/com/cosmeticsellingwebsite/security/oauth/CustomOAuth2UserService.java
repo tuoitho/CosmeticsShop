@@ -7,14 +7,18 @@ import com.cosmeticsellingwebsite.enums.RoleEnum;
 import com.cosmeticsellingwebsite.repository.RoleRepository;
 import com.cosmeticsellingwebsite.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService{
@@ -25,9 +29,24 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService{
 	RoleRepository roleRepository;
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-//		OAuth2User oauth2User = super.loadUser(userRequest);
 		OAuth2User oauth2User = new DefaultOAuth2UserService().loadUser(userRequest);
-//		return new CustomOAuth2User(oauth2User);
+
+
+		//quan trọng: kết quả role trả về từ google khác với role trong hệ thống (ví dụ OAUTH2_USER, SCOPE_openid,...)
+		// nên cần phải thiết lập cứng hoặc ánh xạ lại role thành ROLE_CUSTOMER
+
+
+//		Set<SimpleGrantedAuthority> mappedAuthorities = new HashSet<>();
+//		for (var authority : oauth2User.getAuthorities()) {
+//			if (authority instanceof OAuth2UserAuthority) {
+//				mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+//			}
+//		}
+
+		Set<SimpleGrantedAuthority> mappedAuthorities = new HashSet<>();
+		mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
+
+
 		// Lấy thông tin email từ Google
 		String email = oauth2User.getAttribute("email");
 
@@ -48,7 +67,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService{
 				});
 
 		// Trả về CustomOAuth2User với userId từ database
-		return new CustomOAuth2User(oauth2User, user.getUserId());
+		return new CustomOAuth2User(oauth2User, user.getUserId(),mappedAuthorities);
 	}
 	
 }
