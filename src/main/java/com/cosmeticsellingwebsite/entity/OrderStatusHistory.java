@@ -19,7 +19,7 @@ public class OrderStatusHistory {
     @Enumerated(jakarta.persistence.EnumType.STRING)
     private OrderStatus status;
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    private LocalDateTime updateAt;
+    private LocalDateTime updateAt=LocalDateTime.now();
     private String description;
 
     @ManyToOne
