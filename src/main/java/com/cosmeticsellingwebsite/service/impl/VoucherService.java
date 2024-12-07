@@ -148,4 +148,9 @@ public class VoucherService implements IVoucherService {
             }
         }
     }
+
+    public Page<Voucher> getVouchersWithSearch(String searchTerm, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("startDate").descending());
+        return voucherRepository.findDistinctVouchersWithSearch(searchTerm, pageable);
+    }
 }

@@ -27,9 +27,14 @@ public class AdminVoucherController {
     public String listVouchers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String searchTerm,
             Model model) {
-        Page<Voucher> voucherPage = voucherService.getVouchersWithPagination(page, size);
-        //bien doi dto
+        Page<Voucher> voucherPage;
+
+        voucherPage = voucherService.getVouchersWithSearch(searchTerm, page, size);
+
+
+        // Biến đổi DTO
         Page<VoucherDTO> voucherDTOPage = voucherPage.map(voucher -> {
             VoucherDTO voucherDTO = new VoucherDTO();
             BeanUtils.copyProperties(voucher, voucherDTO);
@@ -38,7 +43,11 @@ public class AdminVoucherController {
             voucherDTO.setQuantityAvailable(voucherService.countByUsedFalseAndVoucherCode(voucher.getVoucherCode()));
             return voucherDTO;
         });
+
+
+
         model.addAttribute("voucherPage", voucherDTOPage);
+        model.addAttribute("searchTerm", searchTerm); // Gửi lại keyword để hiển thị trên view
         return "admin/admin-voucher-list"; // View hiển thị danh sách mã giảm giá
     }
 
