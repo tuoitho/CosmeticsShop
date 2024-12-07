@@ -13,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -125,14 +126,15 @@ public class UserService implements IUserService, UserDetailsService {
     public List<User> searchUsers(String keyword) {
         return userRepository.findByFullnameContainingOrUsernameContainingOrEmailContaining(keyword, keyword, keyword);
     }
-    public Page<User> searchUsers(String keyword, int page, int size) {
-//        return userRepository.search(keyword, PageRequest.of(page, size));
-        return userRepository.search(keyword, PageRequest.of(page, size));
-
+    public Page<User> searchUsers(String keyword, int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return userRepository.findByRole_RoleNameInAndUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+                List.of(RoleEnum.MANAGER, RoleEnum.CUSTOMER), keyword, keyword, pageable);
     }
 
-    public Page<User> getUsers(int page, int size) {
-        return userRepository.findAll(PageRequest.of(page, size));
+    public Page<User> getUsers(int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return userRepository.findByRole_RoleNameIn(List.of(RoleEnum.MANAGER, RoleEnum.CUSTOMER), pageable);
     }
 
 }

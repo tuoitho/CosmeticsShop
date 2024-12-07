@@ -1,6 +1,7 @@
 package com.cosmeticsellingwebsite.repository;
 
 import com.cosmeticsellingwebsite.entity.User;
+import com.cosmeticsellingwebsite.enums.RoleEnum;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,4 +30,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
     Page<User> findAll(Pageable pageable);
+
+    Page<User> findByRole_RoleNameInAndUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+            List<RoleEnum> roleNames, String username, String email, Pageable pageable);
+
+    Page<User> findByRole_RoleNameIn(List<RoleEnum> roleNames, Pageable pageable);
+
 }
