@@ -88,6 +88,10 @@
             class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"    >
         Cancel Order
     </button>
+    <!--		button thanh toán lại, chỉ hiện khi orderstatus is pending-->
+    <div th:if = "${orderDetail.orderStatus.toString() == 'PENDING'}">
+        <button class="submit-btn" type="button" onclick="pay()" th:data-order-id="${orderDetail.orderId}"  th:data-order-status="${orderDetail.orderStatus.name()}">Thanh toán lại đơn hàng</button>
+    </div>
     <div class="bg-white shadow-lg rounded-lg">
         <div class="border border-neutral-300 rounded-lg">
             <div class="bg-neutral-100 p-4 border-b-2 border-primary-500">
@@ -168,8 +172,6 @@
             </div>
         </div>
 
-
-        <!-- thu nho vao trong-->
         <div class="border border-neutral-300 rounded-lg p-4" id="reviewContainer">
             <div class="mb-4">
                 <label for="productSelect" class="block font-semibold mb-2">Select Product:</label>
@@ -449,7 +451,29 @@
             console.log("Order not cancelled.");
         }
     }
+
+
+    function pay(){
+        const orderId = document.querySelector(
+            'button[onclick="pay()"]').getAttribute(
+            'data-order-id');
+
+        // tạo form ẩn để gửi request
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/customer/order/reprocessPayment';
+        form.style.display = 'none';
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'orderId';
+        input.value = orderId;
+        form.appendChild(input);
+        document.body.appendChild(form);
+        console.log("submit form"+orderId);
+        form.submit();
+    }
 </script>
+
 
 <!--  ajax-->
 

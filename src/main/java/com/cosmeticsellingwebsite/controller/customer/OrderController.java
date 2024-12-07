@@ -67,6 +67,8 @@ public class OrderController {
                            @RequestParam(value = "productCode", required = false) String productCode,
                            @RequestParam(value = "quantity", required = false) Integer quantity,
                            ModelMap model){
+
+        Logger.log("cartItemIds: " + cartItemIds);
         //    example data
 //        List<CartItemDTO> cartItems = List.of(
 //                new CartItemDTO("Body_16", "Dầu gội thông ninh", 100000, 1, "https://static.thcdn.com/images/large/origen//productimg/1600/1600/10364465-1064965873801360.jpg"),
@@ -86,7 +88,7 @@ public class OrderController {
         }else {
             //ngược lại, nếu mua nhiều sản phẩm (từ trang giỏ hàng)
             model.addAttribute("isSingleProduct", false);
-            cartItemIds.stream().map(cartItemId -> {
+            cartItems=cartItemIds.stream().map(cartItemId -> {
                 CartItem cartItem = cartService.getCartItemById(cartItemId);
                 CartItemForCheckoutDTO cartItemDTO = new CartItemForCheckoutDTO();
                 cartItemDTO.setProductCode(cartItem.getProduct().getProductCode());
@@ -276,6 +278,30 @@ public class OrderController {
         model.addAttribute("productSnapshot", productSnapshot);
         return "customer/product-snapshot";
     }
+
+    @PostMapping("/reprocessPayment")
+    public String reprocessPayment(@RequestParam("orderId") Long orderId, HttpServletRequest request) {
+        Logger.log("reprocessPayment");
+        Order order = orderService.getOrderById(orderId);
+        //Lấy ra người dùng đã đăng nhập
+        Long userId = authenticationHelper.getUserId();
+        // Kiểm tra xem đơn hàng có tồn tại, có đang pending và có thuộc về người dùng đó không, nếu không trả về trang lỗi
+        if (order == null || order.getOrderStatus()!=OrderStatus.PENDING || !order.getCustomerId().equals(userId)) {
+            return "err/error";
+        }
+        //lấy ra phuog thức thanh toán của đơn hàng
+        PaymentMethod paymentMethod = order.getPayment().getPaymentMethod();
+        String redirectUrl = null;
+        if (paymentMethod.equals(PaymentMethod.VNPAY)) {
+            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            String vnpayUrl = vnpayService.createOrder(request, order.getTotal().intValue(), order.getOrderId().toString(), baseUrl);
+            redirectUrl = vnpayUrl;
+        } else if (paymentMethod.equals(PaymentMethod.PAYPAL)) {
+            redirectUrl = "/customer/paypal/checkout?orderId=" + orderId;
+        }
+        return "redirect:" + redirectUrl;
+    }
+
 
 
     @PostMapping("/cancel")
