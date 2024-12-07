@@ -41,10 +41,6 @@ public class AuthController {
     @Autowired
     private CaptchaService captchaService;
     @Autowired
-    private GoogleService googleUtils;
-    @Autowired
-    private UserService userservice;
-    @Autowired
     MailService mailService;
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -73,37 +69,6 @@ public class AuthController {
         Logger.log("Register: " + registerRequest);
         userService.registerUser(registerRequest);
         return ResponseEntity.ok("Đăng ký thành công");
-    }
-
-
-
-    @RequestMapping("/loginGG")
-    public String LoginWithGoogle(@RequestParam String code) {
-        try {
-            String accessToken = googleUtils.getToken(code);
-            GooglePojo googleUser = googleUtils.getUserInfo(accessToken);
-            Logger.log("Google User: " + googleUser);
-            User user = userservice.findByEmail(googleUser.getEmail());
-            if (user == null) {
-                RegisterReq customer = new RegisterReq();
-                customer.setEmail(googleUser.getEmail());
-                customer.setFullname(googleUser.getName());
-                customer.setPassword("");
-                userservice.registerUser(customer);
-            }
-            // Create authorities
-            Collection<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_USER")); // Add any roles as needed
-
-            // Create Authentication object
-            Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            return "redirect:/";
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "redirect:/";
-        }
     }
 
     @GetMapping("/forgot-password")

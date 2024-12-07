@@ -37,13 +37,4 @@ public class UserDTO {
         this.image = image;
         this.birthDate = birthDate;
     }
-
-    // Getters và Setters
-    public List<AddressForOrderDTO> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(List<AddressForOrderDTO> addresses) {
-        this.addresses = addresses;
-    }
 }
