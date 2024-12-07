@@ -1,6 +1,9 @@
 package com.cosmeticsellingwebsite.controller;
 
+import com.cosmeticsellingwebsite.dto.ProductSearchDTO;
 import com.cosmeticsellingwebsite.dto.VoucherDTO;
+import com.cosmeticsellingwebsite.entity.Category;
+import com.cosmeticsellingwebsite.entity.Product;
 import com.cosmeticsellingwebsite.entity.Voucher;
 import com.cosmeticsellingwebsite.payload.response.ProductDetailResponse;
 import com.cosmeticsellingwebsite.service.impl.CategoryService;
@@ -34,6 +37,44 @@ public class ProductBrowerController {
     private VoucherService voucherService;
 
 
+    @GetMapping("/search")
+    public String searchProducts(
+            @RequestParam(value = "keyword", required = false,defaultValue = "") String keyword,
+            @RequestParam(value = "minPrice", required = false,defaultValue = "0") Double minPrice,
+            @RequestParam(value = "maxPrice", required = false,defaultValue = "9999999999") Double maxPrice,
+            @RequestParam(value = "brand", required = false,defaultValue = "") String brand,
+            @RequestParam(value = "origin", required = false,defaultValue = "") String origin,
+            @RequestParam(value = "category", required = false,defaultValue = "") String category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            Model model
+    ){
+        if (keyword == null) {
+            keyword = ""; }
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("productName").ascending());
+
+        Logger.log("Searching products with keyword: " + keyword + ", minPrice: " + minPrice + ", maxPrice: " + maxPrice + ", brand: " + brand + ", origin: " + origin + ", category: " + category);
+        Page<ProductSearchDTO> products = productService.searchProducts(keyword, minPrice, maxPrice, brand, origin, category, pageable);
+//        Logger.log("Products: " + products.getContent());
+        model.addAttribute("products", products.getContent());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+        model.addAttribute("brand", brand);
+        model.addAttribute("origin", origin);
+        model.addAttribute("category", category);
+
+        List<String> categories = categoryService.getAllCategoriess().stream().map(Category::getCategoryName).toList();
+        model.addAttribute("categories", categories);
+        List<String> brands = productService.getAllBrands();
+        model.addAttribute("brands", brands);
+        List<String> origins = productService.getAllOrigins();
+        model.addAttribute("origins", origins);
+        return "user/searchProduct";
+    }
+
+
+
     @GetMapping("/category/products")
     public ResponseEntity<?> getCategoryWithProducts(@RequestParam Long categoryId, @RequestParam(required = false) Integer page) {
         if (page == null) {
@@ -47,7 +88,7 @@ public class ProductBrowerController {
         return ResponseEntity.ok(categoryService.getCategoryWithProductsPaging(categoryId, pageable));
     }
     @GetMapping("/categories")
-    public Object getAllCategories() {
+    public ResponseEntity<?> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategoriess());
     }
     @GetMapping("/products")
