@@ -1,5 +1,6 @@
 package com.cosmeticsellingwebsite.service.impl;
 
+import com.cosmeticsellingwebsite.dto.AddUserDTO;
 import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.enums.RoleEnum;
 import com.cosmeticsellingwebsite.exception.CustomException;
@@ -121,6 +122,13 @@ public class UserService implements IUserService, UserDetailsService {
 
     public void save(User user) {
         userRepository.save(user);
+    }
+
+    public void saveUser(AddUserDTO user) {
+        User userEntity = userRepository.findById(user.getUserId()).orElseThrow(() -> new CustomException("User not found"));
+        BeanUtils.copyProperties(user, userEntity);
+        userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(userEntity);
     }
 
     public List<User> searchUsers(String keyword) {
