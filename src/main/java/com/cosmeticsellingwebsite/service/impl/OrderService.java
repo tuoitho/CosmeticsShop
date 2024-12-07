@@ -217,7 +217,7 @@ public class OrderService implements IOrderService {
             productSnapshot.put("image", product.getImage());
             orderLine.setProductSnapshot(productSnapshot);
             orderLine.setOrder(order);
-
+            orderLines.add(orderLine);
             // Cộng dồn tổng giá trị
             total += product.getCost() * cartItem.getQuantity();
         }
