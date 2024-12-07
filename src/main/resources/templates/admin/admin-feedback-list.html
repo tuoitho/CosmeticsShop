@@ -35,6 +35,33 @@
 <body>
 <section class="container mt-4" layout:fragment="app-content">
     <h2>Quản lý đánh giá sản phẩm</h2>
+
+    <!-- Form tìm kiếm và lọc -->
+    <form th:action="@{/admin/feedbacks}" method="get" class="mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" name="keyword" class="form-control" placeholder="Tìm theo tên khách hàng"
+                       th:value="${keyword}">
+            </div>
+            <div class="col-md-4">
+                <select name="filter" class="form-control">
+                    <option value="" th:if="${filter == null || filter == ''}" selected>-- Tất cả trạng thái --</option>
+                    <option value="responded" th:selected="${filter == 'responded'}">Đã phản hồi</option>
+                    <option value="not_responded" th:selected="${filter == 'not_responded'}">Chưa phản hồi</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">Lọc</button>
+                <a href="/admin/feedbacks" class="btn btn-secondary">Đặt lại</a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Kiểm tra nếu không có phản hồi -->
+    <div th:if="${productFeedbacks.isEmpty()}" class="alert alert-warning text-center">
+        Hiện chưa có khách hàng nào phản hồi về sản phẩm.
+    </div>
+
     <table class="table table-striped">
         <thead>
         <tr>
@@ -61,6 +88,22 @@
         </tr>
         </tbody>
     </table>
+
+    <!-- Phân trang -->
+    <nav th:if="${!productFeedbacks.isEmpty()}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{'/admin/feedbacks?page=' + ${currentPage - 1} + '&size=' + ${pageSize}}">Previous</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${i == currentPage ? 'active' : ''}">
+                <a class="page-link" th:href="@{'/admin/feedbacks?page=' + ${i} + '&size=' + ${pageSize}}" th:text="${i + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{'/admin/feedbacks?page=' + ${currentPage + 1} + '&size=' + ${pageSize}}">Next</a>
+            </li>
+        </ul>
+    </nav>
 </section>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

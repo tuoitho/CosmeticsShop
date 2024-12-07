@@ -6,6 +6,7 @@ import com.cosmeticsellingwebsite.entity.User;
 import com.cosmeticsellingwebsite.security.UserPrincipal;
 import com.cosmeticsellingwebsite.security.oauth.CustomOAuth2User;
 import com.cosmeticsellingwebsite.service.impl.ProductService;
+import com.cosmeticsellingwebsite.service.impl.ProductService;
 import com.cosmeticsellingwebsite.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,10 +17,12 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/")
@@ -35,4 +38,8 @@ public class HomeController {
         model.addAttribute("top20HighestRatingProducts", productService.getTop20HighestRatedProducts());
         return "user/home";
     }
+
+
+
+
 }

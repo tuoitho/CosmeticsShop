@@ -3,6 +3,7 @@ package com.cosmeticsellingwebsite.repository;
 import com.cosmeticsellingwebsite.entity.Product;
 import com.cosmeticsellingwebsite.entity.ProductFeedback;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -90,4 +91,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 
     boolean existsByCategory_CategoryId(Long id);
+
+    Page<Product> findByProductNameContaining(String productName, Pageable pageable);
+    Page<Product> findByProductNameContainingAndActive(String productName, Boolean active, Pageable pageable);
 }

@@ -4,6 +4,8 @@ import com.cosmeticsellingwebsite.entity.ProductFeedback;
 import com.cosmeticsellingwebsite.repository.ProductFeedbackRepository;
 import com.cosmeticsellingwebsite.service.interfaces.IProductFeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,6 +39,32 @@ public class ProductFeedbackService implements IProductFeedbackService {
     @Override
     public Optional<ProductFeedback> findById(Long id) {
         return productFeedbackRepository.findById(id);
+    }
+
+    @Override
+    public Page<ProductFeedback> getAllFeedbacks(Pageable pageable) {
+        return productFeedbackRepository.findAll(pageable);
+    }
+
+    public Page<ProductFeedback> searchFeedbacks(String keyword, Pageable pageable) {
+        if (keyword == null || keyword.isEmpty()) {
+            return productFeedbackRepository.findAll(pageable);
+        }
+        return productFeedbackRepository.searchFeedbacks(keyword, pageable);
+    }
+
+    public Page<ProductFeedback> getRespondedFeedbacks(String keyword, Pageable pageable) {
+        if (keyword == null || keyword.isEmpty()) {
+            return productFeedbackRepository.findByFeedbackResponseIsNotNull(pageable);
+        }
+        return productFeedbackRepository.findByFeedbackResponseIsNotNullAndKeyword(keyword, pageable);
+    }
+
+    public Page<ProductFeedback> getNotRespondedFeedbacks(String keyword, Pageable pageable) {
+        if (keyword == null || keyword.isEmpty()) {
+            return productFeedbackRepository.findByFeedbackResponseIsNull(pageable);
+        }
+        return productFeedbackRepository.findByFeedbackResponseIsNullAndKeyword(keyword, pageable);
     }
 
 }

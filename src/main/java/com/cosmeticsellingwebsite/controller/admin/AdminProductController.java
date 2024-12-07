@@ -28,7 +28,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/admin/products")
-//@PreAuthorize("hasRole('ADMIN')")
+//@RequestMapping({"/admin/products", "/manager/products"})
 public class AdminProductController {
     @Autowired
     IProductService productService = new ProductService();
@@ -41,14 +41,20 @@ public class AdminProductController {
     @GetMapping("")
     public String getAllProducts(@RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "5") int size,
+                                 @RequestParam(defaultValue = "") String searchKeyword,
+                                 @RequestParam(required = false) Boolean active,
                                  Model model) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("productName").ascending());
-        Page<Product> productPage = productService.getAllProducts(pageable);
+
+        // Gọi service để lấy danh sách sản phẩm theo bộ lọc
+        Page<Product> productPage = productService.searchAndFilterProducts(searchKeyword, active, pageable);
 
         model.addAttribute("products", productPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", productPage.getTotalPages());
         model.addAttribute("pageSize", size);
+        model.addAttribute("searchKeyword", searchKeyword);
+        model.addAttribute("active", active);
 
         return "admin/admin-product-list";
     }

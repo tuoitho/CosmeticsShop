@@ -1,8 +1,11 @@
 package com.cosmeticsellingwebsite.controller.admin;
 
+import com.cosmeticsellingwebsite.dto.VoucherDTO;
 import com.cosmeticsellingwebsite.entity.Voucher;
 import com.cosmeticsellingwebsite.service.impl.VoucherService;
+import com.cosmeticsellingwebsite.util.Logger;
 import jakarta.validation.Valid;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/admin/vouchers")
+//@RequestMapping("/admin/vouchers")
+@RequestMapping({"/admin/vouchers", "/manager/vouchers"})
 public class AdminVoucherController {
     @Autowired
     private VoucherService voucherService;
@@ -26,7 +30,16 @@ public class AdminVoucherController {
             @RequestParam(defaultValue = "5") int size,
             Model model) {
         Page<Voucher> voucherPage = voucherService.getVouchersWithPagination(page, size);
-        model.addAttribute("voucherPage", voucherPage);
+        //bien doi dto
+        Page<VoucherDTO> voucherDTOPage = voucherPage.map(voucher -> {
+            VoucherDTO voucherDTO = new VoucherDTO();
+            BeanUtils.copyProperties(voucher, voucherDTO);
+            voucherDTO.setQuantity(voucherService.countByVoucherCode(voucher.getVoucherCode()));
+            voucherDTO.setQuantityUsed(voucherService.countByUsedTrueAndVoucherCode(voucher.getVoucherCode()));
+            voucherDTO.setQuantityAvailable(voucherService.countByUsedFalseAndVoucherCode(voucher.getVoucherCode()));
+            return voucherDTO;
+        });
+        model.addAttribute("voucherPage", voucherDTOPage);
         return "admin/admin-voucher-list"; // View hiển thị danh sách mã giảm giá
     }
 
@@ -38,7 +51,7 @@ public class AdminVoucherController {
     }
 
     @PostMapping("/save")
-    public String addVoucher(@ModelAttribute Voucher voucher, BindingResult result, Model model) {
+    public String addVoucher(@ModelAttribute VoucherDTO voucher, BindingResult result, Model model) {
 
         // Kiểm tra lỗi từ Hibernate Validator
         if (result.hasErrors()) {
@@ -63,8 +76,7 @@ public class AdminVoucherController {
             return "admin/admin-voucher-list";
         }
 
-        voucher.setOrder(null);
-        voucherService.saveVoucher(voucher);
+        voucherService.addVoucher(voucher);
         return "redirect:/admin/vouchers";
     }
 
@@ -72,16 +84,26 @@ public class AdminVoucherController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable("id") Long id, Model model) {
         Voucher voucher = voucherService.getVoucherById(id);
-        model.addAttribute("voucher", voucher);
+        VoucherDTO voucherDTO = new VoucherDTO();
+        BeanUtils.copyProperties(voucher, voucherDTO);
+        voucherDTO.setQuantity(voucherService.countByVoucherCode(voucher.getVoucherCode()));
+        voucherDTO.setQuantityUsed(voucherService.countByUsedTrueAndVoucherCode(voucher.getVoucherCode()));
+        voucherDTO.setQuantityAvailable(voucherService.countByUsedFalseAndVoucherCode(voucher.getVoucherCode()));
+//        model.addAttribute("voucher", voucher);
+        model.addAttribute("voucher", voucherDTO);
         return "admin/admin-voucher-edit"; // Form chỉnh sửa mã giảm giá
     }
 
-    @PostMapping("/update/{id}")
-    public String updateVoucher(@PathVariable("id") Long id, @ModelAttribute("voucher") @Valid Voucher voucher, BindingResult result) {
+    @PostMapping("/update")
+    public String updateVoucher(
+//            @PathVariable("id") Long id,
+                                @ModelAttribute("voucher") @Valid VoucherDTO voucher, BindingResult result) {
+        Logger.log("Voucher: " + voucher);
         if (result.hasErrors()) {
-            return "voucher/edit";
+            return "admin/admin-voucher-edit";
         }
-        voucherService.updateVoucher(id, voucher);
+//        voucherService.updateVoucher(id, voucher);
+        voucherService.updateVoucher(voucher);
         return "redirect:/admin/vouchers";
     }
 

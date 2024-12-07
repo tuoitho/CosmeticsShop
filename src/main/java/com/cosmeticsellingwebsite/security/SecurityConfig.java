@@ -38,6 +38,8 @@ import java.util.Arrays;
 public class SecurityConfig {
     //    @Autowired
 //    @Lazy
+
+
     private final OAuth2LoginSuccessHandler oauth2LoginSuccessHandler;
     @Autowired
     CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
@@ -79,9 +81,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-//                .sessionManagement(session -> session
-//                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-//                )
                 .sessionManagement(session -> session
                         .maximumSessions(1) // Chỉ cho phép 1 phiên đăng nhập cùng lúc
                         .maxSessionsPreventsLogin(false) // Không cấm đăng nhập nếu đạt giới hạn
@@ -89,17 +88,28 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
+//                        STATIC_RESOURCES
                         .requestMatchers("/assets/**", "/showMsg.js", "/notification.js", "/error", "/error/**", " /login").permitAll()
-                        .requestMatchers("/api/images/**", "/auth/**",
-                                "/oauth2/**", "/user/**", "browser/**",
-                                "/about", "/").permitAll()
-                        .requestMatchers("/customer/**", "customer").hasRole("CUSTOMER")
-                        .requestMatchers("/shipper/**").hasRole("SHIPPER")
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/manager/**").hasRole("MANAGER")
-
+//                        PUBLIC
+                        .requestMatchers("/api/images/**", "/auth/**", "/oauth2/**", "/user/**", "/browser/**","/about", "/").permitAll()
+//                        .requestMatchers("/shipper/**").hasRole("SHIPPER")
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/manager/**").hasRole("MANAGER")
                         .requestMatchers("/api/revenue/**").hasAnyRole("ADMIN", "MANAGER")
-
+                        .requestMatchers("/customer/**").hasRole("CUSTOMER")
+                        .requestMatchers(
+                                "/admin/products/**",
+                                "/admin/report/**",
+                                "/admin/orders/**",
+                                "/admin/revenue/**",
+                                "/admin/categories/**",
+                                "/admin/vouchers/**",
+                                "/admin/stock/**",
+                                "/admin/feedbacks/**"
+                                ).hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers(
+                                "/admin/user/**")
+                                .hasRole("ADMIN")
                         .anyRequest().authenticated()) // Require authentication for all other requests
                 .formLogin(f -> f.loginPage("/auth/login").permitAll()
                         .loginProcessingUrl("/login")

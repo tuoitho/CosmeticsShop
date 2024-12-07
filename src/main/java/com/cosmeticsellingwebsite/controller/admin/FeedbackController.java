@@ -10,6 +10,9 @@ import com.cosmeticsellingwebsite.service.impl.FeedbackResponseService;
 import com.cosmeticsellingwebsite.service.impl.ProductFeedbackService;
 import com.cosmeticsellingwebsite.service.impl.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -35,11 +38,27 @@ public class FeedbackController {
     private ProductService productService;
 
     @GetMapping
-    public String listFeedbacks(Model model) {
-        List<ProductFeedback> feedbacks = productFeedbackService.getAllFeedbacks();
+    public String listFeedbacks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String filter,
+            Model model) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductFeedback> feedbackPage;
+
+        if ("responded".equals(filter)) {
+            feedbackPage = productFeedbackService.getRespondedFeedbacks(keyword, pageable);
+        } else if ("not_responded".equals(filter)) {
+            feedbackPage = productFeedbackService.getNotRespondedFeedbacks(keyword, pageable);
+        } else {
+            feedbackPage = productFeedbackService.searchFeedbacks(keyword, pageable);
+        }
+
         List<Customer> customers = customerService.getAllCustomers();
 
-        List<ProductFeedbackDTO> feedbackDTOs = feedbacks.stream()
+        List<ProductFeedbackDTO> feedbackDTOs = feedbackPage.getContent().stream()
                 .map(f -> {
                     String customerName = customers.stream()
                             .filter(c -> c.getUserId().equals(f.getCustomerId()))
@@ -56,11 +75,16 @@ public class FeedbackController {
                 })
                 .collect(Collectors.toList());
 
+        // Truyền dữ liệu vào model
         model.addAttribute("productFeedbacks", feedbackDTOs);
-        model.addAttribute("customers", customers);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", feedbackPage.getTotalPages());
+        model.addAttribute("pageSize", size);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("filter", filter);
+
         return "admin/admin-feedback-list";
     }
-
     // Hiển thị form phản hồi
     @GetMapping("/respond/{feedbackId}")
     public String showFeedbackResponseForm(@PathVariable Long feedbackId, Model model) {

@@ -25,8 +25,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 .collect(Collectors.joining(", "));
         Logger.log(authorities);
         switch (authorities) {
-            case "ROLE_ADMIN" -> response.sendRedirect("/admin");
-            case "ROLE_MANAGER" -> response.sendRedirect("/manager");
+            case "ROLE_ADMIN" -> response.sendRedirect("/admin/report");
+            case "ROLE_MANAGER" -> response.sendRedirect("/manager/report");
             case "ROLE_CUSTOMER" -> response.sendRedirect("/");
             default -> response.sendRedirect("/login");
         }

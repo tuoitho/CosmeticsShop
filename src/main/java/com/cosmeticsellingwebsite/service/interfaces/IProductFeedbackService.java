@@ -1,6 +1,8 @@
 package com.cosmeticsellingwebsite.service.interfaces;
 
 import com.cosmeticsellingwebsite.entity.ProductFeedback;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,4 +19,11 @@ public interface IProductFeedbackService {
 
     Optional<ProductFeedback> findById(Long id);
 
+    Page<ProductFeedback> getAllFeedbacks(Pageable pageable);
+
+    Page<ProductFeedback> searchFeedbacks(String keyword, Pageable pageable);
+
+    Page<ProductFeedback> getRespondedFeedbacks(String keyword, Pageable pageable);
+
+    Page<ProductFeedback> getNotRespondedFeedbacks(String keyword, Pageable pageable);
 }

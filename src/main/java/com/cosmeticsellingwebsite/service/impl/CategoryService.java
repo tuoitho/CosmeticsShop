@@ -2,11 +2,13 @@ package com.cosmeticsellingwebsite.service.impl;
 
 import com.cosmeticsellingwebsite.dto.ProductSummaryDTO;
 import com.cosmeticsellingwebsite.entity.Category;
+import com.cosmeticsellingwebsite.entity.Order;
 import com.cosmeticsellingwebsite.entity.ProductFeedback;
 import com.cosmeticsellingwebsite.exception.CustomException;
 import com.cosmeticsellingwebsite.payload.response.CategoryProductPagingResponse;
 import com.cosmeticsellingwebsite.payload.response.CategoryProductResponse;
 import com.cosmeticsellingwebsite.payload.response.CategoryResponse;
+import com.cosmeticsellingwebsite.payload.response.CategorySalesResp;
 import com.cosmeticsellingwebsite.repository.CategoryRepository;
 import com.cosmeticsellingwebsite.repository.OrderLineRepository;
 import com.cosmeticsellingwebsite.repository.ProductFeedbackRepository;
@@ -18,6 +20,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +41,34 @@ public class CategoryService implements ICategoryService {
         List<Category> categories = categoryRepository.findAll();
         return categories.stream().map(category -> new CategoryResponse(category.getCategoryId(), category.getCategoryName())).toList();
     }
+
+    // lấy doanh số của từng category trong năm
+    public List<CategorySalesResp> getCategoryTotalSold() {
+        // Lấy thời điểm đầu năm
+        LocalDateTime startOfYear = LocalDateTime.now()
+                .withDayOfYear(1)
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+
+        // Lấy thời điểm cuối năm
+        LocalDateTime endOfYear = startOfYear.plusYears(1)
+                .minusDays(1)
+                .withHour(23)
+                .withMinute(59)
+                .withSecond(59);
+
+
+        List<Category> categories = categoryRepository.findAll();
+        return categories.stream().map(category -> {
+            CategorySalesResp categoryResponse = new CategorySalesResp();
+            categoryResponse.setCategoryName(category.getCategoryName());
+            categoryResponse.setTotalSold(categoryRepository.findTotalSoldByCategoryId(category.getCategoryId(), startOfYear, endOfYear));
+            return categoryResponse;
+        }).toList();
+    }
+
 
     @Override
     public List<Category> getAllCategoriess() {
