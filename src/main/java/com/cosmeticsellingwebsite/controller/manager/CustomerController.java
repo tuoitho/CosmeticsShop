@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/manager/customers")
-public class ManagerCustomerController {
+public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
@@ -38,7 +38,7 @@ public class ManagerCustomerController {
         // Thêm dữ liệu vào model
         model.addAttribute("customerPage", customerPage);
 
-        return "manager/manager-customer-list"; // Tên file HTML
+        return "manager/customer-list"; // Tên file HTML
     }
 
     @GetMapping("/search")
@@ -46,7 +46,7 @@ public class ManagerCustomerController {
         List<Customer> customers = customerService.searchByKeyword(keyword);
         model.addAttribute("customers", customers);
         model.addAttribute("keyword", keyword);
-        return "manager/manager-customer-list"; // Tên file HTML
+        return "manager/customer-list"; // Tên file HTML
     }
 
     @GetMapping("/{id}")
@@ -62,7 +62,7 @@ public class ManagerCustomerController {
         model.addAttribute("customer", customer);
         model.addAttribute("orders", orders);
 
-        return "manager/manager-customer-detail"; // Tên view
+        return "manager/customer-detail"; // Tên view
 
     }
 
@@ -100,3 +100,5 @@ public class ManagerCustomerController {
                 .orElse(true); // Nếu không tìm thấy giỏ hàng, coi như giỏ hàng rỗng
     }
 }
+
+

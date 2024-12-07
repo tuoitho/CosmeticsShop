@@ -1,22 +1,18 @@
-package com.cosmeticsellingwebsite.controller.admin;
+package com.cosmeticsellingwebsite.controller.manager;
 
 import com.cosmeticsellingwebsite.entity.Order;
 import com.cosmeticsellingwebsite.enums.OrderStatus;
 import com.cosmeticsellingwebsite.service.impl.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
 @Controller
-@RequestMapping("/admin/orders")
-public class AdminOrderController {
+@RequestMapping("/manager/orders")
+public class OrderController {
 
     @Autowired
     private OrderService orderService;
@@ -34,7 +30,7 @@ public class AdminOrderController {
         model.addAttribute("searchKeyword", searchKeyword);
         model.addAttribute("selectedStatus", selectedStatus);
 
-        return "admin/order-list";
+        return "manager/order-list";
     }
 
 
@@ -57,7 +53,7 @@ public class AdminOrderController {
     public String viewOrderDetails(@PathVariable("id") Long orderId, Model model) {
         Order order = orderService.getOrderById(orderId);
         model.addAttribute("order", order);
-        return "admin/order_details";
+        return "manager/order-details";
     }
 
 
