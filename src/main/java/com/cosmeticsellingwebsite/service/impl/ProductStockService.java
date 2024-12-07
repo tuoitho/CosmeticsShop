@@ -44,4 +44,13 @@ public class ProductStockService implements IProductStockService {
     public Page<ProductStock> getPaginatedProductStocks(Pageable pageable) {
         return productStockRepository.findAll(pageable);
     }
+
+    public Page<ProductStock> searchProductStocks(String searchTerm, Pageable pageable) {
+        if (searchTerm == null || searchTerm.isEmpty()) {
+            // Nếu không có từ khóa tìm kiếm, trả về toàn bộ danh sách có phân trang
+            return productStockRepository.findAll(pageable);
+        }
+        // Nếu có từ khóa tìm kiếm, thực hiện tìm kiếm
+        return productStockRepository.searchByProductNameOrCode(searchTerm, pageable);
+    }
 }
