@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -27,4 +28,5 @@ public class OrderHistoryDetailDTO {
 
     private ShippingAddressDTO shippingAddress;
     private PaymentDTO payment;
+    private List<OrderStatusHistoryDTO> orderStatusHistories;
 }

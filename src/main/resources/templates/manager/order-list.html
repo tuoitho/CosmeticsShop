@@ -36,8 +36,8 @@
                     <select name="status" class="form-select">
                         <option value="">Tất cả</option>
                         <option th:each="status : ${T(com.cosmeticsellingwebsite.enums.OrderStatus).values()}"
-                                th:value="${status}" th:text="${status}"
-                                th:selected="${status == selectedStatus}"></option>
+                                th:value="${status.toString()}" th:text="${status.toString()}"
+                                th:selected="${status.toString() == selectedStatus}"></option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -62,14 +62,17 @@
             <tr th:each="order, stat : ${orders}">
                 <td th:text="${stat.index + 1 + (orders.number * orders.size)}">1</td>
                 <td th:text="${order.orderId}">ORD12345</td>
-                <td th:text="${order.orderStatus}">PENDING</td>
+                <td th:text="${order.orderStatus.toString()}">PENDING</td>
                 <td>
                     <form th:action="@{/admin/orders/{id}/update-status(id=${order.orderId})}" method="post" class="d-inline">
                         <select name="newStatus" class="form-select form-select-sm d-inline w-auto">
                             <option th:each="status : ${T(com.cosmeticsellingwebsite.enums.OrderStatus).values()}"
-                                    th:value="${status}" th:text="${status}"
-                                    th:selected="${status == order.orderStatus}"></option>
+                                    th:value="${status.toString()}" th:text="${status.toString()}"
+                                    th:selected="${status.toString() == order.orderStatus.toString()}"></option>
                         </select>
+<!--                        input tùy chọn-->
+                        <input type="text" name="content" class="form-control form-control-sm d-inline w-50"
+                               placeholder="Nội dung cập nhật (Không bắt buộc)">
                         <button type="submit" class="btn btn-success btn-sm">
                             <i class="fa fa-sync"></i> Cập nhật
                         </button>

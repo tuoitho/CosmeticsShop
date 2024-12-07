@@ -411,6 +411,11 @@ public class OrderService implements IOrderService {
         PaymentDTO paymentDTO = new PaymentDTO();
         BeanUtils.copyProperties(payment, paymentDTO);
         orderHistoryDetailDTO.setPayment(paymentDTO);
+        orderHistoryDetailDTO.setOrderStatusHistories(order.getOrderStatusHistories().stream().map(x -> {
+            OrderStatusHistoryDTO orderStatusHistoryDTO = new OrderStatusHistoryDTO();
+            BeanUtils.copyProperties(x, orderStatusHistoryDTO);
+            return orderStatusHistoryDTO;
+        }).collect(Collectors.toList()));
         return orderHistoryDetailDTO;
     }
 
@@ -471,13 +476,33 @@ public class OrderService implements IOrderService {
             }
             return orderRepository.findByOrderIdContaining(searchKeyword, pageable);
         } else if (selectedStatus != null) {
-            return orderRepository.findByOrderStatus(selectedStatus, pageable);
+            return orderRepository.findByOrderStatusOrderByOrderDateDesc(selectedStatus, pageable);
         }
-        return orderRepository.findAll(pageable);
+//        return orderRepository.findAll(pageable);
+        return orderRepository.findAllDesc(pageable);
     }
 
 
     public Page<Order> getOrdersByOrderStatus(Long customerId, OrderStatus orderStatus, Pageable pageable) {
         return orderRepository.findAllPaginatedByOrderStatus(customerId, orderStatus, pageable);
+    }
+
+    public void updateOrderStatusWithContent(Long id, OrderStatus newStatus, String content) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng với ID: " + id));
+        order.setOrderStatus(newStatus);
+        OrderStatusHistory orderStatusHistory = new OrderStatusHistory();
+        orderStatusHistory.setOrder(order);
+        orderStatusHistory.setStatus(newStatus);
+        orderStatusHistory.setDescription(content);
+        if (order.getOrderStatusHistories() == null) {
+            order.setOrderStatusHistories(new ArrayList<>());
+        }
+        order.getOrderStatusHistories().add(orderStatusHistory);
+        if (newStatus == OrderStatus.COMPLETED) {
+            //update ngay hoan thanh
+            order.setDeliveryDate(LocalDateTime.now());
+        }
+        orderRepository.save(order);
     }
 }
