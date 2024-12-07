@@ -102,4 +102,16 @@ public class AddressService {
             return false;
         }
     }
+    public void deleteAddressById(Long id) {
+        addressRepository.deleteById(id); // Gọi repository để xóa
+    }
+
+    public boolean checkAddressBelongToUser(Long id, Long userID) {
+        Customer customer = (Customer) userRepository.findById(userID).get();
+        Address address = addressRepository.findById(id).get();
+        if( customer.getAddresses().contains(address)) {
+            return true;
+        }
+        return false;
+    }
 }

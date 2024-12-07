@@ -5,9 +5,12 @@ import com.cosmeticsellingwebsite.dto.AddressForOrderDTO;
 import com.cosmeticsellingwebsite.service.impl.AddressService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -49,14 +52,32 @@ public class AddressController {
 
     // Lưu địa chỉ (thêm hoặc cập nhật)
     @PostMapping("/save")
-    public String saveAddress(@ModelAttribute AddressForOrderDTO addressDTO, HttpSession session, Model model) {
+    public String saveAddress(@ModelAttribute AddressForOrderDTO addressDTO, HttpSession session, Model model, RedirectAttributes redirectAttributes) {
         Long userID = authenticationHelper.getUserId();
         boolean success = addressService.saveAddressForUser(addressDTO, userID);
         if (success) {
+            redirectAttributes.addFlashAttribute("message", "Lưu địa chỉ thành công!");
             return "redirect:/customer/personal-info";
         } else {
-            model.addAttribute("error", "Có lỗi xảy ra khi lưu địa chỉ!");
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi lưu địa chỉ!");
             return "customer/edit-address";
         }
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteAddress(@PathVariable Long id) {
+        try {
+            // Gọi service để xóa địa chỉ
+            //Kiểm tra xem địa chỉ có thuộc về user đang đăng nhập không
+            Long userID = authenticationHelper.getUserId();
+            if (!addressService.checkAddressBelongToUser(id, userID)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Địa chỉ không thuộc về bạn.");
+            }
+            addressService.deleteAddressById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Không thể xóa địa chỉ.");
+        }
+    }
+
 }
