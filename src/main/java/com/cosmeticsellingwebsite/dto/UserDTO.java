@@ -5,6 +5,7 @@ import com.cosmeticsellingwebsite.enums.Gender;
 import com.cosmeticsellingwebsite.enums.RoleEnum;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -20,8 +21,11 @@ public class UserDTO {
     private Role role;
     private AddressForOrderDTO address; // Địa chỉ chính
     private List<AddressForOrderDTO> addresses; // Danh sách địa chỉ
+    private String image;
+    private LocalDate birthDate;
 
-    public UserDTO(Long userId, String name, String email, String password, Gender gender, String phone, Role role, AddressForOrderDTO address) {
+
+    public UserDTO(Long userId, String name, String email, String password, Gender gender, String phone, Role role, AddressForOrderDTO address, String image, LocalDate birthDate) {
         this.userId = userId;
         this.name = name;
         this.email = email;
@@ -30,6 +34,8 @@ public class UserDTO {
         this.phone = phone;
         this.role = role;
         this.address = address;
+        this.image = image;
+        this.birthDate = birthDate;
     }
 
     // Getters và Setters

@@ -55,7 +55,7 @@ public class PaypalController {
             return new ModelAndView("err/500");
         }
         modelMap.addAttribute("orderId", orderId);
-        return new ModelAndView("user/paypalcheckout");
+        return new ModelAndView("customer/paypalcheckout");
     }
 
     @PostMapping("/orders")

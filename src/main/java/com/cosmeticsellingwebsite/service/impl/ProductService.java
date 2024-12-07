@@ -308,6 +308,7 @@ public class ProductService implements IProductService {
         return productRepository.findById(id);
     }
 
+    @Override
     public void addFeedback(Long customerId, AddProductFeedbackReq addProductFeedbackReq) {
         Long orderId = addProductFeedbackReq.getOrderId();
         Long productId = addProductFeedbackReq.getProductId();
@@ -340,6 +341,7 @@ public class ProductService implements IProductService {
         productFeedbackRepository.save(productFeedback);
     }
 
+    @Override
     public FeedbackDTO getFeedback(Long customerId, Long orderId, Long productId) {
 //        Logger.log(customerId, orderId, productId);
 //        Logger.log(productFeedbackRepository.findByCustomerIdAndOrderIdAndProduct_ProductId(customerId, orderId, productId));
@@ -352,5 +354,19 @@ public class ProductService implements IProductService {
         FeedbackDTO feedbackDTO = new FeedbackDTO();
         BeanUtils.copyProperties(productFeedback, feedbackDTO);
         return feedbackDTO;
+    }
+
+    public Product getProductByProductCode(String productCode) {
+        return productRepository.findByProductCode(productCode)
+                .orElseThrow(() -> new CustomException("Product not found"));
+    }
+
+    @Override
+    public Page<Product> searchAndFilterProducts(String searchKeyword, Boolean active, Pageable pageable) {
+        if (active != null) {
+            return productRepository.findByProductNameContainingAndActive(searchKeyword, active, pageable);
+        } else {
+            return productRepository.findByProductNameContaining(searchKeyword, pageable);
+        }
     }
 }

@@ -96,7 +96,7 @@ public class CartService implements ICartService {
         if (!product.getActive()) {
             throw new CustomException("Product is not active");
         }
-        Logger.log(product.toString());
+        Logger.log(addProductToCartRequest.toString());
         Cart cart = cartRepository.findByCustomer_UserId(userId).orElseGet(() -> {
             Cart newCart = new Cart();
             newCart.setCustomer((Customer) userRepository.findById(authenticationHelper.getUserId()).orElseThrow(() -> new RuntimeException("User not found")));
@@ -111,9 +111,17 @@ public class CartService implements ICartService {
                 .filter(item -> item.getProduct().getProductCode().equals(addProductToCartRequest.getProductCode()))
                 .findFirst();
         if (existingCartItem.isPresent()) {
+            Long productStock = existingCartItem.get().getProduct().getProductStock().getQuantity();
+            if (productStock < existingCartItem.get().getQuantity() + addProductToCartRequest.getQuantity()) {
+                throw new CustomException("Không đủ số lượng sản phẩm trong kho");
+            }
             CartItem cartItem = existingCartItem.get();
             cartItem.setQuantity(cartItem.getQuantity() + addProductToCartRequest.getQuantity());
         } else {
+            Long productStock = product.getProductStock().getQuantity();
+            if (productStock < addProductToCartRequest.getQuantity()) {
+                throw new CustomException("Không đủ số lượng sản phẩm trong kho");
+            }
             CartItem cartItem = new CartItem();
             cartItem.setProduct(product);
             cartItem.setQuantity(addProductToCartRequest.getQuantity());

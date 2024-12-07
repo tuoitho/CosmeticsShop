@@ -9,4 +9,6 @@ public interface IPersonalInformationService {
     UserDTO fetchPersonalInfo(Long userID);
     boolean savePersonalInfo(UserDTO userModel, Long userID);
     Optional<User> findUserById(Long userID);
+    boolean updatePassword(Long userId, String encodedNewPassword);
+
 }

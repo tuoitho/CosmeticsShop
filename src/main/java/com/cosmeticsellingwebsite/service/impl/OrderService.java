@@ -113,6 +113,7 @@ public class OrderService implements IOrderService {
                 Voucher voucher = voucherRepository.findFirstByVoucherCodeAndUsedFalseAndStartDateBeforeAndEndDateAfter(voucherCode, LocalDateTime.now(), LocalDateTime.now())
                         .orElseThrow(() -> new CustomException("Voucher " + voucherCode + " is not available"));
                 voucher.setUsed(true);
+                voucher.setOrder(order);
                 voucherRepository.save(voucher);
                 total -= voucher.getVoucherValue();
             }
@@ -168,34 +169,104 @@ public class OrderService implements IOrderService {
 
         return createOrderResponse;
     }
-//
-//    @Transactional
-//    public OrderResponse updateOrder(@Valid UpdateOrderRequest updateOrderRequest) {
-//        Order order = orderRepository.findById(updateOrderRequest.getOrderId()).orElseThrow(() -> new CustomException("Order not found"));
-//        Logger.log("Order found: " + order.getOrderLines());
-//        ShippingAddress shippingAddress = new ShippingAddress();
-//        BeanUtils.copyProperties(updateOrderRequest.getAddress(), shippingAddress);
-//        order.setShippingAddress(shippingAddress);
-//        Order savedOrder = orderRepository.save(order);
-//
-//        Payment payment = paymentRepository.findByOrder(order).orElseThrow(() -> new CustomException("Payment not found"));
-//        payment.setPaymentMethod(updateOrderRequest.getPaymentMethod());
-//        paymentRepository.save(payment);
-//
-//        OrderResponse createOrderResponse = new OrderResponse();
-//        BeanUtils.copyProperties(savedOrder, createOrderResponse);
-//        //        xử lý OrderLineForOrderDTO cho phan hoi
-//        Set<OrderLineForOrderDTO> orderLineForOrderDTOS = savedOrder.getOrderLines().stream().map(x -> {
-//            OrderLineForOrderDTO dto = new OrderLineForOrderDTO();
-//            dto.setProductCode(x.getProduct().getProductCode());
-//            dto.setProductSnapshot(x.getProductSnapshot());
-//            dto.setQuantity(x.getQuantity());
-//            return dto;
-//        }).collect(Collectors.toSet());
-//        createOrderResponse.setOrderLines(orderLineForOrderDTOS);
-//        createOrderResponse.setPaymentMethod(payment.getPaymentMethod());
-//        return createOrderResponse;
-//    }
+
+
+
+    @Transactional
+    public OrderResponse createOrderForSingleProduct(Long userId, CreateOrderRequest createOrderRequest) {
+        // TODO: chưa xử lý trường hợp tranh nhau đặt hàng
+        // Tìm người dùng
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        // Khởi tạo đơn hàng và các dòng đơn hàng
+        Order order = new Order();
+        Set<CartItemForOrderDTO> cartItemForOrderDTOS = createOrderRequest.getCartItemForOrderDTOS();
+        Set<OrderLine> orderLines = new LinkedHashSet<>();
+        double total = 0.0;
+        for (var cartItem : cartItemForOrderDTOS) {
+            Product product = productRepository.findByProductCode(cartItem.getProductCode())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            // check quantity
+            if (productService.getStockByProductCode(product.getProductCode()) < cartItem.getQuantity()) {
+                throw new RuntimeException("Product " + product.getProductCode() + " out of stock");
+            }
+//         tru so luong san pham
+            ProductStock productStock = productStockRepository.findByProduct_ProductCode(product.getProductCode())
+                    .orElseThrow(() -> new RuntimeException("Product stock not found"));
+            productStock.setQuantity(productStock.getQuantity() - cartItem.getQuantity());
+            productStockRepository.save(productStock);
+            OrderLine orderLine = new OrderLine();
+            orderLine.setProduct(product);
+            orderLine.setQuantity((long) Math.toIntExact(cartItem.getQuantity()));
+
+            // Tạo snapshot cho sản phẩm
+            Map<String, Object> productSnapshot = new HashMap<>();
+            productSnapshot.put("productId", product.getProductId());
+            productSnapshot.put("productCode", product.getProductCode());
+            productSnapshot.put("productName", product.getProductName());
+            productSnapshot.put("cost", product.getCost());
+            productSnapshot.put("description", product.getDescription());
+            productSnapshot.put("brand", product.getBrand());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            productSnapshot.put("expirationDate", product.getExpirationDate() != null ? product.getExpirationDate().format(formatter) : null);
+            productSnapshot.put("manufactureDate", product.getManufactureDate() != null ? product.getManufactureDate().format(formatter) : null);
+            productSnapshot.put("ingredient", product.getIngredient());
+            productSnapshot.put("how_to_use", product.getHow_to_use());
+            productSnapshot.put("volume", product.getVolume());
+            productSnapshot.put("origin", product.getOrigin());
+            productSnapshot.put("image", product.getImage());
+            orderLine.setProductSnapshot(productSnapshot);
+            orderLine.setOrder(order);
+
+            // Cộng dồn tổng giá trị
+            total += product.getCost() * cartItem.getQuantity();
+        }
+//        apply discount
+        if (createOrderRequest.getVoucherCodes() != null) {
+            for (String voucherCode : createOrderRequest.getVoucherCodes()) {
+                Voucher voucher = voucherRepository
+                        .findFirstByVoucherCodeAndUsedFalseAndStartDateBeforeAndEndDateAfter(voucherCode,
+                                LocalDateTime.now(), LocalDateTime.now())
+                        .orElseThrow(() -> new RuntimeException("Voucher " + voucherCode + " is not available"));
+                voucher.setUsed(true);
+                voucher.setOrder(order);
+                voucherRepository.save(voucher);
+                total -= voucher.getVoucherValue();
+            }
+        }
+        // Thiết lập các thuộc tính cho đơn hàng
+        order.setOrderLines(orderLines);
+        order.setTotal(total < 0 ? 0 : total);
+        order.setCustomerId(user.getUserId());
+        order.setOrderDate(LocalDateTime.ofInstant(new Date().toInstant(), TimeZone.getDefault().toZoneId()));
+        order.setOrderStatus(OrderStatus.PENDING);
+
+        // Cập nhật địa chỉ giao hàng
+        ShippingAddress shippingAddress = new ShippingAddress();
+        shippingAddress.setOrder(order);
+        BeanUtils.copyProperties(createOrderRequest.getAddress(), shippingAddress);
+        order.setShippingAddress(shippingAddress);
+
+        // Lưu đơn hàng và tạo phản hồi
+        Order savedOrder = orderRepository.save(order);
+        OrderResponse createOrderResponse = new OrderResponse();
+        BeanUtils.copyProperties(savedOrder, createOrderResponse);
+
+
+        // Lưu Payment và thiết lập phương thức thanh toán cho phản hồi
+        Payment payment = new Payment();
+        payment.setOrder(savedOrder);
+        payment.setTotal(total);
+        payment.setPaymentStatus(PaymentStatus.PENDING);
+        payment.setPaymentMethod(createOrderRequest.getPaymentMethod());
+        paymentRepository.save(payment);
+
+        OrderResponse orderResponse = new OrderResponse();
+        orderResponse.setOrderId(savedOrder.getOrderId());
+        orderResponse.setTotal( savedOrder.getTotal());
+        orderResponse.setPaymentMethod(payment.getPaymentMethod());
+        return orderResponse;
+    }
 
     public void cancelOrder( Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomException("Order not found"));
@@ -233,6 +304,18 @@ public class OrderService implements IOrderService {
         Payment payment = paymentRepository.findByOrder(order).orElseThrow(() -> new CustomException("Payment not found"));
         orderResponse.setPaymentMethod(payment.getPaymentMethod());
         return orderResponse;
+    }
+
+
+    public void updateOrderStatus(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        order.setOrderStatus(OrderStatus.CONFIRMED);
+        Payment payment = paymentRepository.findByOrder(order)
+                .orElseThrow(() -> new RuntimeException("Payment not found"));
+        payment.setPaymentStatus(PaymentStatus.PENDING);
+        payment.setPaymentDate(order.getOrderDate());
+        paymentRepository.save(payment);
+        orderRepository.save(order);
     }
 
     public Double getOrderTotal(Long orderId) {
@@ -275,6 +358,11 @@ public class OrderService implements IOrderService {
 
     public Set<Order> getAllOrders(Long customerId) {
         return orderRepository.findAllByCustomerId(customerId);
+    }
+
+    public Page<Order> getAllOrders(Long customerId,Pageable pageable) {
+
+        return orderRepository.findAllPaginated(customerId,pageable);
     }
 
     public Set<Order> getOrdersByOrderStatus(Long customerId, OrderStatus orderStatus) {
@@ -386,5 +474,10 @@ public class OrderService implements IOrderService {
             return orderRepository.findByOrderStatus(selectedStatus, pageable);
         }
         return orderRepository.findAll(pageable);
+    }
+
+
+    public Page<Order> getOrdersByOrderStatus(Long customerId, OrderStatus orderStatus, Pageable pageable) {
+        return orderRepository.findAllPaginatedByOrderStatus(customerId, orderStatus, pageable);
     }
 }

@@ -1,224 +1,357 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<!--      layout:decorate="~{layout.html}"-->
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý tài khoản</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!--    bootstrap-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/css/style.css">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f9f9f9;
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
         }
 
         .wrapper {
-            padding: 20px;
+            padding: 30px;
         }
 
         .myaccount-page-wrapper {
             background: #fff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            border-radius: 8px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .myaccount-tab-menu {
+            display: flex;
+            flex-direction: column;
+            background: #007bff;
+            border-radius: 10px 0 0 10px;
+            padding: 20px;
         }
 
         .myaccount-tab-menu a {
-            display: block;
-            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
             margin-bottom: 10px;
-            background: #f8f8f8;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 5px;
-            color: #333;
+            transition: background 0.3s ease, transform 0.2s ease;
             text-decoration: none;
-            transition: all 0.3s ease;
         }
 
-        .myaccount-tab-menu a:hover, .myaccount-tab-menu a.active {
-            background: #007bff;
-            color: #fff;
+        .myaccount-tab-menu a i {
+            margin-right: 10px;
+        }
+
+        .myaccount-tab-menu a:hover,
+        .myaccount-tab-menu a.active {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .tab-content {
+            padding: 20px;
+            background: #fff;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .tab-content h3 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
         }
 
         .single-input-item label {
-            font-weight: bold;
+            font-weight: 600;
+            color: #555;
         }
 
         .single-input-item input,
         .single-input-item select {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin-top: 5px;
             border: 1px solid #ddd;
             border-radius: 5px;
+            font-size: 16px;
         }
 
-        .single-input-item button {
-            background: #007bff;
-            color: #fff;
+        .single-input-item button,
+        .address-card button {
+            margin-top: 10px;
             padding: 10px 20px;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: #fff;
             border: none;
-            border-radius: 5px;
+            border-radius: 25px; /* Bo tròn nút */
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase; /* In hoa chữ */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Thêm hiệu ứng bóng */
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease; /* Hiệu ứng chuyển động khi hover */
         }
 
-        .single-input-item button:hover {
-            background: #0056b3;
+        .single-input-item button:hover,
+        .address-card button:hover {
+            background: linear-gradient(135deg, #0056b3, #00408a); /* Thay đổi gradient khi hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Hiệu ứng bóng khi hover */
+            transform: translateY(-3px); /* Nâng nút lên khi hover */
         }
 
-        .alert {
-            margin-top: 15px;
-        }
+
         .address-cards {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
         }
 
         .address-card {
+            position: relative; /* Đặt position relative để chứa nút chỉnh sửa */
             background: #fff;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 10px;
             padding: 15px;
-            width: calc(33.333% - 15px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .address-card button {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
+        .address-card p {
+            margin: 0;
+            font-size: 21px;
+            color: #555;
+        }
+
+        .address-card p strong {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .address-card a.btn-primary {
+            position: absolute; /* Đặt nút chỉnh sửa cố định */
+            bottom: 10px; /* Cách đáy card 15px */
+            right: 15px; /* Cách phải card 15px */
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: #fff;
+            font-size: 13px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .address-card a.btn-primary:hover {
+            background: linear-gradient(135deg, #0056b3, #003f85);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .address-card .btn-delete {
+            position: absolute; /* Đặt nút chỉnh sửa cố định */
+            bottom: 10px; /* Cách đáy card 15px */
+            right: 120px; /* Cách phải card 1px */
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: #fff;
+            font-size: 13px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .address-card .btn-delete:hover {
+            background: linear-gradient(135deg, #0056b3, #003f85);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Tab visibility */
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #1e7e34); /* Màu gradient xanh lá */
+            color: #fff;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #1e7e34, #155d27);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Nút Thay đổi */
+        .btn-danger {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #28a745, #218838); /* Gradient xanh lá */
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333, #bd2130); /* Đổi gradient khi hover */
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Bóng đậm hơn khi hover */
         }
 
     </style>
 </head>
 
 <body>
+
 <div class="wrapper">
-    <div class="my-account-wrapper">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="myaccount-page-wrapper">
-                        <div class="row">
-                            <!-- Tab Menu -->
-                            <div class="col-lg-3 col-md-4">
-                                <div class="myaccount-tab-menu nav" role="tablist">
-                                    <a th:href="@{#info-edit}" class="active" data-toggle="tab">
-                                        <i class="fa fa-user"></i> Thông tin cá nhân
-                                    </a>
-                                    <a th:href="@{#address-edit}" data-toggle="tab">
-                                        <i class="fa fa-map-marker"></i> Địa chỉ
-                                    </a>
-                                    <a th:href="@{#change-password}" data-toggle="tab">
-                                        <i class="fa fa-lock"></i> Đổi mật khẩu
-                                    </a>
+    <h2>Quản lý tài khoản</h2>
+    <div th:if="${message}" class="alert alert-success" style="font-size: 1.5em;">
+        <i class="fa fa-check-circle"></i> <span th:text="${message}"></span>
+    </div>
+    <div th:if="${error}" class="alert alert-danger" style="font-size: 1.5em;">
+        <i class="fa fa-exclamation-circle"></i> <span th:text="${error}"></span>
+    </div>
+
+    <div class="myaccount-page-wrapper">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="myaccount-tab-menu nav">
+                    <a href="#info-edit" onclick="toggleTab(event, 'info-edit')" class="active">
+                        <i class="fa fa-user"></i> Thông tin cá nhân
+                    </a>
+                    <a href="#address-edit" onclick="toggleTab(event, 'address-edit')">
+                        <i class="fa fa-map-marker"></i> Địa chỉ
+                    </a>
+                    <a href="#change-password" onclick="toggleTab(event, 'change-password')">
+                        <i class="fa fa-lock"></i> Đổi mật khẩu
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div class="tab-content">
+                    <div id="info-edit" class="tab-pane active">
+                        <h3>Thông tin cá nhân</h3>
+                        <form th:action="@{/customer/personal-info/profile}" method="post" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-lg-6 single-input-item">
+<!--                                    <label for="profileImage" class="required">Hình ảnh đại diện</label>-->
+<!--                                    <input type="file" id="profileImage" name="profileImage" accept="image/*" onchange="previewImage(event)">-->
+<!--                                    <img id="preview" th:src="${user.image}"-->
+<!--                                         alt="Hình đại diện"-->
+<!--                                         style="width: 150px; height: 150px; border-radius: 50%; margin-top: 10px;">-->
+
+
+                                    <div class="mb-4">
+                                        <label class="block font-semibold mb-2">Hình ảnh đại diện:</label>
+                                        <div class="flex items-center gap-2">
+                                            <button id="customButton" type="button" class="choose-file-button">Choose File</button>
+                                            <span id="fileName" class="text-gray-500">No file chosen</span>
+                                        </div>
+                                        <input type="file" id="imageInput" name="imagePath" accept="image/*" hidden>
+                                        <img id="imagePreview" th:src="@{'/api/images?imageName=' + ${user.image}}" alt="Image Preview"
+                                             style="width: 200px; height: 200px;  border-radius: 50%; margin-top: 10px;
+                                               object-fit: cover;
+                                                object-position: center;">
+                                    </div>
+
+
+                                </div>
+                                <div class="col-lg-6 single-input-item">
+                                    <label for="name" class="required">Họ và tên</label>
+                                    <input type="text" id="name" name="name" th:value="${user.name}" placeholder="Nhập họ và tên">
+                                </div>
+                                <div class="col-lg-6 single-input-item">
+                                    <label for="birthDate" class="required">Ngày sinh</label>
+                                    <input type="date" id="birthDate" name="birthDate" th:value="${user.birthDate}" placeholder="Nhập ngày sinh">
+                                </div>
+                                <div class="col-lg-6 single-input-item">
+                                    <label for="email" class="required">Email</label>
+                                    <input type="email" id="email" name="email" th:value="${user.email}" placeholder="Nhập email">
+                                </div>
+                                <div class="col-lg-6 single-input-item">
+                                    <label for="gender" class="required">Giới tính</label>
+                                    <select id="gender" name="gender">
+                                        <option th:value="${T(com.cosmeticsellingwebsite.enums.Gender).MALE.name()}"
+                                                th:selected="${user.gender == 'MALE'}">Nam</option>
+                                        <option th:value="${T(com.cosmeticsellingwebsite.enums.Gender).FEMALE.name()}"
+                                                th:selected="${user.gender == 'FEMALE'}">Nữ</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6 single-input-item">
+                                    <label for="phone" class="required">Số điện thoại</label>
+                                    <input type="text" id="phone" name="phone" th:value="${user.phone}" placeholder="Nhập số điện thoại">
                                 </div>
                             </div>
-                            <!-- Tab Content -->
-                            <div class="col-lg-9 col-md-8">
-                                <div class="tab-content">
-                                    <!-- Thông tin cá nhân -->
-                                    <div class="tab-pane fade show active" id="info-edit" role="tabpanel">
-                                        <div class="myaccount-content">
-                                            <h3>Thông tin cá nhân</h3>
-                                            <form th:action="@{/customer/personal-info/profile}" method="post">
-                                                <div class="row">
-                                                    <div th:if="${message}" class="alert alert-success">
-                                                        <i class="fa fa-check-circle"></i> <span th:text="${message}"></span>
-                                                    </div>
-                                                    <div th:if="${error}" class="alert alert-danger">
-                                                        <i class="fa fa-exclamation-circle"></i> <span th:text="${error}"></span>
-                                                    </div>
-                                                    <div class="col-lg-6 single-input-item">
-                                                        <label for="name" class="required">Họ và tên</label>
-                                                        <input type="text" id="name" name="name" th:value="${user.name}" placeholder="Nhập họ và tên">
-                                                    </div>
-                                                    <div class="col-lg-6 single-input-item">
-                                                        <label for="email" class="required">Email</label>
-                                                        <input type="email" id="email" name="email" th:value="${user.email}" placeholder="Nhập email">
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-lg-6 single-input-item">
-                                                        <label for="gender" class="required">Giới tính</label>
-                                                        <select id="gender" name="gender">
-                                                            <option th:value="${T(com.cosmeticsellingwebsite.enums.Gender).MALE.name()}"
-                                                                    th:selected="${user.gender == 'MALE'}">Nam</option>
-                                                            <option th:value="${T(com.cosmeticsellingwebsite.enums.Gender).FEMALE.name()}"
-                                                                    th:selected="${user.gender == 'FEMALE'}">Nữ</option>
-                                                        </select>
+                            <button type="submit" class="btn btn-danger">Lưu</button>
+                        </form>
 
-                                                    </div>
-                                                    <div class="col-lg-6 single-input-item">
-                                                        <label for="phone" class="required">Số điện thoại</label>
-                                                        <input type="text" id="phone" name="phone" th:value="${user.phone}" placeholder="Nhập số điện thoại">
-                                                    </div>
-                                                </div>
-                                                <button type="submit">Lưu</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <!-- Địa chỉ -->
-                                    <div class="tab-pane fade" id="address-edit" role="tabpanel">
-                                        <div class="myaccount-content">
-                                            <h3>Thông tin địa chỉ</h3>
+                    </div>
 
-                                            <!-- Hiển thị danh sách địa chỉ dạng thẻ -->
-                                            <div class="address-cards">
-                                                <div th:each="address : ${user.addresses}" class="address-card">
-                                                    <p><strong>Tên người nhận:</strong> <span th:text="${address.receiverName}"></span></p>
-                                                    <p><strong>Số điện thoại:</strong> <span th:text="${address.receiverPhone}"></span></p>
-                                                    <p><strong>Địa chỉ:</strong>
-                                                        <span th:text="${address.address} + ', ' + ${address.ward} + ', ' + ${address.district} + ', ' + ${address.province}"></span>
-                                                    </p>
-                                                    <a th:href="@{/customer/personal-info/address/edit/{id}(id=${address.addressId})}" class="btn btn-primary">Chỉnh sửa</a>
+                    <div id="address-edit" class="tab-pane">
+                        <h3>Thông tin địa chỉ</h3>
+                        <div class="address-cards">
+                            <div th:each="address : ${user.addresses}" class="address-card">
+                                <p><strong>Tên người nhận:</strong> <span th:text="${address.receiverName}"></span></p>
+                                <p><strong>Số điện thoại:</strong> <span th:text="${address.receiverPhone}"></span></p>
+                                <p><strong>Địa chỉ:</strong>
+                                    <span th:text="${address.address} + ', ' + ${address.ward} + ', ' + ${address.district} + ', ' + ${address.province}"></span>
+                                </p>
+                                <a th:href="@{/customer/personal-info/address/edit/{id}(id=${address.addressId})}" class="btn btn-primary">Chỉnh sửa</a>
+                                <!-- Nút Xóa -->
+                                <button
+                                        th:onclick="'confirmDelete(' + ${address.addressId} + ')'"
+                                        class="btn btn-delete">
+                                    Xóa
+                                </button>
+                            </div>
 
-                                                </div>
-                                            </div>
+                        </div>
+                        <button th:onclick="'window.location.href=\'/customer/personal-info/address/new\''" class="btn btn-success mt-3">Thêm địa chỉ mới</button>
+                    </div>
 
-                                            <!-- Nút thêm địa chỉ mới -->
-                                            <button th:onclick="'window.location.href=\'/customer/personal-info/address/new\''" class="btn btn-success mt-3">Thêm địa chỉ mới</button>
-                                        </div>
-                                    </div>
-                                    <!-- Đổi mật khẩu -->
-                                    <div class="tab-pane fade" id="change-password" role="tabpanel">
-                                        <div class="myaccount-content">
-                                            <h3>Đổi mật khẩu</h3>
-                                            <form th:action="@{/customer/personal-info/password}" method="post">
-                                                <div class="row">
-                                                    <div class="col-lg-6 single-input-item">
-                                                        <label for="currentPassword" class="required">Mật khẩu hiện tại</label>
-                                                        <input type="password" id="currentPassword" name="currentPassword" required/>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-lg-6 single-input-item">
-                                                        <label for="newPassword" class="required">Mật khẩu mới</label>
-                                                        <input type="password" id="newPassword" name="newPassword" required/>
-                                                    </div>
-                                                    <div class="col-lg-6 single-input-item">
-                                                        <label for="confirmNewPassword" class="required">Xác nhận mật khẩu mới</label>
-                                                        <input type="password" id="confirmNewPassword" name="confirmNewPassword" required/>
-                                                    </div>
-                                                </div>
-                                                <button type="submit" class="btn btn-danger">Thay đổi</button>
-                                            </form>
-                                        </div>
-                                    </div>
+                    <div id="change-password" class="tab-pane">
+                        <h3>Đổi mật khẩu</h3>
+                        <form th:action="@{/customer/personal-info/password}" method="post">
+                            <div class="row">
+                                <div class="col-lg-6 single-input-item">
+                                    <label for="currentPassword" class="required">Mật khẩu hiện tại</label>
+                                    <input type="password" id="currentPassword" name="currentPassword" required />
+                                </div>
+                                <div class="col-lg-6 single-input-item">
+                                    <label for="newPassword" class="required">Mật khẩu mới</label>
+                                    <input type="password" id="newPassword" name="newPassword" required />
+                                </div>
+                                <div class="col-lg-6 single-input-item">
+                                    <label for="confirmPassword" class="required">Xác nhận mật khẩu mới</label>
+                                    <input type="password" id="confirmPassword" name="confirmPassword" required />
                                 </div>
                             </div>
-                        </div>
-                        <!-- Thông báo -->
-                        <div th:if="${message}" class="alert alert-success">
-                            <i class="fa fa-check-circle"></i> <span th:text="${message}"></span>
-                        </div>
-                        <div th:if="${error}" class="alert alert-danger">
-                            <i class="fa fa-exclamation-circle"></i> <span th:text="${error}"></span>
-                        </div>
+                            <button type="submit" class="btn btn-danger">Thay đổi</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -226,39 +359,108 @@
     </div>
 </div>
 
-<!-- JS -->
 <script>
-    async function fetchAddressData() {
-        const response = await fetch('/assets/data/Address.json');
-        const data = await response.json();
-        populateProvinces(data);
+    function toggleTab(event, tabId) {
+        event.preventDefault();
+
+        // Xóa class "active" khỏi tất cả các tab menu
+        const tabs = document.querySelectorAll(".myaccount-tab-menu a");
+        tabs.forEach(tab => tab.classList.remove("active"));
+
+        // Ẩn toàn bộ nội dung
+        const tabContents = document.querySelectorAll(".tab-pane");
+        tabContents.forEach(content => content.classList.remove("active"));
+
+        // Thêm class "active" cho tab và nội dung được chọn
+        event.currentTarget.classList.add("active");
+        document.getElementById(tabId).classList.add("active");
     }
 
-    function populateProvinces(data) {
-        const provinceSelect = document.getElementById("province");
-        for (const province in data) {
-            const option = document.createElement("option");
-            option.value = province;
-            option.textContent = province;
-            provinceSelect.appendChild(option);
+    // function previewImage(event) {
+    //     const reader = new FileReader();
+    //     reader.onload = function () {
+    //         const preview = document.getElementById('preview');
+    //         preview.src = reader.result;
+    //     };
+    //     reader.readAsDataURL(event.target.files[0]);
+    // }
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const customButton = document.getElementById('customButton');
+    const fileNameDisplay = document.getElementById('fileName');
+    let selectedFile = null; // Biến lưu trữ file được chọn
+
+    let previousImageUrl = imagePreview.src === "#" ? null : imagePreview.src;
+
+    // Click vào nút tùy chỉnh để kích hoạt input file
+    customButton.addEventListener('click', function () {
+        imageInput.click();
+    });
+
+    // Hiển thị ảnh được chọn
+    function displayImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previousImageUrl = imagePreview.src;
+                imagePreview.src = e.target.result;
+                selectedFile = input.files[0]; // Lưu trữ file được chọn
+                imagePreview.style.display = 'block';
+                fileNameDisplay.textContent = input.files[0].name; // Cập nhật tên file
+            };
+            reader.readAsDataURL(input.files[0]);
         }
-        window.addressData = data;
     }
 
-    function updateDistricts() {
-        const province = document.getElementById("province").value;
-        const districts = window.addressData[province] || [];
-        const districtSelect = document.getElementById("district");
-        districtSelect.innerHTML = "";
-        districts.forEach(district => {
-            const option = document.createElement("option");
-            option.value = district;
-            option.textContent = district;
-            districtSelect.appendChild(option);
-        });
+    // Khôi phục ảnh trước đó
+    function restorePreviousImage() {
+        if (previousImageUrl) {
+            imagePreview.src = previousImageUrl;
+            imagePreview.style.display = 'block';
+        } else {
+            imagePreview.style.display = 'none';
+        }
+        fileNameDisplay.textContent = "No file chosen"; // Khôi phục trạng thái tên file
     }
 
-    document.addEventListener("DOMContentLoaded", fetchAddressData);
+    // Xử lý khi file input thay đổi
+    imageInput.addEventListener('change', function () {
+        if (this.files.length > 0) {
+            displayImage(this);
+        } else {
+            restorePreviousImage();
+        }
+    });
+
+    // Xử lý khi người dùng nhấp vào input file
+    imageInput.addEventListener('click', function () {
+        // Đặt lại giá trị chỉ khi cần
+        setTimeout(() => {
+            this.value = ''; // Đặt lại input file về rỗng
+        }, 0); // Đảm bảo thực hiện sau khi sự kiện click hoàn thành
+    });
+
+    function confirmDelete(addressId) {
+        if (confirm("Bạn có chắc chắn muốn xóa địa chỉ này?")) {
+            // Gửi yêu cầu xóa đến máy chủ
+            fetch(`/customer/personal-info/address/delete/${addressId}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Địa chỉ đã được xóa thành công!");
+                        location.reload(); // Tải lại trang để cập nhật danh sách địa chỉ
+                    } else {
+                        alert("Đã xảy ra lỗi khi xóa địa chỉ.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Không thể xóa địa chỉ. Vui lòng thử lại.");
+                });
+        }
+    }
+
 </script>
 </body>
 </html>
