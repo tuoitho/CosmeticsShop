@@ -21,8 +21,10 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -205,28 +207,33 @@ public class OrderController {
 
 
     @GetMapping("/order-history")
-    public String getOrderHistory(@RequestParam(value = "tab", required = false, defaultValue = "tat-ca-don-hang") String tab,Model model) {
+    public String getOrderHistory(@RequestParam(defaultValue = "0") int page,
+                                  @RequestParam(defaultValue = "4") int size,
+                                @RequestParam(value = "tab", required = false, defaultValue = "tat-ca-don-hang") String tab,Model model) {
         // Lấy thông tin người dùng từ session
         Long customerId = authenticationHelper.getUserId();
-        Logger.log("customerId: " + customerId);
+//        Logger.log("customerId: " + customerId);
 //        Set<PurchaseHistoryDTO> orders;
-        Set<Order> orders = switch (tab) {
-            case "tat-ca-don-hang" -> orderService.getAllOrders(customerId); // Lấy tất cả đơn hàng của người dùng
+        Pageable pageable = PageRequest.of(page, size, Sort.by("orderDate").descending());
+        Page<Order> ordersPage = switch (tab) {
             case "don-cho-xac-nhan" ->
-                    orderService.getOrdersByOrderStatus(customerId, OrderStatus.PENDING); // Đơn chờ xác nhận
+                    orderService.getOrdersByOrderStatus(customerId, OrderStatus.PENDING, pageable); // Đơn chờ xác nhận
             case "don-da-xac-nhan" ->
-                    orderService.getOrdersByOrderStatus(customerId, OrderStatus.CONFIRMED); // Đơn đã xác nhận
+                    orderService.getOrdersByOrderStatus(customerId, OrderStatus.CONFIRMED,pageable); // Đơn đã xác nhận
             case "don-dang-van-chuyen" ->
-                    orderService.getOrdersByOrderStatus(customerId, OrderStatus.SHIPPING); // Đơn đang vận chuyển
-            case "don-da-giao" -> orderService.getOrdersByOrderStatus(customerId, OrderStatus.COMPLETED); // Đơn đã giao
-            case "don-huy" -> orderService.getOrdersByOrderStatus(customerId, OrderStatus.CANCELLED);
-            default -> orderService.getAllOrders(customerId); // Mặc định là tất cả đơn hàng của người dùng
+                    orderService.getOrdersByOrderStatus(customerId, OrderStatus.SHIPPING,pageable); // Đơn đang vận chuyển
+            case "don-da-giao" -> orderService.getOrdersByOrderStatus(customerId, OrderStatus.COMPLETED,pageable); // Đơn đã giao
+            case "don-huy" -> orderService.getOrdersByOrderStatus(customerId, OrderStatus.CANCELLED,pageable);
+            default -> orderService.getAllOrders(customerId,pageable);  // Mặc định là tất cả đơn hàng của người dùng
         };
         // Ánh xạ trực tiếp từ "tab" sang trạng thái đơn hàng
 
-        Logger.log(orders);
+//        Logger.log(orders);
         // Gửi thông tin đến view
-        model.addAttribute("orders", orders);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", ordersPage != null ? ordersPage.getTotalPages() : 0);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("orders", ordersPage != null ? ordersPage.getContent() : null);
         model.addAttribute("tab", tab);
         return "customer/order-history";
     }

@@ -26,6 +26,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Set<Order> findAllByCustomerId(Long customerId);
 
     @Query("""
+        SELECT o
+        FROM Order o
+        WHERE o.customerId = :customerId
+    """)
+    Page<Order> findAllPaginated(Long customerId, Pageable pageable);
+
+    @Query("""
     SELECT o
     FROM Order o
     JOIN o.orderLines ol
@@ -75,4 +82,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findTop5ByOrderByOrderDateDesc();
 
     Long countByOrderStatus(OrderStatus orderStatus);
+    @Query("""
+        SELECT o
+        FROM Order o
+        WHERE o.customerId = :customerId
+            and o.orderStatus = :orderStatus
+    """)
+    Page<Order> findAllPaginatedByOrderStatus(Long customerId, OrderStatus orderStatus, Pageable pageable);
 }

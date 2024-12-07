@@ -307,6 +307,27 @@
             </div>
         </div>
     </div>
+
+<!--    page-->
+    <div class="container">
+<!--        center-->
+        <div  class="d-flex justify-content-center"  th:if="${orders.size() > 0}">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link" th:href="@{/customer/order/order-history(page=${currentPage - 1}, size=${pageSize}, tab=${tab})}">Previous</a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link" th:href="@{/customer/order/order-history(page=${i}, size=${pageSize}, tab=${tab})}" th:text="${i + 1}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{/customer/order/order-history(page=${currentPage + 1}, size=${pageSize}, tab=${tab})}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
 </div>
 <footer th:replace="~{user/fragments/footer :: footer}"></footer>
 </body>

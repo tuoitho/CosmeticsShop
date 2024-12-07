@@ -148,23 +148,4 @@ public class PersonalInformationController {
             return "redirect:/customer/personal-info";
         }
     }
-
-    private String saveImage(MultipartFile imageFile) {
-        String folderPath = "src/main/resources/static/assets/img/customer/";
-        String fileName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
-        Path filePath = Paths.get(folderPath + fileName);
-
-        try {
-            // Tạo thư mục nếu chưa tồn tại
-            Files.createDirectories(filePath.getParent());
-            Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            return "/assets/img/customer/" + fileName + "?v=" + System.currentTimeMillis();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-
 }

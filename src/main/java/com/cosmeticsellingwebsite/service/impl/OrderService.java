@@ -268,35 +268,6 @@ public class OrderService implements IOrderService {
         return orderResponse;
     }
 
-//
-//    @Transactional
-//    public OrderResponse updateOrder(@Valid UpdateOrderRequest updateOrderRequest) {
-//        Order order = orderRepository.findById(updateOrderRequest.getOrderId()).orElseThrow(() -> new CustomException("Order not found"));
-//        Logger.log("Order found: " + order.getOrderLines());
-//        ShippingAddress shippingAddress = new ShippingAddress();
-//        BeanUtils.copyProperties(updateOrderRequest.getAddress(), shippingAddress);
-//        order.setShippingAddress(shippingAddress);
-//        Order savedOrder = orderRepository.save(order);
-//
-//        Payment payment = paymentRepository.findByOrder(order).orElseThrow(() -> new CustomException("Payment not found"));
-//        payment.setPaymentMethod(updateOrderRequest.getPaymentMethod());
-//        paymentRepository.save(payment);
-//
-//        OrderResponse createOrderResponse = new OrderResponse();
-//        BeanUtils.copyProperties(savedOrder, createOrderResponse);
-//        //        xử lý OrderLineForOrderDTO cho phan hoi
-//        Set<OrderLineForOrderDTO> orderLineForOrderDTOS = savedOrder.getOrderLines().stream().map(x -> {
-//            OrderLineForOrderDTO dto = new OrderLineForOrderDTO();
-//            dto.setProductCode(x.getProduct().getProductCode());
-//            dto.setProductSnapshot(x.getProductSnapshot());
-//            dto.setQuantity(x.getQuantity());
-//            return dto;
-//        }).collect(Collectors.toSet());
-//        createOrderResponse.setOrderLines(orderLineForOrderDTOS);
-//        createOrderResponse.setPaymentMethod(payment.getPaymentMethod());
-//        return createOrderResponse;
-//    }
-
     public void cancelOrder( Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomException("Order not found"));
 //        if order is not pending, throw exception
@@ -387,6 +358,11 @@ public class OrderService implements IOrderService {
 
     public Set<Order> getAllOrders(Long customerId) {
         return orderRepository.findAllByCustomerId(customerId);
+    }
+
+    public Page<Order> getAllOrders(Long customerId,Pageable pageable) {
+
+        return orderRepository.findAllPaginated(customerId,pageable);
     }
 
     public Set<Order> getOrdersByOrderStatus(Long customerId, OrderStatus orderStatus) {
@@ -501,4 +477,7 @@ public class OrderService implements IOrderService {
     }
 
 
+    public Page<Order> getOrdersByOrderStatus(Long customerId, OrderStatus orderStatus, Pageable pageable) {
+        return orderRepository.findAllPaginatedByOrderStatus(customerId, orderStatus, pageable);
+    }
 }
