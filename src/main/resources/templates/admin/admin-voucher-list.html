@@ -15,6 +15,11 @@
     <!-- Nút thêm mã giảm giá -->
     <a href="/admin/vouchers/new" class="btn btn-primary mb-3">Thêm mã giảm giá</a>
 
+    <!-- Kiểm tra nếu danh sách mã giảm giá trống -->
+    <div th:if="${voucherPage.content.size() == 0}" class="alert alert-warning text-center">
+        Không có mã giảm giá nào để hiển thị.
+    </div>
+
     <!-- Bảng danh sách mã giảm giá -->
     <table class="table table-striped">
         <thead>
@@ -65,7 +70,7 @@
     </table>
 
     <!-- Phân trang -->
-    <nav>
+    <nav th:if="${voucherPage.content.size() > 0}">
         <ul class="pagination">
             <li class="page-item" th:classappend="${voucherPage.first} ? 'disabled'">
                 <a class="page-link" th:href="@{/admin/vouchers(page=${voucherPage.number - 1}, size=${voucherPage.size})}">Trước</a>

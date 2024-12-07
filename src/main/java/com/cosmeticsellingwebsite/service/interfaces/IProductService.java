@@ -1,7 +1,10 @@
 package com.cosmeticsellingwebsite.service.interfaces;
 
+import com.cosmeticsellingwebsite.dto.FeedbackDTO;
 import com.cosmeticsellingwebsite.entity.Category;
 import com.cosmeticsellingwebsite.entity.Product;
+import com.cosmeticsellingwebsite.entity.ProductFeedback;
+import com.cosmeticsellingwebsite.payload.request.AddProductFeedbackReq;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,4 +27,10 @@ public interface IProductService {
     String getExistingImage(Long productId);
 
     Optional<Product> findById(Long id);
+
+    void addFeedback(Long customerId, AddProductFeedbackReq addProductFeedbackReq);
+
+    FeedbackDTO getFeedback(Long customerId, Long orderId, Long productId);
+
+    Page<Product> searchAndFilterProducts(String searchKeyword, Boolean active, Pageable pageable);
 }
