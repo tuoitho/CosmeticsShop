@@ -29,6 +29,18 @@ public class ManagerCustomerController {
     @Autowired
     private OrderService orderService;
 
+
+    @PostMapping("/{id}/delete")
+    public String removeCustomer(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            customerService.deleteCustomerById(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Xoá khách hàng thành công!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/manager/customers";
+    }
+
     @GetMapping("/search")
     public String searchCustomersFilter(@RequestParam String keyword, Model model) {
         List<Customer> customers = customerService.searchByKeyword(keyword);
@@ -49,37 +61,11 @@ public class ManagerCustomerController {
         return "manager/customer-list"; // Tên file HTML
     }
 
-    @PostMapping("/{id}/delete")
-    public String deleteCustomer(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            customerService.deleteCustomerById(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Xoá khách hàng thành công!");
-        } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-        }
-        return "redirect:/manager/customers";
-    }
-
     @PostMapping("/{id}/toggle-active")
     public String toggleCustomerActive(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         customerService.toggleActiveStatus(id);
         redirectAttributes.addFlashAttribute("success", "Thay đổi trạng thái thành công.");
         return "redirect:/manager/customers";
-    }
-
-    @PostMapping("/check-cart-empty")
-    @ResponseBody
-    public boolean isCartEmpty(@RequestParam Long customerId) {
-        Optional<Customer> optionalCustomer = customerService.findById(customerId);
-        if (optionalCustomer.isEmpty()) {
-            throw new RuntimeException("Không tìm thấy khách hàng với ID: " + customerId); // Nếu không có customer, ném lỗi
-        }
-
-        Customer customer = optionalCustomer.get(); // Lấy giá trị Customer
-
-        return cartService.findCartByCustomer(customer)
-                .map(cart -> cart.getCartItems().isEmpty()) // Nếu tìm thấy giỏ hàng, kiểm tra rỗng
-                .orElse(true); // Nếu không tìm thấy giỏ hàng, coi như giỏ hàng rỗng
     }
 
     @GetMapping("/{id}")
@@ -97,6 +83,21 @@ public class ManagerCustomerController {
 
         return "manager/customer-detail"; // Tên view
 
+    }
+
+    @PostMapping("/check-cart-empty")
+    @ResponseBody
+    public boolean isCustomerCartEmpty(@RequestParam Long customerId) {
+        Optional<Customer> optionalCustomer = customerService.findById(customerId);
+        if (optionalCustomer.isEmpty()) {
+            throw new RuntimeException("Không tìm thấy khách hàng với ID: " + customerId); // Nếu không có customer, ném lỗi
+        }
+
+        Customer customer = optionalCustomer.get(); // Lấy giá trị Customer
+
+        return cartService.findCartByCustomer(customer)
+                .map(cart -> cart.getCartItems().isEmpty()) // Nếu tìm thấy giỏ hàng, kiểm tra rỗng
+                .orElse(true); // Nếu không tìm thấy giỏ hàng, coi như giỏ hàng rỗng
     }
 
 }
