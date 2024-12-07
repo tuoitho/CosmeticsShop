@@ -63,14 +63,21 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public String createUser(@ModelAttribute @Valid User user, BindingResult result, Model model) {
+    public String createUser(
+            @ModelAttribute @Valid AddUserDTO userDTO,
+            @RequestParam("imagePath") MultipartFile imageFile,
+            BindingResult result,
+            Model model) throws IOException {
         if (result.hasErrors()) {
             model.addAttribute("roles", roleService.findAll());
             return "admin/user/createUser";
         }
-        userService.save(user);
+        String image = imageFile != null && !imageFile.isEmpty() ? imageService.saveImage(imageFile) : null;
+        userDTO.setImage(image);
+        userService.saveUser(userDTO);
         return "redirect:/admin/user";
     }
+
 
     @GetMapping("/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model) {
