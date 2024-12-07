@@ -40,8 +40,8 @@ public class ProductBrowerController {
     @GetMapping("/search")
     public String searchProducts(
             @RequestParam(value = "keyword", required = false,defaultValue = "") String keyword,
-            @RequestParam(value = "minPrice", required = false,defaultValue = "0") Double minPrice,
-            @RequestParam(value = "maxPrice", required = false,defaultValue = "9999999999") Double maxPrice,
+            @RequestParam(value = "minPrice", required = false,defaultValue = "0") Long minPrice,
+            @RequestParam(value = "maxPrice", required = false,defaultValue = "9999999999") Long maxPrice,
             @RequestParam(value = "brand", required = false,defaultValue = "") String brand,
             @RequestParam(value = "origin", required = false,defaultValue = "") String origin,
             @RequestParam(value = "category", required = false,defaultValue = "") String category,
@@ -54,7 +54,7 @@ public class ProductBrowerController {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("productName").ascending());
 
         Logger.log("Searching products with keyword: " + keyword + ", minPrice: " + minPrice + ", maxPrice: " + maxPrice + ", brand: " + brand + ", origin: " + origin + ", category: " + category);
-        Page<ProductSearchDTO> products = productService.searchProducts(keyword, minPrice, maxPrice, brand, origin, category, pageable);
+        Page<ProductSearchDTO> products = productService.searchProducts(keyword, Double.valueOf(minPrice), Double.valueOf(maxPrice), brand, origin, category, pageable);
 //        Logger.log("Products: " + products.getContent());
         model.addAttribute("products", products.getContent());
         model.addAttribute("keyword", keyword);
@@ -70,6 +70,12 @@ public class ProductBrowerController {
         model.addAttribute("brands", brands);
         List<String> origins = productService.getAllOrigins();
         model.addAttribute("origins", origins);
+
+        model.addAttribute("products", products.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", products.getTotalPages());
+        model.addAttribute("pageSize", size);
+
         return "user/searchProduct";
     }
 
