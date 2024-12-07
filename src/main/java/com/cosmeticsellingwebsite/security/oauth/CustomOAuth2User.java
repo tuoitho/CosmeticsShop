@@ -12,10 +12,14 @@ public class CustomOAuth2User implements OAuth2User {
 
 	private OAuth2User oauth2User;
 	private Long userId;
-	public CustomOAuth2User(OAuth2User oauth2User, Long userId) {
+	private Collection<? extends GrantedAuthority> authorities;
+
+	public CustomOAuth2User(OAuth2User oauth2User, Long userId, Collection<? extends GrantedAuthority> authorities) {
 //		super();
 		this.oauth2User = oauth2User;
 		this.userId = userId;
+		this.authorities = authorities;
+
 	}
 
 	@Override
@@ -25,7 +29,8 @@ public class CustomOAuth2User implements OAuth2User {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return oauth2User.getAuthorities();
+//		return oauth2User.getAuthorities();
+		return authorities;
 	}
 
 	@Override
