@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 public class PersonalInformationService implements IPersonalInformationService {
     @Autowired
-    private UserRepositoty userRepositoty;
+    private UserRepositoty userRepository;
 
     @Autowired
     private AddressRepository addressRepository;
@@ -31,7 +31,7 @@ public class PersonalInformationService implements IPersonalInformationService {
     private RoleRepository roleRepository;
     @Override
     public UserDTO fetchPersonalInfo(Long userID) {
-        Optional<User> userEntityOpt = userRepositoty.findById(userID);
+        Optional<User> userEntityOpt = userRepository.findById(userID);
         if (userEntityOpt.isPresent()) {
             Customer userEntity = (Customer)userEntityOpt.get();
 
@@ -56,6 +56,9 @@ public class PersonalInformationService implements IPersonalInformationService {
             userDTO.setPhone(userEntity.getPhone());
             userDTO.setRole(userEntity.getRole());
             userDTO.setAddresses(addressDTOs); // Gán danh sách địa chỉ
+            userDTO.setImage(userEntity.getImage());
+            userDTO.setBirthDate(userEntity.getBirthDate());
+
             return userDTO;
         }
         return null;
@@ -69,7 +72,7 @@ public class PersonalInformationService implements IPersonalInformationService {
                 return false; // Không thể lưu nếu userID không tồn tại
             }
 
-            Optional<User> existingUserOpt = userRepositoty.findById(userID);
+            Optional<User> existingUserOpt = userRepository.findById(userID);
             if (!existingUserOpt.isPresent()) {
                 return false; // Không thể lưu nếu user không tồn tại
             }
@@ -90,6 +93,10 @@ public class PersonalInformationService implements IPersonalInformationService {
                 return roleRepository.save(newRole);
             });
             existingUser.setRole(userDTO.getRole() != null ? userDTO.getRole() : role);
+            if (userDTO.getImage() != null && !userDTO.getImage().isEmpty()) {
+                existingUser.setImage(userDTO.getImage());
+            }
+            existingUser.setBirthDate(userDTO.getBirthDate());
 
 
 
@@ -108,10 +115,12 @@ public class PersonalInformationService implements IPersonalInformationService {
                 addressEntity.setWard(addressDTO.getWard());
                 addressEntity.setCustomer(existingUser); // Liên kết với User hiện tại
 
+
+
                 addressRepository.save(addressEntity); // Lưu địa chỉ mới hoặc cập nhật
             }
 
-            userRepositoty.save(existingUser); // Lưu hoặc cập nhật user
+            userRepository.save(existingUser); // Lưu hoặc cập nhật user
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,6 +130,24 @@ public class PersonalInformationService implements IPersonalInformationService {
 
     @Override
     public Optional<User> findUserById(Long userID) {
-        return userRepositoty.findById(userID);
+        return userRepository.findById(userID);
     }
+
+    @Override
+    public boolean updatePassword(Long userId, String encodedPassword) {
+        try {
+            User user = userRepository.findById(userId).orElse(null);
+            if (user != null) {
+                user.setPassword(encodedPassword);
+                userRepository.save(user);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 }
