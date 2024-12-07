@@ -330,7 +330,12 @@
                         quantity: 1
                     }),
                     success: function (response) {
-                        alert(response);
+                        if (response.indexOf('loginForm')>0) {
+                            // Chuyển hướng đến trang đăng nhập
+                            window.location.href = '/auth/login';}
+                        else {
+                            alert(response);
+                        }
                     },
                     error: function (xhr, status, error) {
                         alert("Error: " + xhr.responseText);
