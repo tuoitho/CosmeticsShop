@@ -3,6 +3,7 @@ package com.cosmeticsellingwebsite.service.impl;
 import com.cosmeticsellingwebsite.dto.*;
 import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.enums.OrderStatus;
+import com.cosmeticsellingwebsite.enums.PaymentMethod;
 import com.cosmeticsellingwebsite.enums.PaymentStatus;
 import com.cosmeticsellingwebsite.exception.CustomException;
 import com.cosmeticsellingwebsite.payload.request.CreateOrderRequest;
@@ -502,6 +503,8 @@ public class OrderService implements IOrderService {
         if (newStatus == OrderStatus.COMPLETED) {
             //update ngay hoan thanh
             order.setDeliveryDate(LocalDateTime.now());
+            if (order.getPayment().getPaymentMethod() == PaymentMethod.COD)
+                order.getPayment().setPaymentStatus(PaymentStatus.PAID);
         }
         orderRepository.save(order);
     }
