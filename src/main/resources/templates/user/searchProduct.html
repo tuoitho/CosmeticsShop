@@ -81,7 +81,7 @@
 							</option>
 						</select>
 					</div>
-					<input type="hidden" name="keyword" th:value="${keyword}">
+					<input type="hidden" name="keyword" value="${keyword}">
 					<button type="submit" class="btn btn-primary w-100">Áp dụng</button>
 				</form>
 			</div>
@@ -129,7 +129,10 @@
 									<p class="sold mb-0" th:text="'Đã bán: ' + ${product.sellCount}"></p>
 
 								</div>
-								<button class="btn btn-success mt-auto">Add to Cart</button>
+<!--								<button class="btn btn-success mt-auto">Add to Cart</button>-->
+								<a href="javascript:void(0)"
+								   class="btn btn-success mt-auto add-to-cart"
+								   th:data-product-code="${product.productCode}">Thêm vào giỏ hàng</a>
 							</div>
 						</div>
 				</div>
@@ -142,21 +145,51 @@
 			<nav aria-label="Page navigation" class="d-flex justify-content-center">
 				<ul class="pagination">
 					<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-						<a class="page-link" th:href="@{/browser/search(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category}, origin=${origin}, brand=${brand})}">Previous</a>
+						<a class="page-link" th:href="@{/browsers/search(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category}, origin=${origin}, brand=${brand})}">Previous</a>
 					</li>
-					<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-						th:classappend="${i == currentPage} ? 'active'">
-						<a class="page-link" th:href="@{/browser/search(page=${i}, size=${pageSize}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category}, origin=${origin}, brand=${brand})}"
-							th:text="${i + 1}"></a>
+					<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${i == currentPage} ? 'active'">
+						<a class="page-link" th:href="@{/browsers/products(page=${i}, size=${pageSize},  keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category}, origin=${origin}, brand=${brand})}">Previous</a>
 					</li>
 					<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-						<a class="page-link" th:href="@{/browser/search(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category}, origin=${origin}, brand=${brand})}">Next</a>
+						<a class="page-link" th:href="@{/admin/products(page=${currentPage + 1}, size=${pageSize})}">Next</a>
 					</li>
 				</ul>
 			</nav>
 		</div>
 	</div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+	<script>
+	const addToCartButtons = document.querySelectorAll(".add-to-cart");
+
+	addToCartButtons.forEach(button => {
+		button.addEventListener("click", function () {
+			const productCode = this.getAttribute("data-product-code");
+
+			// Gửi yêu cầu AJAX đến API thêm vào giỏ hàng
+			$.ajax({
+				url: '/customer/cart/add-to-cart',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					productCode: productCode,
+					quantity: 1
+				}),
+				success: function (response) {
+					if (response.indexOf('loginForm')>0) {
+						// Chuyển hướng đến trang đăng nhập
+						window.location.href = '/auth/login';}
+					else {
+						alert(response);
+					}
+				},
+				error: function (xhr, status, error) {
+					alert(xhr.responseText);
+				}
+			});
+		});
+	});
+</script>
 </body>
 
 
