@@ -145,13 +145,13 @@
 			<nav aria-label="Page navigation" class="d-flex justify-content-center">
 				<ul class="pagination">
 					<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-						<a class="page-link" th:href="@{/browsers/search(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category}, origin=${origin}, brand=${brand})}">Previous</a>
+						<a class="page-link" th:href="@{/browser/search(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category}, origin=${origin}, brand=${brand})}">Previous</a>
 					</li>
 					<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${i == currentPage} ? 'active'">
-						<a class="page-link" th:href="@{/browsers/products(page=${i}, size=${pageSize},  keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category}, origin=${origin}, brand=${brand})}">Previous</a>
+						<a class="page-link" th:href="@{/browser/search(page=${i}, size=${pageSize},  keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category}, origin=${origin}, brand=${brand})}"> <span th:text="${i + 1}"></span></a>
 					</li>
 					<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-						<a class="page-link" th:href="@{/admin/products(page=${currentPage + 1}, size=${pageSize})}">Next</a>
+						<a class="page-link" th:href="@{/browser/search(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category}, origin=${origin}, brand=${brand})}">Next</a>
 					</li>
 				</ul>
 			</nav>
