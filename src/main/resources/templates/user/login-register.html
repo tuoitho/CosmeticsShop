@@ -60,6 +60,10 @@
     <!-- Phần Đăng Nhập -->
     <div class="form-section">
         <h2>Đăng Nhập</h2>
+<!--        message-->
+        <div th:if = "${messageLogin}" class="alert alert-danger">
+            <p th:text="${messageLogin}"></p>
+        </div>
         <form id="loginForm" th:action="@{/login}" method="post">
             <div class="form-group">
                 <label for="username">Tên người dùng:</label>
@@ -68,15 +72,8 @@
             <div class="form-group">
                 <label for="password">Mật khẩu:</label> <input type="password" class="form-control" id="password" name="password" required>
             </div>
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
-                <label class="form-check-label"for="rememberMe">Nhớ đăng
-                nhập</label>
-            </div>
-
-
-
-
+            <input type="checkbox" id="remember-me" name="remember-me" checked>
+            <label for="remember-me">Remember Me</label>
 
 <!--            <button type="submit" class="btn btn-primary">Đăng Nhập</button>-->
             <button type="submit"  id="loginBtn">Login</button>
@@ -98,21 +95,21 @@
     </div><!-- Phần Đăng Ký -->
     <div class="form-section">
         <h2>Đăng Ký</h2>
-        <form id="registerForm">
+        <form id="registerForm" method="post" action="/auth/register" >
 <!--            fullname-->
             <div class="form-group">
                 <label for="regFullname">Fullname:</label> <input type="text" class="form-control"
-                                                                        id="regFullname" required>
+                                                                        id="regFullname" name="fullname" required>
             </div>
             <div class="form-group">
-                <label for="regEmail">Email:</label> <input type="email" class="form-control" id="regEmail" required>
+                <label for="regEmail">Email:</label> <input type="email" class="form-control" name="email" id="regEmail" required>
             </div>
             <div class="form-group">
                 <label for="regUsername">Username:</label> <input type="text" class="form-control"
-                                                                        id="regUsername" required>
+                                                                        id="regUsername" required name="username">
             </div>
             <div class="form-group">
-                <label for="regPassword">Mật khẩu:</label> <input type="password" class="form-control" id="regPassword"
+                <label for="regPassword">Mật khẩu:</label> <input type="password" class="form-control" id="regPassword" name="password"
                                                                   required>
             </div>
 
@@ -147,6 +144,15 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/showMsg.js"></script>
+<script>
+    /*<![CDATA[*/
+    // sessionStorage.removeItem("messageLogin");
+    /*]]>*/
+    // <div th:if="${session.messageLogin != null}" th:text="${session.messageLogin}" className="error-message"></div>
+    //remove message
+    sessionStorage.clear()
+    console.log("messageLogin: " + sessionStorage.length)
+</script>
 <script>
     // Function to show modal with a custom message
     const contextPath = window.location.origin + '/';
@@ -197,31 +203,33 @@
     // });
 
     // AJAX cho đăng ký
-    $("#registerForm").on("submit", function (event) {
-        event.preventDefault();
-        const regFullname = $("#regFullname").val();
-        const regUsername = $("#regUsername").val();
-        const regEmail = $("#regEmail").val();
-        const regPassword = $("#regPassword").val();
-
-        $.ajax({
-            url: contextPath+'auth/register', // Đường dẫn đến file xử lý đăng ký
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                fullname: regFullname,
-                email: regEmail,
-                username: regUsername,
-                password: regPassword
-            }),
-            success: function (response) {
-                showModalWithMessage(response); // Hiển thị phản hồi từ server
-            },
-            error: function (xhr, status, error) {
-                showModalWithMessage(xhr.responseText); // Hiển thị phản hồi lỗi từ server
-            }
-        });
-    });
+    // $("#registerForm").on("submit", function (event) {
+    //     event.preventDefault();
+    //     const regFullname = $("#regFullname").val();
+    //     const regUsername = $("#regUsername").val();
+    //     const regEmail = $("#regEmail").val();
+    //     const regPassword = $("#regPassword").val();
+    //     const gresponse = $("#g-recaptcha-response").val();
+    //     const formData = {
+    //         fullname: regFullname,
+    //         email: regEmail,
+    //         username: regUsername,
+    //         password: regPassword,
+    //         gresponse: gresponse
+    //     };
+    //
+    //     $.ajax({
+    //         url: contextPath+'auth/register', // Đường dẫn đến file xử lý đăng ký
+    //         type: 'POST',
+    //         data: formData,
+    //         success: function (response) {
+    //             showModalWithMessage(response); // Hiển thị phản hồi từ server
+    //         },
+    //         error: function (xhr, status, error) {
+    //             showModalWithMessage(xhr.responseText); // Hiển thị phản hồi lỗi từ server
+    //         }
+    //     });
+    // });
 </script>
 
 

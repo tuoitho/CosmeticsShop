@@ -13,6 +13,19 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ... other styles ... */
+
+        .rating .star {
+            display: inline-block;
+            color: #ccc; /* Default star color (gray) */
+        }
+
+        .rating .star.gold .fa-star{
+            color: gold; /* Gold color for filled stars */
+        }
+        .rating .avg-rating {
+            margin-left: 5px; /* Space between stars and average rating */
+        }
         .numsold{
             color: #c81616;
             font-weight: bold;
@@ -53,7 +66,7 @@
         .product-slider {
             position: relative;
             overflow: hidden;
-            width: calc(250px * 5 + 20px * 4); /* Đảm bảo đúng 5 item (250px width + 20px margin) */
+            width: calc(250px * 5 + 20px * 5); /* Đảm bảo đúng 5 item (250px width + 20px margin) */
             margin: auto;
         }
 
@@ -74,7 +87,7 @@
 
         .product-image {
             width: 100%;
-            height: 200px;
+            height: 270px;
             object-fit: cover;
         }
         .product-info {
@@ -110,26 +123,47 @@
 <body>
 <div id="app">
     <header th:replace="~{user/fragments/header::header}"></header>
-    <div class="hero">
-        <div class="container">
-            <h1>Discover Your Beauty</h1>
-            <p class="lead">Explore our wide range of premium cosmetics</p>
-        </div>
-    </div>
+    <main>
+        <section class="hero-section">
+            <div class="container">
+                <h1 class="hero-title">Discover Your True Beauty</h1>
+                <p class="hero-subtitle">Explore our exquisite range of premium cosmetics</p>
+                <button class="btn btn-custom btn-lg">Shop Now</button>
+            </div>
+        </section>
+
+        <section class="py-5">
+            <div class="container">
+                <h2 class="text-center mb-4">Featured Products</h2>
+                <div class="row">
+                </div>
+            </div>
+        </section>
+    </main>
     <main class="container my-5">
         <section class="mb-5">
-            <h2 class="section-title">Top 20 Best Sellers</h2>
+            <h2 class="section-title">Top Bán Chạy</h2>
             <div class="product-slider" id="bestSellersSlider">
                 <button class="slider-button prev" onclick="slide('bestSellersSlider', -1)"><i class="fas fa-chevron-left"></i></button>
                 <div class="product-container">
-                    <!-- Best Sellers Products -->
                     <div th:each="product : ${top20BestSellingProducts}" class="product-card">
                         <img th:src="@{/api/images(imageName=${product.image})}" th:alt="${product.productId}" class="product-image">
                         <div class="product-info">
-                            <h3 th:text="${product.productName}" class="product-title">1</h3>
-                            <p th:text="${product.cost}" class="product-price">$19.99</p>
-<!--                            num sold-->
-                            <p class="numsold">Đã mua trong 30 ngày: <span th:text="${product.totalSoldLast30Days}" class="product-price"></span></p>
+                            <a th:text="${product.productName}" th:href="@{'/browser/product/' + ${product.productId}}"
+                               class="product-title" style="
+                           color: #fd7e14;
+                            overflow: hidden;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;
+                            width: 100%;
+                            font-weight: bold;
+                            "></a>
+                            <p class="product-price">Giá: <span th:text="${#numbers.formatDecimal(product.cost, 0, 'COMMA', 2, 'POINT')}"></span> đ</p>
+                            <p class="numsold">Đã mua trong 30 ngày: <span th:text="${product.totalSoldLast30Days}"></span></p>
+                            <a href="javascript:void(0)"
+                               class="btn btn-custom add-to-cart"
+                               th:data-product-code="${product.productCode}">Thêm vào giỏ hàng</a>
                         </div>
                     </div>
                 </div>
@@ -138,7 +172,7 @@
         </section>
 
         <section>
-            <h2 class="section-title">20 New Arrivals</h2>
+            <h2 class="section-title">Sản Phẩm Mới</h2>
             <div class="product-slider" id="newArrivalsSlider">
                 <button class="slider-button prev" onclick="slide('newArrivalsSlider', -1)"><i class="fas fa-chevron-left"></i></button>
                 <div class="product-container">
@@ -146,16 +180,64 @@
                     <div th:each="product : ${top20NewestProducts}" class="product-card">
                         <img th:src="@{/api/images(imageName=${product.image})}" th:alt="${product.productId}" class="product-image">
                         <div class="product-info">
-                            <h3 th:text="${product.productName}" class="product-title">1</h3>
-                            <p th:text="${product.cost}" class="product-price">$19.99</p>
+                            <a th:text="${product.productName}" th:href="@{'/browser/product/' + ${product.productId}}"
+                               class="product-title" style="
+                           color: #da7079;
+                            overflow: hidden;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;
+                            width: 100%;
+                            font-weight: bold;
+                            "></a>
+                            <p class="product-price">Giá: <span th:text="${#numbers.formatDecimal(product.cost, 0, 'COMMA', 2, 'POINT')}"></span> đ</p>
+                            <p class="fas " style="color: red">New ! ! !</p>
+                            <br>
+
+                            <a href="javascript:void(0)"
+                               class="btn btn-custom add-to-cart"
+                               th:data-product-code="${product.productCode}">Thêm vào giỏ hàng</a>
                         </div>
                     </div>
-
-                    <!-- Add more product cards here to reach 20 -->
                 </div>
                 <button class="slider-button next" onclick="slide('newArrivalsSlider', 1)"><i class="fas fa-chevron-right"></i></button>
             </div>
         </section>
+
+    <section>
+        <br>
+        <br>
+        <br>
+        <h2 class="section-title">Top Sản Phẩm Đánh Giá Cao Nhât</h2>
+        <div class="product-slider" id="top20RatedProductsSlider">
+            <button class="slider-button prev" onclick="slide('top20RatedProductsSlider', -1)"><i class="fas fa-chevron-left"></i></button>
+            <div class="product-container">
+                <!-- Top 20 Rated Products -->
+                <div th:each="product : ${top20HighestRatingProducts}" class="product-card">
+                    <img th:src="@{/api/images(imageName=${product.image})}" th:alt="${product.productId}" class="product-image">
+                    <div class="product-info">
+                        <a th:text="${product.productName}" th:href="@{'/browser/product/' + ${product.productId}}"
+                           class="product-title" style="
+                           color: #4CAF50;
+                            overflow: hidden;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;
+                            width: 100%;
+                            font-weight: bold;
+                            "></a>
+                        <p class="product-price">Giá: <span th:text="${#numbers.formatDecimal(product.cost, 0, 'COMMA', 2, 'POINT')}"></span> đ</p>
+<!--                        đánh giá-->
+                        <p class="numsold">Đánh giá: <i class="fas fa-star gold" style="color: gold"></i> <span th:text="${product.averageRating}"></span></p>
+                        <a href="javascript:void(0)"
+                           class="btn btn-custom add-to-cart"
+                           th:data-product-code="${product.productCode}">Thêm vào giỏ hàng</a>
+                    </div>
+                </div>
+            </div>
+            <button class="slider-button next" onclick="slide('top20RatedProductsSlider', 1)"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </section>
     </main>
 
     <div class="footer" th:replace="~{user/fragments/footer::footer}">
@@ -163,6 +245,9 @@
 </div>
 <!--    modal-->
 <!--<script src="/assets/js/showHide.js"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<!--jquery-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     function slide(sliderId, direction) {
         const slider = document.getElementById(sliderId);
@@ -210,6 +295,55 @@
             }, 50);
         }, 500);
     }
+
+    $(document).ready(function() {
+        $('.btn-custom.btn-lg').click(function(event) {
+            event.preventDefault(); // Prevent default link behavior
+
+            // Calculate target position (500px from the top)
+            var targetPosition = 500;
+
+            // Smooth scroll to the target position
+            $('html, body').animate({
+                scrollTop: targetPosition
+            }, 10); // Adjust animation duration as needed
+        });
+    });
+
+
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const addToCartButtons = document.querySelectorAll(".add-to-cart");
+
+        addToCartButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const productCode = this.getAttribute("data-product-code");
+
+                // Gửi yêu cầu AJAX đến API thêm vào giỏ hàng
+                $.ajax({
+                    url: '/customer/cart/add-to-cart',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        productCode: productCode,
+                        quantity: 1
+                    }),
+                    success: function (response) {
+                        if (response.indexOf('loginForm')>0) {
+                            // Chuyển hướng đến trang đăng nhập
+                            window.location.href = '/auth/login';}
+                        else {
+                            alert(response);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Error: " + xhr.responseText);
+                    }
+                });
+            });
+        });
+    });
 </script>
 </body>
 </html>

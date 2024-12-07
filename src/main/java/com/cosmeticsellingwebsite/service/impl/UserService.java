@@ -1,5 +1,6 @@
 package com.cosmeticsellingwebsite.service.impl;
 
+import com.cosmeticsellingwebsite.dto.AddUserDTO;
 import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.enums.RoleEnum;
 import com.cosmeticsellingwebsite.exception.CustomException;
@@ -11,6 +12,9 @@ import com.cosmeticsellingwebsite.util.Logger;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,6 +35,8 @@ public class UserService implements IUserService, UserDetailsService {
     @Autowired
     private AddressRepository addressRepository;
 
+
+
     //    add address
 //    public void addAddress(AddAddressRequest addAddressRequest) {
 //        Optional<User> userOptional = userRepository.findById(addAddressRequest.getUserId());
@@ -49,7 +55,7 @@ public class UserService implements IUserService, UserDetailsService {
         if (!userRepository.existsById(userId)) {
             throw new CustomException("User not found");
         }
-        return addressRepository.findAllByCustomer_UserId(userId);
+        return addressRepository.findByCustomer_UserId(userId);
     }
 
     public List<User> list() {
@@ -108,4 +114,35 @@ public class UserService implements IUserService, UserDetailsService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
+    public void saveUser(AddUserDTO user) {
+        User userEntity = userRepository.findById(user.getUserId()).orElseThrow(() -> new CustomException("User not found"));
+        BeanUtils.copyProperties(user, userEntity);
+        userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(userEntity);
+    }
+
+    public List<User> searchUsers(String keyword) {
+        return userRepository.findByFullnameContainingOrUsernameContainingOrEmailContaining(keyword, keyword, keyword);
+    }
+    public Page<User> searchUsers(String keyword, int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return userRepository.findByRole_RoleNameInAndUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+                List.of(RoleEnum.MANAGER, RoleEnum.CUSTOMER), keyword, keyword, pageable);
+    }
+
+    public Page<User> getUsers(int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return userRepository.findByRole_RoleNameIn(List.of(RoleEnum.MANAGER, RoleEnum.CUSTOMER), pageable);
+    }
+
 }

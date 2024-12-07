@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<!-- Icon font awesome -->
+	<style>
+		.card {
+			transition: transform 0.3s;
+			height: 100%;
+		}
+		.card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+		}
+		.card-img-top {
+			height: 200px;
+			object-fit: cover;
+		}
+		.rating {
+			color: #ffc107;
+		}
+		.origin {
+			position: absolute;
+			bottom: 10px;
+			right: 10px;
+			font-size: 0.8rem;
+			color: #6c757d;
+		}
+		.brand {
+			font-weight: bold;
+			color: #007bff;
+		}
+		.sold {
+			font-size: 0.9rem;
+			color: #6c757d;
+		}
+	</style>
+</head>
+<body>
+	<header th:replace="~{user/fragments/header::header}"></header>
+
+	<!-- Main Content -->
+	<div class="container-fluid my-4">
+		<div class="row">
+			<!-- Sidebar with filters -->
+			<div class="col-md-3 col-lg-2 sidebar">
+				<h3 class="mb-4">Bộ lọc tìm kiếm</h3>
+				<form id="filterForm" action="/browser/search" >
+					<div class="mb-3">
+						<label for="minPrice" class="form-label">Giá tối thiểu</label>
+						<input type="number" class="form-control" id="minPrice" name="minPrice" placeholder="0">
+					</div>
+					<div class="mb-3">
+						<label for="maxPrice" class="form-label">Giá tối đa</label>
+						<input type="number" class="form-control" id="maxPrice" name="maxPrice" placeholder="1000000">
+					</div>
+					<div class="mb-3">
+						<label for="category" class="form-label">Danh mục</label>
+						<select class="form-select" id="category" name="category">
+							<option value="">Tất cả</option>
+							<option  th:each="category : ${categories}" th:value="${category}" th:text="${category}" th:selected="${category == selectedCategory}">
+							</option>
+						</select>
+					</div>
+					<div class="mb-3">
+						<label for="origin" class="form-label">Xuất xứ</label>
+						<select class="form-select" id="origin" name="origin">
+							<option value="">Tất cả</option>
+							<option th:each="origin : ${origins}" th:value="${origin}" th:text="${origin}" th:selected="${origin == selectedOrigin}">
+							</option>
+						</select>
+					</div>
+					<div class="mb-3">
+						<label for="brand" class="form-label">Thương hiệu</label>
+						<select class="form-select" id="brand" name="brand">
+							<option value="">Tất cả</option>
+							<option th:each="brand : ${brands}" th:value="${brand}" th:text="${brand}" th:selected="${brand == selectedBrand}">
+							</option>
+						</select>
+					</div>
+					<input type="hidden" name="keyword" value="${keyword}">
+					<button type="submit" class="btn btn-primary w-100">Áp dụng</button>
+				</form>
+			</div>
+
+			<!-- Main content area -->
+			<div class="col-md-9 col-lg-10 p-4">
+				<div class="row mb-4">
+					<div class="col-md-6 offset-md-6">
+						<form class="d-flex" action="/browser/search" method="get">
+							<input th:value="${keyword}" class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm" aria-label="Search" name="keyword">
+							<input hidden="hidden" name="minPrice" type="number" th:value="${minPrice}">
+							<input hidden="hidden" name="maxPrice" type="number"  th:value="${maxPrice}">
+							<input hidden="hidden" name="category" th:value="${category}">
+							<input hidden="hidden" name="origin" th:value="${origin}">
+							<input hidden="hidden" name="brand" th:value="${brand}">
+							<button class="btn btn-outline-primary" type="submit">Tìm</button>
+						</form>
+					</div>
+				</div>
+				<h2 class="mb-4">Sản phẩm</h2>
+				<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="productContainer">
+					<!-- Product card -->
+						<div class="card h-100" style="width: 300px" th:each="product : ${products}">
+							<img style="height: 300px;width: 300px;object-fit: scale-down" class="card-img-top" alt="Product 1" th:src="@{'/api/images?imageName=' + ${product.image}}" />
+							<div class="card-body d-flex flex-column">
+								<a class="card-title" th:text="${product.productName}" style="font-size: 20px"
+								   th:href="@{'/browser/product/' + ${product.productId}}"
+
+								></a>
+<!--								<strong class="origin" th:text="${product.origin}"></strong>-->
+
+								<p class="brand mb-1" th:text="${product.brand}"></p>
+								<p class="card-text mb-1">
+									<strong th:text="${product.cost} + 'đ'"></strong>
+								</p>
+
+								<div class="d-flex justify-content-between align-items-center mb-2">
+									<p class="rating mb-0">
+									<i class="fas fa-star" th:if="${product.ratingAverage != null}"></i>
+									<i class="fas fa-star" th:if="${product.ratingAverage != null and product.ratingAverage > 1}"></i>
+									<i class="fas fa-star" th:if="${product.ratingAverage != null and product.ratingAverage > 2}"></i>
+									<i class="fas fa-star" th:if="${product.ratingAverage != null and product.ratingAverage > 3}"></i>
+									<i class="fas fa-star" th:if="${product.ratingAverage != null and product.ratingAverage > 4}"></i>
+									<span class="ms-1" th:text="${product.ratingAverage}"></span>
+									<p class="sold mb-0" th:text="'Đã bán: ' + ${product.sellCount}"></p>
+
+								</div>
+<!--								<button class="btn btn-success mt-auto">Add to Cart</button>-->
+								<a href="javascript:void(0)"
+								   class="btn btn-success mt-auto add-to-cart"
+								   th:data-product-code="${product.productCode}">Thêm vào giỏ hàng</a>
+							</div>
+						</div>
+				</div>
+			</div>
+		</div>
+
+
+
+		<div class="mt-4" th:if="${products.size() > 0}">
+			<nav aria-label="Page navigation" class="d-flex justify-content-center">
+				<ul class="pagination">
+					<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+						<a class="page-link" th:href="@{/browser/search(page=${currentPage - 1}, size=${pageSize}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category}, origin=${origin}, brand=${brand})}">Previous</a>
+					</li>
+					<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${i == currentPage} ? 'active'">
+						<a class="page-link" th:href="@{/browser/search(page=${i}, size=${pageSize},  keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category}, origin=${origin}, brand=${brand})}"> <span th:text="${i + 1}"></span></a>
+					</li>
+					<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+						<a class="page-link" th:href="@{/browser/search(page=${currentPage + 1}, size=${pageSize}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice}, category=${category}, origin=${origin}, brand=${brand})}">Next</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+	<script>
+	const addToCartButtons = document.querySelectorAll(".add-to-cart");
+
+	addToCartButtons.forEach(button => {
+		button.addEventListener("click", function () {
+			const productCode = this.getAttribute("data-product-code");
+
+			// Gửi yêu cầu AJAX đến API thêm vào giỏ hàng
+			$.ajax({
+				url: '/customer/cart/add-to-cart',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					productCode: productCode,
+					quantity: 1
+				}),
+				success: function (response) {
+					if (response.indexOf('loginForm')>0) {
+						// Chuyển hướng đến trang đăng nhập
+						window.location.href = '/auth/login';}
+					else {
+						alert(response);
+					}
+				},
+				error: function (xhr, status, error) {
+					alert(xhr.responseText);
+				}
+			});
+		});
+	});
+</script>
+</body>
+
+
+</html>

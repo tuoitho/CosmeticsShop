@@ -3,7 +3,9 @@ package com.cosmeticsellingwebsite.service.impl;
 import com.cosmeticsellingwebsite.config.AuthenticationHelper;
 import com.cosmeticsellingwebsite.entity.*;
 import com.cosmeticsellingwebsite.exception.CustomException;
+import com.cosmeticsellingwebsite.exception.EntityNotFoundException;
 import com.cosmeticsellingwebsite.payload.request.AddProductToCartRequest;
+import com.cosmeticsellingwebsite.payload.request.UpdateCartReq;
 import com.cosmeticsellingwebsite.repository.CartItemRepository;
 import com.cosmeticsellingwebsite.repository.CartRepository;
 import com.cosmeticsellingwebsite.repository.ProductRepository;
@@ -90,7 +92,11 @@ public class CartService implements ICartService {
 
     public void addToCart(Long userId, AddProductToCartRequest addProductToCartRequest) {
         Product product = productRepository.findByProductCode(addProductToCartRequest.getProductCode()).orElseThrow(() -> new RuntimeException("Product not found"));
-        Logger.log(product.toString());
+        //check if product is active
+        if (!product.getActive()) {
+            throw new CustomException("Product is not active");
+        }
+        Logger.log(addProductToCartRequest.toString());
         Cart cart = cartRepository.findByCustomer_UserId(userId).orElseGet(() -> {
             Cart newCart = new Cart();
             newCart.setCustomer((Customer) userRepository.findById(authenticationHelper.getUserId()).orElseThrow(() -> new RuntimeException("User not found")));
@@ -105,9 +111,17 @@ public class CartService implements ICartService {
                 .filter(item -> item.getProduct().getProductCode().equals(addProductToCartRequest.getProductCode()))
                 .findFirst();
         if (existingCartItem.isPresent()) {
+            Long productStock = existingCartItem.get().getProduct().getProductStock().getQuantity();
+            if (productStock < existingCartItem.get().getQuantity() + addProductToCartRequest.getQuantity()) {
+                throw new CustomException("Không đủ số lượng sản phẩm trong kho");
+            }
             CartItem cartItem = existingCartItem.get();
             cartItem.setQuantity(cartItem.getQuantity() + addProductToCartRequest.getQuantity());
         } else {
+            Long productStock = product.getProductStock().getQuantity();
+            if (productStock < addProductToCartRequest.getQuantity()) {
+                throw new CustomException("Không đủ số lượng sản phẩm trong kho");
+            }
             CartItem cartItem = new CartItem();
             cartItem.setProduct(product);
             cartItem.setQuantity(addProductToCartRequest.getQuantity());
@@ -118,65 +132,48 @@ public class CartService implements ICartService {
         cartRepository.save(cart);
     }
 
-//    public void updateProductQuantityInCart(@Valid AddProductToCartRequest addProductToCartRequest) {
-//        Optional<User> user = userRepository.findById(addProductToCartRequest.getUserId());
-//        if (user.isEmpty()) {
-//            throw new RuntimeException("User not found");
-//        }
-//        Optional<Product> product = productRepository.findById(addProductToCartRequest.getProductId());
-//        if (product.isEmpty()) {
-//            throw new RuntimeException("Product not found");
-//        }
-//        Optional<Cart> cartOpt = Optional.ofNullable(cartRepository.findByCustomer(user.get()));
-//        if (cartOpt.isEmpty()) {
-//            throw new RuntimeException("Cart not found");
-//        }
-//        Cart cart = cartOpt.get();
-//        Set<CartItem> cartItems = cart.getCartItems();
-//        //update quantity
-//        Optional<CartItem> cartItem = cartItems.stream().filter(item -> Objects.equals(item.getProduct().getProductId(), addProductToCartRequest.getProductId())).findFirst();
-//        if (cartItem.isEmpty()) {
-//            throw new RuntimeException("Product not found in cart");
-//        }
-//        Long quantityInStock = productService.getStockByProductCode(product.get().getProductCode());
-//        if (quantityInStock < addProductToCartRequest.getQuantity()) {
-//            throw new RuntimeException("Không đủ số lượng sản phẩm trong kho");
-//        }
-//        cartItem.get().setQuantity(addProductToCartRequest.getQuantity());
-////        Logger.log(addProductToCartRequest.getQuantity().toString());
-////        Logger.log(cartItem.get().getQuantity().toString());
-////
-//        cart.setCartItems(cartItems);
-//
-//        cartRepository.save(cart);
-//    }
 
-//    public void removeProductFromCart(Long userId, Long productId) {
-//        Optional<User> user = userRepository.findById(userId);
-//        if (user.isEmpty()) {
-//            throw new RuntimeException("User not found");
-//        }
-//        Optional<Product> product = productRepository.findById(productId);
-//        if (product.isEmpty()) {
-//            throw new RuntimeException("Product not found");
-//        }
-//        Optional<Cart> cartOpt = Optional.ofNullable(cartRepository.findByCustomer(user.get()));
-//        if (cartOpt.isEmpty()) {
-//            throw new RuntimeException("Cart not found");
-//        }
-//        Cart cart = cartOpt.get();
-//        Logger.log(cart.toString());
-//        Set<CartItem> cartItems = cart.getCartItems();
-//        Logger.log(cartItems.toString());
-//        Optional<CartItem> cartItem = cartItems.stream().filter(item -> Objects.equals(item.getProduct().getProductId(), productId)).findFirst();
-//        if (cartItem.isEmpty()) {
-//            throw new RuntimeException("Product not found in cart");
-//        }
-//        cartItems.remove(cartItem.get());
-//        Logger.log(cartItems.toString());
-//        cart.setCartItems(cartItems);
-////        cartRepository.save(cart);
-//        Logger.log( cartRepository.save(cart).toString());
-//        Logger.log(cartRepository.findByCustomer(userRepository.findById(userId).get()).toString());
-//    }
+    public void updateProductQuantityInCart(Long userId, UpdateCartReq updateCartReq) {
+        Cart cart = cartRepository.findByCustomer_UserId(userId).orElseGet(() -> {
+            Cart newCart = new Cart();
+            newCart.setCustomer((Customer) userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found")));
+            return cartRepository.save(newCart);
+        });
+        CartItem cartItem = cartItemRepository.findById(updateCartReq.getCartItemId()).orElseThrow(() -> new RuntimeException("Cart item not found"));
+        Set<CartItem> cartItems = cart.getCartItems();
+        //update quantity
+        Long quantityInStock = cartItem.getProduct().getProductStock().getQuantity();
+        if (quantityInStock < updateCartReq.getQuantity()) {
+            throw new CustomException("Không đủ số lượng sản phẩm trong kho");
+        }
+        cartItem.setQuantity((long) updateCartReq.getQuantity());
+        cart.setCartItems(cartItems);
+
+        cartRepository.save(cart);
+    }
+
+    public void removeFromCart(Long userId, Long cartItemId) {
+        Cart cart = cartRepository.findByCustomer_UserId(userId).orElseGet(() -> {
+            Cart newCart = new Cart();
+            newCart.setCustomer((Customer) userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found")));
+            return cartRepository.save(newCart);
+        });
+        Set<CartItem> cartItems = cart.getCartItems();
+        cartItems.removeIf(cartItem -> cartItem.getCartItemId().equals(cartItemId));
+        cart.setCartItems(cartItems);
+        cartRepository.save(cart);
+    }
+
+
+    public Long countProductInCart(){
+        return cartItemRepository.count();
+    }
+
+    @Override
+    public Optional<Cart> findCartByCustomer(Customer customer) {
+        return cartRepository.findByCustomer(customer);
+    }
+
+
+
 }

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{admin/layout-admin.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh sửa mã giảm giá</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<section class="container mt-4" layout:fragment="app-content">
+    <!-- Thông báo lỗi nếu có -->
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <p th:text="${errorMessage}"></p>
+    </div>
+
+    <h2 class="mb-4">Chỉnh sửa mã giảm giá</h2>
+
+    <!-- Form chỉnh sửa mã giảm giá -->
+    <form th:action="@{/admin/vouchers/update}" th:method="post" onsubmit="return validateForm()">
+        <input type="hidden" name="voucherId" th:value="${voucher.voucherId}">
+
+        <div class="form-group">
+            <label for="voucherCode">Code giảm giá</label>
+            <input type="text" id="voucherCode" name="voucherCode" class="form-control"
+                   th:value="${voucher.voucherCode}" placeholder="Nhập code giảm giá" required readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="voucherValue">Giá trị giảm</label>
+            <input type="number" id="voucherValue" name="voucherValue" class="form-control"
+                   th:value="${voucher.voucherValue}" placeholder="Nhập giá trị giảm" min="1" max="99999999" required>
+        </div>
+
+        <div class="form-group">
+            <label for="startDate">Ngày hiệu lực</label>
+<!--            <input type="datetime-local" id="startDate" name="startDate" class="form-control"-->
+<!--                   th:value="${@dateTimeUtils.formatLocalDateTime(voucher.startDate, 'dd/MM/yyyy HH:mm:ss')}" required>-->
+            <input type="datetime-local" id="startDate" name="startDate" class="form-control"
+                   th:value="${voucher.startDate}" required>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+        <div class="form-group">
+            <label for="endDate">Ngày hết hạn</label>
+            <input type="datetime-local" id="endDate" name="endDate" class="form-control"
+                   th:value="${voucher.startDate}" required>
+        </div>
+
+<!--        so luong-->
+        <div class="form-group">
+            <label for="quantity">Số lượng</label>
+            <input type="number" id="quantity" name="quantityAvailable" class="form-control"
+                   th:value="${voucher.quantityAvailable}" placeholder="Nhập số lượng" min="1" max="99999999" required>
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Cập nhật mã giảm giá</button>
+        <a href="/admin/vouchers" class="btn btn-secondary">Hủy</a>
+    </form>
+    <script>
+        // flatpickr("#startDate", {
+        //     enableTime: true,
+        //     time_24hr: true,
+        //     dateFormat: "d-m-Y H:i:S", // Định dạng với giây
+        //     value:  new Date(document.getElementById("startDate").value),
+        //     allowInput: true // Cho phép nhập liệu thủ công
+        // });
+        // flatpickr("#endDate", {
+        //     enableTime: true,
+        //     time_24hr: true,
+        //     dateFormat: "d-m-Y H:i:S", // Định dạng với giây
+        //     value:  new Date(document.getElementById("endDate").value),
+        //     allowInput: true // Cho phép nhập liệu thủ công
+        // });
+    </script>
+    <script>
+        function validateForm() {
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+
+            if (new Date(startDate) >= new Date(endDate)) {
+                alert("Ngày hiệu lực phải nhỏ hơn ngày hết hạn!");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</section>
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

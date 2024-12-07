@@ -2,7 +2,9 @@ package com.cosmeticsellingwebsite.security;
 
 
 //import com.cosmeticsellingwebsite.filter.JwtFilter;
+
 import com.cosmeticsellingwebsite.enums.RoleEnum;
+import com.cosmeticsellingwebsite.security.oauth.CustomAuthenticationFailureHandler;
 import com.cosmeticsellingwebsite.security.oauth.CustomOAuth2UserService;
 import com.cosmeticsellingwebsite.security.oauth.OAuth2LoginSuccessHandler;
 import com.cosmeticsellingwebsite.service.impl.UserService;
@@ -36,13 +38,14 @@ import java.util.Arrays;
 @CrossOrigin
 public class SecurityConfig {
     //    @Autowired
-//    private JwtFilter jwtFilter;
-    @Autowired
-    private    CustomOAuth2UserService oauth2UserService; // Inject CustomOAuth2UserService
-
-    //    @Autowired
 //    @Lazy
+
+
     private final OAuth2LoginSuccessHandler oauth2LoginSuccessHandler;
+    @Autowired
+    CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
 
     public SecurityConfig(@Lazy OAuth2LoginSuccessHandler oauth2LoginSuccessHandler) {
         this.oauth2LoginSuccessHandler = oauth2LoginSuccessHandler;
@@ -53,14 +56,11 @@ public class SecurityConfig {
         return new OAuth2LoginSuccessHandler(passwordEncoder);
     }
 
-
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    @Autowired
-    private CustomOAuth2UserService customOAuth2UserService;
-    // Defines a UserDetailsService bean for user authentication
+
     @Bean
     public UserDetailsService userDetailsService() {
         return new UserService();
@@ -83,44 +83,58 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                        .maximumSessions(1) // Chỉ cho phép 1 phiên đăng nhập cùng lúc
+                        .maxSessionsPreventsLogin(false) // Không cấm đăng nhập nếu đạt giới hạn
                 )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/assets/**","/showMsg.js","/notification.js","/error","/error/**"," /login").permitAll()
+//                        STATIC_RESOURCES
+                        .requestMatchers("/assets/**", "/showMsg.js", "/notification.js", "/error", "/error/**", " /login").permitAll()
+//                        PUBLIC
+                        .requestMatchers("/api/images/**", "/auth/**", "/oauth2/**", "/user/**", "/browser/**","/about", "/").permitAll()
+//                        .requestMatchers("/shipper/**").hasRole("SHIPPER")
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/**").permitAll()
-                        .requestMatchers("/api/images/**","/auth/**",
-                                "/oauth2/**","/user/**","browser/**",
-                                "/about","/","/admin/products/**").permitAll()
-                        .requestMatchers("/customer/**","customer").hasRole("CUSTOMER")
-                        .requestMatchers("/shipper/**").hasRole("SHIPPER")
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/manager/**").hasRole("MANAGER")
+//                        .requestMatchers("/manager/**").hasRole("MANAGER")
+                        .requestMatchers("/api/revenue/**").hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers("/customer/**").hasRole("CUSTOMER")
+                        .requestMatchers(
+                                "/admin/products/**",
+                                "/admin/report/**",
+                                "/admin/orders/**",
+                                "/admin/revenue/**",
+                                "/admin/categories/**",
+                                "/admin/vouchers/**",
+                                "/admin/stock/**",
+                                "/admin/feedbacks/**"
+                                ).hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers(
+                                "/admin/user/**")
+                                .hasRole("ADMIN")
                         .anyRequest().authenticated()) // Require authentication for all other requests
-                .formLogin(f->f.loginPage("/auth/login").permitAll()
+                .formLogin(f -> f.loginPage("/auth/login").permitAll()
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/")
-                        .failureUrl("/auth/login")
+                        .successHandler(customAuthenticationSuccessHandler)
+//                        .failureUrl("/auth/login-failure")
+                                .failureHandler(new CustomAuthenticationFailureHandler())
                 )
+                .rememberMe(remember -> remember
+                        .key("yourSecretRememberMeKey") // Replace with a strong, unique key
+                        .userDetailsService(userDetailsService()) // Cần thiết để lấy thông tin người dùng
+                        .tokenValiditySeconds(7*24*60*60) // 7 days
+                        .useSecureCookie(true) // Chỉ gửi cookie qua HTTPS
+                         )
+                //nhớ tích chọn rememberMe lúc đăng nhập và hãy thử tắt trình duyệt đi rồi mở lại để xem kết quả nhé
+
                 .authenticationProvider(authenticationProvider()) // Register the authentication provider
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/auth/login") // Custom login page
-
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService) // Custom OAuth2 user service
                         )
                         .successHandler(oauth2LoginSuccessHandler) // Handle success
                 )
-//                k có add fiter vào đây, vì project này không chuyên làm về api, nên không cần jwt, project này chủ yếu làm về view,
-//                role SHIPPER mới cần jwt
-//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Add the JWT filter before processing the request
-//                .oauth2Login(Customizer.withDefaults())
-//                .oauth2Login(oauth2 -> oauth2
-//                        .userInfoEndpoint(userInfo -> userInfo
-//                                .userService(oauth2UserService)) // Set the custom OAuth2UserService
-//                )
+
                 .build();
     }
 
@@ -135,16 +149,11 @@ public class SecurityConfig {
     }
 
 
-    // Defines a PasswordEncoder bean that uses bcrypt hashing by default for password encoding
-
-
-
     // Defines an AuthenticationManager bean to manage authentication processes
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
 
 
 }

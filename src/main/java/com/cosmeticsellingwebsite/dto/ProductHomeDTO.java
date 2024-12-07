@@ -13,4 +13,5 @@ public class ProductHomeDTO {
     private String image;
     private Integer totalSoldLast30Days;
     private LocalDateTime createdDate;
+    private Double averageRating;
 }

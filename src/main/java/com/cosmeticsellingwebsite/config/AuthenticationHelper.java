@@ -5,6 +5,7 @@ import com.cosmeticsellingwebsite.repository.UserRepository;
 import com.cosmeticsellingwebsite.security.UserPrincipal;
 import com.cosmeticsellingwebsite.security.oauth.CustomOAuth2User;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.RememberMeAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,17 +23,28 @@ public class AuthenticationHelper {
     public Long getUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
-            if (authentication instanceof UsernamePasswordAuthenticationToken) {
-                UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-                return userPrincipal.getUserId();
-            } else if (authentication instanceof OAuth2AuthenticationToken oauthToken) {
-                OAuth2User oauthUser = oauthToken.getPrincipal();
-                if (oauthUser instanceof CustomOAuth2User customOAuth2User) {
-                    return customOAuth2User.getUserId();
-                } else {
-                    // Trường hợp OAuth2User không phải là CustomOAuth2User,
-                    // bạn cần lấy userId từ attributes của oauthUser
-                    return oauthUser.getAttribute("id"); // Hoặc key tương ứng với userId
+            switch (authentication) {
+                case UsernamePasswordAuthenticationToken authenticationToken -> {
+                    UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+                    return userPrincipal.getUserId();
+                }
+                case OAuth2AuthenticationToken oauthToken -> {
+                    OAuth2User oauthUser = oauthToken.getPrincipal();
+                    if (oauthUser instanceof CustomOAuth2User customOAuth2User) {
+                        return customOAuth2User.getUserId();
+                    } else {
+                        // Trường hợp OAuth2User không phải là CustomOAuth2User,
+                        // bạn cần lấy userId từ attributes của oauthUser
+                        return oauthUser.getAttribute("id"); // Hoặc key tương ứng với userId
+                    }
+                }
+                case RememberMeAuthenticationToken rememberMeAuthenticationToken -> {
+                    UserPrincipal userPrincipal = (UserPrincipal) rememberMeAuthenticationToken.getPrincipal();
+                    return userPrincipal.getUserId();
+                }
+                default -> {
+                    // Xử lý trường hợp không xác định
+                    return null;
                 }
             }
         }

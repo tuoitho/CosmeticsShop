@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{admin/layout-admin.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Phản hồi đánh giá</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<section class="container mt-4" layout:fragment="app-content">
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Phản hồi đánh giá</h2>
+
+        <!-- Thông tin khách hàng -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">Thông tin khách hàng</div>
+            <div class="card-body">
+                <p><strong>Tên khách hàng:</strong> <span th:text="${customer.fullname}"></span></p>
+                <p><strong>Số điện thoại:</strong> <span th:text="${customer.phone}"></span></p>
+            </div>
+        </div>
+
+        <!-- Thông tin sản phẩm -->
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white">Thông tin sản phẩm</div>
+            <div class="card-body">
+                <p><strong>Tên sản phẩm:</strong> <span th:text="${product.productName}"></span></p>
+                <p><strong>Giá:</strong> <span th:text="${product.cost}"></span> VND</p>
+                <p><strong>Thương hiệu:</strong> <span th:text="${product.brand}"></span></p>
+                <p><strong>Hình ảnh:</strong></p>
+                <img th:src="@{${product.image}}" class="img-thumbnail" style="max-width: 200px;" alt="Product Image">
+            </div>
+        </div>
+
+        <!-- Nội dung đánh giá -->
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-white">Nội dung đánh giá</div>
+            <div class="card-body">
+                <p><strong>Nội dung đánh giá:</strong> <span th:text="${productFeedback.comment}"></span></p>
+                <p><strong>Ngày đánh giá:</strong> <span
+                        th:text="${@dateTimeUtils.formatLocalDateTime(productFeedback.feedbackDate, 'dd/MM/yyyy HH:mm:ss')}"></span>
+                </p>
+                <p><strong>Đánh giá:</strong> <span th:text="${productFeedback.rating}"></span> / 5</p>
+
+                <!-- Hiển thị hình ảnh đánh giá nếu có -->
+                <div th:if="${productFeedback.image != null}">
+                    <p><strong>Hình ảnh đánh giá:</strong></p>
+                    <img th:src="@{/api/images(imageName=${productFeedback.image})}" class="img-thumbnail" style="max-width: 200px;"
+                         alt="Feedback Image">
+                </div>
+                <div th:if="${productFeedback.image == null}">
+                    <p class="text-muted">Không có hình ảnh đánh giá.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phản hồi đánh giá -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">Phản hồi đánh giá</div>
+            <div class="card-body">
+                <form th:action="@{/admin/feedbacks/respond/{id}(id=${productFeedback.productFeedbackId})}"
+                      th:object="${feedbackResponse}" method="post">
+                    <div class="mb-3">
+                        <label for="responseComment" class="form-label">Nội dung phản hồi</label>
+                        <textarea id="responseComment" class="form-control"
+                                  th:field="*{comment}"
+                                  rows="5" required
+                                  th:placeholder="${feedbackResponse.comment == null ? 'Nhập phản hồi...' : ''}"></textarea>
+                    </div>
+                    <input type="hidden" name="feedbackId" th:value="${productFeedback.productFeedbackId}">
+                    <button type="submit" class="btn btn-primary"
+                            th:text="${feedbackResponse.comment == null ? 'Gửi phản hồi' : 'Cập nhật phản hồi'}"></button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</section>
+</body>
+</html>

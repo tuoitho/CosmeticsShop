@@ -16,21 +16,48 @@
         .container {
             max-width: 800px;
         }
+
+        .choose-file-button {
+            background-color: #007bff; /* Bright blue color */
+            color: white;
+            font-weight: bold;
+            padding: 12px 24px; /* Larger padding for better clickability */
+            border: 2px solid #0056b3; /* Darker blue border */
+            border-radius: 8px; /* Slightly rounded corners */
+            font-size: 18px; /* Larger font size */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Smooth transitions */
+        }
+
+        .choose-file-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            transform: scale(1.05); /* Slightly grow the button on hover */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow on hover for depth */
+        }
+
+        #fileName {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
     </style>
 </head>
 <body>
 <section class="row" layout:fragment="app-content">
     <div class="container mt-4">
+        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+        <div th:if="${message}" class="alert alert-success" role="alert" th:text="${message}"></div>
+
         <h2 class="mb-4">Chỉnh sửa Sản phẩm</h2>
 
         <!-- Form Chỉnh sửa Sản phẩm -->
-        <form th:action="@{/admin/products/update}" th:object="${product}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/admin/products/update}" th:object="${product}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
             <input type="hidden" th:field="*{productId}" />
 
             <!-- Mã sản phẩm -->
             <div class="form-group">
                 <label for="productCode">Mã sản phẩm</label>
-                <input type="text" id="productCode" th:field="*{productCode}" class="form-control" readonly>
+                <input type="text" id="productCode" th:field="*{productCode}" class="form-control" readonly required>
             </div>
 
             <!-- Tên sản phẩm -->
@@ -60,49 +87,49 @@
             <!-- Mô tả sản phẩm -->
             <div class="form-group">
                 <label for="description">Mô tả sản phẩm</label>
-                <textarea id="description" th:field="*{description}" class="form-control" rows="4"></textarea>
+                <textarea id="description" th:field="*{description}" class="form-control" rows="4" required></textarea>
             </div>
 
             <!-- Thương hiệu -->
             <div class="form-group">
                 <label for="brand">Thương hiệu</label>
-                <input type="text" id="brand" th:field="*{brand}" class="form-control">
+                <input type="text" id="brand" th:field="*{brand}" class="form-control" required>
             </div>
 
             <!-- Ngày sản xuất -->
             <div class="form-group">
                 <label for="manufactureDate">Ngày sản xuất</label>
-                <input type="date" id="manufactureDate" th:field="*{manufactureDate}" class="form-control">
+                <input type="date" id="manufactureDate" th:field="*{manufactureDate}" class="form-control" required>
             </div>
 
             <!-- Ngày hết hạn -->
             <div class="form-group">
                 <label for="expirationDate">Ngày hết hạn</label>
-                <input type="date" id="expirationDate" th:field="*{expirationDate}" class="form-control">
+                <input type="date" id="expirationDate" th:field="*{expirationDate}" class="form-control" required>
             </div>
 
             <!-- Thành phần -->
             <div class="form-group">
                 <label for="ingredient">Thành phần</label>
-                <textarea id="ingredient" th:field="*{ingredient}" class="form-control" rows="2"></textarea>
+                <textarea id="ingredient" th:field="*{ingredient}" class="form-control" rows="2" required></textarea>
             </div>
 
             <!-- Hướng dẫn sử dụng -->
             <div class="form-group">
                 <label for="how_to_use">Hướng dẫn sử dụng</label>
-                <textarea id="how_to_use" th:field="*{how_to_use}" class="form-control" rows="2"></textarea>
+                <textarea id="how_to_use" th:field="*{how_to_use}" class="form-control" rows="2" required></textarea>
             </div>
 
             <!-- Dung tích -->
             <div class="form-group">
                 <label for="volume">Dung tích</label>
-                <input type="text" id="volume" th:field="*{volume}" class="form-control">
+                <input type="text" id="volume" th:field="*{volume}" class="form-control" required>
             </div>
 
             <!-- Nơi sản xuất -->
             <div class="form-group">
                 <label for="origin">Nơi sản xuất</label>
-                <input type="text" id="origin" th:field="*{origin}" class="form-control">
+                <input type="text" id="origin" th:field="*{origin}" class="form-control" required>
             </div>
 
 <!--            &lt;!&ndash; Link hình ảnh &ndash;&gt;-->
@@ -115,9 +142,7 @@
             <div class="mb-4">
                 <label class="block font-semibold mb-2">Add Image:</label>
                 <div class="flex items-center gap-2">
-                    <button id="customButton" type="button" class="px-4 py-2 bg-blue-500 text-white rounded">Choose
-                        File
-                    </button>
+                    <button id="customButton" type="button" class="choose-file-button">Choose File</button>
                     <span id="fileName" class="text-gray-500">No file chosen</span>
                 </div>
                 <input type="file" id="imageInput" name="imagePath" accept="image/*" hidden>
@@ -127,7 +152,11 @@
 
             <!-- Nút submit -->
             <button type="submit" class="btn btn-primary">Cập nhật sản phẩm</button>
+
         </form>
+
+        <!-- Nút quay lại -->
+        <a href="/admin/products" class="btn btn-secondary mt-3">Quay lại danh sách sản phẩm</a>
     </div>
 
     <!-- Bootstrap JS và Popper.js -->
@@ -191,6 +220,20 @@
                 this.value = ''; // Đặt lại input file về rỗng
             }, 0); // Đảm bảo thực hiện sau khi sự kiện click hoàn thành
         });
+
+        function validateForm() {
+        const manufactureDate = document.getElementById('manufactureDate').value;
+        const expirationDate = document.getElementById('expirationDate').value;
+
+        if (new Date(manufactureDate) >= new Date(expirationDate)) {
+        alert("Ngày sản xuất phải nhỏ hơn ngày hết hạn!");
+        return false;
+        }
+
+        return true;
+        }
+
+
     </script>
 </section>
 </body>

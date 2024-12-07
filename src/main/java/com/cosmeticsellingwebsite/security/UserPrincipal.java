@@ -20,6 +20,7 @@ public class UserPrincipal implements UserDetails {
     String userName;
     String password = null;
     String role = null;
+    Boolean active;
     Set<SimpleGrantedAuthority> authorities;
 
     public UserPrincipal(User user) {
@@ -28,6 +29,7 @@ public class UserPrincipal implements UserDetails {
         password = user.getPassword();
         role = user.getRole().getRoleName().toString();
         authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_"+role));
+        active = user.getActive();
     }
 
 
@@ -53,7 +55,8 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+//        return true;
+        return active;
     }
 
     @Override

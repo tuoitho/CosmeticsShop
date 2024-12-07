@@ -10,8 +10,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -20,6 +24,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     boolean existsByOrderIdAndOrderLines_Product_ProductId(Long orderId, Long orderLinesProductProductId);
 
     Set<Order> findAllByCustomerId(Long customerId);
+
+    @Query("""
+        SELECT o
+        FROM Order o
+        WHERE o.customerId = :customerId
+    """)
+    Page<Order> findAllPaginated(Long customerId, Pageable pageable);
 
     @Query("""
     SELECT o
@@ -45,6 +56,37 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             """, nativeQuery = true)
     Optional<Long> findTotalQuantitySoldByProductId(Long productId);
 
-
     Set<Order> findAllByCustomerIdAndOrderStatus(Long customerId, OrderStatus orderStatus);
+
+    List<Order> findByOrderStatus(OrderStatus status);
+
+
+    @Query("SELECT o FROM Order o WHERE CAST(o.orderId AS string) LIKE CONCAT('%', :searchKeyword, '%')")
+    Page<Order> findByOrderIdContaining(@Param("searchKeyword") String searchKeyword, Pageable pageable);
+    Page<Order> findByOrderStatus(OrderStatus status, Pageable pageable);
+    @Query("SELECT o FROM Order o WHERE CAST(o.orderId AS string) LIKE CONCAT('%', :searchKeyword, '%') AND o.orderStatus = :status")
+    Page<Order> findByOrderIdContainingAndOrderStatus(@Param("searchKeyword") String searchKeyword,
+                                                      @Param("status") OrderStatus status,
+                                                      Pageable pageable);
+
+    @Query("SELECT o FROM Order o WHERE o.orderStatus = 'COMPLETED' AND o.payment.paymentDate BETWEEN :startDate AND :endDate")
+    List<Order> findOrdersWithShippingStatusAndReceiveDate(
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
+
+    List<Order> findByCustomerId(Long customerId);
+
+
+
+    @Query("SELECT o FROM Order o ORDER BY o.orderDate DESC limit 5")
+    List<Order> findTop5ByOrderByOrderDateDesc();
+
+    Long countByOrderStatus(OrderStatus orderStatus);
+    @Query("""
+        SELECT o
+        FROM Order o
+        WHERE o.customerId = :customerId
+            and o.orderStatus = :orderStatus
+    """)
+    Page<Order> findAllPaginatedByOrderStatus(Long customerId, OrderStatus orderStatus, Pageable pageable);
 }

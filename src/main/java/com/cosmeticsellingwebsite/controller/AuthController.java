@@ -10,6 +10,7 @@ import com.cosmeticsellingwebsite.service.mail.MailService;
 import com.cosmeticsellingwebsite.util.Logger;
 import com.cosmeticsellingwebsite.dto.gooogle.GooglePojo;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -39,63 +41,34 @@ public class AuthController {
     @Autowired
     private CaptchaService captchaService;
     @Autowired
-    private GoogleService googleUtils;
-    @Autowired
-    private UserService userservice;
-    @Autowired
     MailService mailService;
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
     @GetMapping({"/login", "/register"})
-    public String login() {
+    public String login(@RequestParam(value = "error", required = false) String error, Model model) {
+        //get from RedirectAttributes
+        if (error != null) {
+            model.addAttribute("messageLogin", error);
+        }
         return "user/login-register";
     }
-    //lấy thông tin user đã đăng nhập
-    @GetMapping("/info")
-    @ResponseBody
-    public String info(Principal principal){
-        Logger.log("Principal: " +principal.getName());
-        return ("Xem thông tin user thành công: "+principal.getName());
+    @GetMapping({"/login-failure"})
+    public String loginFailureHander(Model model) {
+        model.addAttribute("messageLogin", "Sai tên đăng nhập hoặc mật khẩu");
+        return "user/login-register";
+    }
+    @GetMapping("/alogin")
+    public String alogin() {
+        return "admin/alogin";
     }
     @PostMapping("/register")
     @ResponseBody
-    public ResponseEntity<?> register(@RequestParam("g-recaptcha-response") String response, @RequestBody @Valid RegisterReq registerRequest) {
+    public ResponseEntity<?> register(@RequestParam("g-recaptcha-response") String response, @ModelAttribute @Valid RegisterReq registerRequest) {
         captchaService.processResponse(response);
         Logger.log("Register: " + registerRequest);
         userService.registerUser(registerRequest);
         return ResponseEntity.ok("Đăng ký thành công");
-    }
-
-
-
-    @RequestMapping("/loginGG")
-    public String LoginWithGoogle(@RequestParam String code) {
-        try {
-            String accessToken = googleUtils.getToken(code);
-            GooglePojo googleUser = googleUtils.getUserInfo(accessToken);
-            Logger.log("Google User: " + googleUser);
-            User user = userservice.findByEmail(googleUser.getEmail());
-            if (user == null) {
-                RegisterReq customer = new RegisterReq();
-                customer.setEmail(googleUser.getEmail());
-                customer.setFullname(googleUser.getName());
-                customer.setPassword("");
-                userservice.registerUser(customer);
-            }
-            // Create authorities
-            Collection<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_USER")); // Add any roles as needed
-
-            // Create Authentication object
-            Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            return "redirect:/";
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "redirect:/";
-        }
     }
 
     @GetMapping("/forgot-password")

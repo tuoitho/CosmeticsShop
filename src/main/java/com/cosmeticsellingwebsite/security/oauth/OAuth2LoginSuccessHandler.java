@@ -32,13 +32,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 										Authentication authentication) throws IOException, ServletException {
-		CustomOAuth2User oauth2User = (CustomOAuth2User) authentication.getPrincipal();
-		String email = oauth2User.getName();
-//		Optional<KhachHang> cus = customerRepository.findByEmail(email);
-//		if(cus.isEmpty()) {
-//			//save new customer
-//		}
-		
 		super.onAuthenticationSuccess(request, response, authentication);
 	}
 	

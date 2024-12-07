@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Xem lịch sử mua hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Container Styles */
+        .tab {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            border-bottom: 2px solid #007bff; /* Blue underline for active tab */
+            background-color: #f8f9fa; /* Light background for better contrast */
+            border-radius: 0.5rem; /* Rounded corners for the tab container */
+        }
+
+        /* Individual Tab Items */
+        .nav-item {
+            margin: 0 10px; /* Space between tabs */
+        }
+
+        .nav-link {
+            padding: 10px 20px; /* Padding for better click area */
+            border-radius: 5px; /* Rounded corners */
+            color: #007bff; /* Default text color */
+            text-decoration: none; /* Remove underline */
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+        }
+
+        /* Active Tab Style */
+        .nav-link.active {
+            background-color: #007bff; /* Background color for active tab */
+            color: white; /* Text color for active tab */
+        }
+
+        /* Hover Effects */
+        .nav-link:hover {
+            background-color: rgba(0, 123, 255, 0.1); /* Light blue background on hover */
+            color: #0056b3; /* Darker text color on hover */
+        }
+
+        /* Button Active State (if applicable) */
+        button:active {
+            background-color: #a1a1ff; /* Background color when button is pressed */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column; /* Stack tabs vertically on small screens */
+            }
+
+            .nav-item {
+                margin-bottom: 10px; /* Space between stacked tabs */
+            }
+        }
+        .nav-tabs {
+            border-bottom: 2px solid #ddd;
+        }
+        .nav-tabs .nav-link-d {
+            color: #555;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 10px 15px;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+        .nav-tabs .nav-link-d.active {
+            color: #fff;
+            background-color: #8E44AD;
+            border: 1px solid #8E44AD;
+            border-radius: 8px;
+        }
+        .nav-tabs .nav-link-d:hover {
+            color: #fff;
+            background-color: #E74C3C;
+            border: 1px solid #E74C3C;
+            border-radius: 8px;
+        }
+        .nav-tabs .nav-item {
+            margin-bottom: -1px;
+        }
+    </style>
+
+</head>
+<body>
+<header th:replace="~{user/fragments/header::header}"></header>
+<div class="main">
+    <!--    thanh search-->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Lịch sử mua hàng</h2>
+            </div>
+            <div class="col-md-6 text-end">
+                <form action="/customer/order/search" method="get">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Tìm kiếm đơn hàng" name="keyword" th:value="${keyword}">
+                        <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="tab mt-4 mb-4 container text-center">
+        <ul class="nav nav-tabs justify-content-center">
+            <li class="nav-item"><a class="nav-link-d" href="/customer/order/order-history?tab=tat-ca-don-hang" th:classappend='active'><i class="fas fa-list"></i> Tất cả</a></li>
+            <li class="nav-item"><a class="nav-link-d" href="/customer/order/order-history?tab=don-cho-xac-nhan"><i class="fas fa-clock"></i> Chờ xác nhận</a></li>
+            <li class="nav-item"><a class="nav-link-d" href="/customer/order/order-history?tab=don-da-xac-nhan"><i class="fas fa-check-circle"></i> Đã xác nhận</a></li>
+            <li class="nav-item"><a class="nav-link-d" href="/customer/order/order-history?tab=don-dang-van-chuyen" ><i class="fas fa-truck"></i> Đang vận chuyển</a></li>
+            <li class="nav-item"><a class="nav-link-d" href="/customer/order/order-history?tab=don-da-giao" ><i class="fas fa-check-double"></i> Hoàn thành</a></li>
+            <li class="nav-item"><a class="nav-link-d" href="/customer/order/order-history?tab=don-huy"><i class="fas fa-times-circle"></i> Đã hủy</a></li>
+        </ul>
+    </div>
+    <div class="tab-content">
+    </div>
+</div>
+<footer th:replace="~{user/fragments/footer :: footer}"></footer>
+
+<!--jquery3.6.0-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let currentPage = 0;
+    const pageSize = 3; // Giống với pageSize trong controller
+    let isLoading = false;
+    let keyword = document.querySelector('input[name="keyword"]').value;
+
+    function loadMoreOrders() {
+        if (isLoading) return;
+
+        isLoading = true;
+
+        $.ajax({
+            url: '/customer/order/order-history-search',
+            type: 'GET',
+            data: {
+                keyword: keyword,
+                page: currentPage
+            },
+            success: function (data) {
+
+                // Tạo HTML cho các order mới
+                const newOrdersHTML = data.map(order => {
+                    let orderHtml = `
+          <div class="card mb-3 container">
+            <div class="card-header">
+              <a href="/customer/order/followOrder/${order.orderId}">
+                <h5>Đơn hàng ngày: ${new Date(order.orderDate).toLocaleDateString('vi-VN')}</h5>
+              </a>
+            </div>
+        `;
+
+                    order.orderLines.forEach(orderline => {
+                        orderHtml += `
+            <div class="row g-0">
+              <div class="col-md-3">
+                <img src="${orderline.productSnapshot.image}" class="img-fluid rounded-start" alt="Sản phẩm" style="width: 150px;">
+              </div>
+              <div class="col-md-9">
+                <div class="card-body">
+                  <h5 class="card-title">${orderline.productSnapshot.productName}</h5>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <p class="card-text">${orderline.productSnapshot.cost}</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                      <p class="card-text">x${orderline.quantity}</p>
+                    </div>
+                  </div>
+                  <hr>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 text-end mb-4">
+                  <strong class="card-text">Tổng tiền: ${order.total}</strong>
+                </div>
+              </div>
+            </div>
+          `;
+                    });
+
+                    orderHtml += `</div>`;
+                    return orderHtml;
+                }).join('');
+
+                // Thêm HTML vào tab-content
+                $('.tab-content').append(newOrdersHTML);
+                console.log(newOrdersHTML);
+
+                currentPage++;
+                isLoading = false;
+            },
+            error: function (error) {
+                // Ẩn loading indicator (nếu có)
+                // ...
+                console.error("Lỗi khi tải đơn hàng:", error);
+            }
+        });
+    }
+
+    // Gọi loadMoreOrders() khi người dùng cuộn đến gần cuối trang
+    $(window).scroll(function () {
+        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+            loadMoreOrders();
+        }
+    });
+
+    // Gọi loadMoreOrders() lần đầu để hiển thị trang đầu tiên
+    loadMoreOrders();
+});
+</script>
+</body>
+</html>

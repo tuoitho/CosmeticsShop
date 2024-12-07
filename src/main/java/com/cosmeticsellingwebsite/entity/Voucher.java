@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ public class Voucher implements Serializable {
     private Long voucherId;
     private String voucherCode;
     private Double voucherValue;
+//    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Boolean used = false;

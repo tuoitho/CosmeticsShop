@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{admin/layout-admin.html}">
+<section layout:fragment="app-content">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS cơ bản */
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #e0eafc, #cfdef3);
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: nowrap; /* Đảm bảo các thẻ nằm cùng hàng */
+            gap: 15px;
+        }
+
+        .col-4 {
+            flex: 1;
+            max-width: calc(33.333% - 15px);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb-area {
+            background-color: #f1f1f1;
+            padding: 15px 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .breadcrumb {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .breadcrumb-item {
+            margin-right: 10px;
+        }
+
+        .breadcrumb-item a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+
+        /* Card Styles */
+        .card {
+            background: linear-gradient(135deg, #ffffff, #e3f2fd);
+            border: 0;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        .card-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        #todayRevenue, #monthlyRevenue, #annualRevenue {
+            font-size: 28px;
+            font-weight: bold;
+            color: #212121;
+            margin: 0;
+        }
+
+        canvas {
+            margin-top: 20px;
+            max-width: 100%;
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        /* Hiệu ứng động */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+<div class="breadcrumb-area">
+    <div class="container">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/MainHome.html">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Doanh Thu</li>
+        </ul>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <!-- Thông tin doanh thu -->
+    <div class="row mb-4">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Doanh thu hôm nay</h5>
+                    <p id="todayRevenue">0 VND</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Doanh thu trong tháng</h5>
+                    <p id="monthlyRevenue">0 VND</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Doanh thu trong năm</h5>
+                    <p id="annualRevenue">0 VND</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Biểu đồ doanh thu 12 tháng -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Biểu đồ doanh thu 12 tháng</h5>
+            <canvas id="monthlyRevenueChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Gọi API lấy dữ liệu doanh thu từ server
+    fetch('/api/revenue/today')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('todayRevenue').textContent = new Intl.NumberFormat().format(data.revenue) + " VND";
+        })
+        .catch(error => console.error('Có lỗi khi lấy dữ liệu doanh thu hôm nay:', error));
+
+    fetch('/api/revenue/monthly')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('monthlyRevenue').textContent = new Intl.NumberFormat().format(data.revenue) + " VND";
+        })
+        .catch(error => console.error('Có lỗi khi lấy dữ liệu doanh thu tháng:', error));
+
+    fetch('/api/revenue/annual')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('annualRevenue').textContent = new Intl.NumberFormat().format(data.revenue) + " VND";
+        })
+        .catch(error => console.error('Có lỗi khi lấy dữ liệu doanh thu năm:', error));
+
+    // Gọi API lấy dữ liệu doanh thu hàng tháng từ server
+    fetch('/api/revenue/annual-data')
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('monthlyRevenueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [
+                        "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+                        "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"
+                    ],
+                    datasets: [{
+                        label: 'Doanh thu (VND)',
+                        data: data.monthlyRevenue,
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(200, 200, 200, 0.5)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: 14,
+                                    family: "'Roboto', Arial, sans-serif"
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#007bff',
+                            titleColor: '#fff',
+                            bodyColor: '#fff'
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Có lỗi khi lấy dữ liệu doanh thu 12 tháng:', error);
+        });
+</script>
+</section>

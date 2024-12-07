@@ -1,212 +1,232 @@
-<!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${product.productName + ' - Product Detail'}">Product Detail</title>
+    <title>Product Detail - Luxury Face Cream</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .feedback-item {
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
         }
 
-        .rating-stars {
-            color: #ffc107; /* Màu vàng cho sao */
-        }
-
-        .star {
-            font-size: 1.5em;
-        }
-
-        .filled {
-            color: #ffc107; /* Màu vàng cho sao đã tô */
-        }
-
-        .staff-response {
-            margin-top: 15px;
-            border-top: 1px dashed #ccc;
-            padding-top: 10px;
-        }
-
-        .response-header {
-            font-weight: bold;
-        }
-
-        .response-date {
-            font-size: 0.8em;
-            color: #777;
+        .product-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .star-rating {
             color: #ffc107;
         }
 
-        /* Container for feedback item */
-        .feedback-item {
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin: 10px 0;
+        .section-title {
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .review-card {
+            border: 1px solid #dee2e6;
             border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
         }
 
-        /* Star rating style */
-        .rating-stars {
-            margin: 10px 0;
+        .review-image {
+            max-width: 100px;
+            height: auto;
+            border-radius: 4px;
         }
 
-        .star {
-            font-size: 20px;
-            color: #ccc;
-            margin-right: 5px;
-        }
-
-        .star.filled {
-            color: gold;
-        }
-
-        /* Buttons styles */
-        .buttons {
+        .shop-response {
+            background-color: #f1f3f5;
+            border-radius: 8px;
+            padding: 10px;
             margin-top: 10px;
         }
-
-        .reply-btn, .ok-btn {
-            margin-right: 10px;
-        }
-
     </style>
 </head>
 <body>
-<div class="container mt-5">
+<header th:replace="~{/user/fragments/header :: header}"></header>
+<div class="container my-5">
     <div class="row">
         <div class="col-md-6">
             <img th:src="@{/api/images(imageName=${product.image})}" alt="Product Image" class="img-fluid rounded">
         </div>
         <div class="col-md-6">
             <h1 th:text="${product.productName}">Product Name</h1>
-            <p class="text-muted" th:text="${'Product Code: ' + product.productCode}">Product Code</p>
+            <p class="text-muted" th:text="${'Mã sản phẩm: ' + product.productCode}"></p>
             <div class="mb-3">
                 <span class="star-rating" th:each="i : ${#numbers.sequence(1, 5)}"> <i class="fas fa-star"
                                                                                        th:classappend="${i <= product.averageRating ? 'text-warning' : 'text-secondary'}"></i> </span>
-                <span th:text="${'(' + product.averageRating + ' / 5) ' + product.totalFeedback + ' reviews'}"></span>
+                <span th:text="${'(' + product.averageRating + ' / 5) ' + product.totalFeedback + ' đánh giá'}"></span>
             </div>
-            <p class="h3 text-primary" th:text="${'$' + #numbers.formatDecimal(product.cost, 1, 2)}">$0.00</p>
-            <p th:text="${'Brand: ' + product.brand}">Brand</p>
-            <p th:text="${'Category: ' + product.category}">Category</p>
-            <p th:text="${'Stock: ' + product.stock}">Stock</p>
-            <p th:text="${'Total Sold: ' + product.totalSold}">Total Sold</p>
-            <p th:if="${product.active}" class="text-success">In Stock</p>
-            <p th:unless="${product.active}" class="text-danger">Out of Stock</p>
-            <button class="btn btn-primary">Add to Cart</button>
+            <h2 class="text-primary mb-3" th:text="${#numbers.formatDecimal(product.cost, 1, 2)+' đ'}"></h2>
+            <p><strong th:text="${'Thương hiệu: ' + product.brand}">Brand:</strong> </p>
+            <p><strong th:text="${'Danh mục sản phẩm: ' + product.category}"></strong></p>
+            <p><strong th:text="${'Số lượng trong kho: ' + product.stock}">Stock:</strong> </p>
+            <p><strong th:text="${'Đã bán: ' + product.totalSold}">Total Sold:</strong> </p>
+            <p class="text-success"><i class="fas fa-check-circle"></i> Còn hàng</p>
+<!--            input quantity-->
+            <div class="input-group">
+                <span class="input-group-text text-black">Số lượng</span>
+                <input type="number" id="inputQuantity" class="quantity input-group-text text-black"  value="1" min="1">
+            </div>
+            <div th:if="${product.active}">
+                <button th:if = "${product.stock > 0}" id="add-cart" class="btn btn-primary btn-lg mt-3"><i class="fas fa-shopping-cart"></i> Thêm vào giỏ hàng</button>
+                <button th:if = "${product.stock == 0}" class="btn btn-secondary btn-lg mt-3" disabled><i class="fas fa-shopping-cart"></i> Sản phẩm hết hàng</button>
+                <button  th:if = "${product.stock > 0}"  class="btn btn-success btn-lg mt-3"  type="button" th:attr="onclick=|buySingleProduct('${product.productCode}')|">Mua ngay</button>
+                <button  th:if = "${product.stock == 0}"  class="btn btn-success btn-lg mt-3"  disabled type="button">Sản phẩm hết hàng</button>
+
+            </div>
+
+            <div th:unless="${product.active}">
+                <button class="btn btn-secondary btn-lg mt-3" disabled><i class="fas fa-shopping-cart"></i> Sản phẩm đã ngừng kinh doanh</button>
+                <button  class="btn btn-success btn-lg mt-3" disabled type="button" >Sản phẩm đã ngừng kinh doanh</button>
+
+            </div>
         </div>
     </div>
     <div class="row mt-5">
-        <div class="col-12">
-            <ul class="nav nav-tabs" id="productTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
-                            data-bs-target="#description" type="button" role="tab" aria-controls="description"
-                            aria-selected="true">Description
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#details"
-                            type="button" role="tab" aria-controls="details" aria-selected="false">Details
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews"
-                            type="button" role="tab" aria-controls="reviews" aria-selected="false">Reviews
-                    </button>
-                </li>
-            </ul>
-            <div class="tab-content" id="productTabsContent">
-                <div class="tab-pane fade show active" id="description" role="tabpanel"
-                     aria-labelledby="description-tab">
-                    <p class="mt-3" th:text="${product.description}">Product description</p>
+        <div class="col-md-12">
+            <h2 class="section-title">Mô tả sản phẩm</h2>
+            <p th:text="${product.description}"></p>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h2 class="section-title">Chi tiết sản phẩm</h2>
+            <table class="table table-striped">
+                <tbody>
+                <tr>
+                    <th>Ngày sản xuất</th>
+                    <td th:text="${#temporals.format(product.manufactureDate, 'dd MMMM yyyy')}">January 15, 2023</td>
+                </tr>
+                <tr>
+                    <th th:text="${#temporals.format(product.expirationDate, 'dd MMMM yyyy')}">Hạn sử dụng</th>
+                    <td>January 15, 2025</td>
+                </tr>
+                <tr>
+                    <th>Thành phần</th>
+                    <td th:text="${product.ingredient}">Water, Glycerin, Shea Butter, Vitamin E, Hyaluronic Acid</td>
+                </tr>
+                <tr>
+                    <th>Cách sử dụng</th>
+                    <td th:text="${product.how_to_use}">Apply a small amount to clean face and neck, morning and
+                        night.
+                    </td>
+                </tr>
+                <tr>
+                    <th>Thể tích</th>
+                    <td th:text="${product.volume}">50ml</td>
+                </tr>
+                <tr>
+                    <th>Xuất xứ</th>
+                    <td th:text="${product.origin}">France</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h2 class="section-title">Đánh giá sản phẩm</h2>
+            <div class="review-card" th:each="feedback : ${product.productFeedbacks}">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0" th:text="${feedback.customerName}">Jane Doe</h5>
+                    <p>Đánh giá cho sản phẩm: <span th:text="${feedback.productSnapshotName}">productSnapshotName name goes here</span>
+                        <span class="star-rating">
+                            <i class="fas fa-star" th:classappend="${feedback.rating >= 1 ? 'filled' : ''}"></i>
+                            <i class="fas fa-star" th:classappend="${feedback.rating >= 1 ? 'filled' : ''}"></i>
+                            <i class="fas fa-star" th:classappend="${feedback.rating >= 1 ? 'filled' : ''}"></i>
+                            <i class="fas fa-star" th:classappend="${feedback.rating >= 1 ? 'filled' : ''}"></i>
+                            <i class="fas fa-star" th:classappend="${feedback.rating >= 1 ? 'filled' : ''}"></i>
+                        </span>
                 </div>
-                <div class="tab-pane fade" id="details" role="tabpanel" aria-labelledby="details-tab">
-                    <table class="table mt-3">
-                        <tbody>
-                        <tr>
-                            <th>Manufacture Date</th>
-                            <td th:text="${#temporals.format(product.manufactureDate, 'dd MMMM yyyy')}">Manufacture
-                                Date
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Expiration Date</th>
-                            <td th:text="${#temporals.format(product.expirationDate, 'dd MMMM yyyy')}">Expiration Date
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Ingredients</th>
-                            <td th:text="${product.ingredient}">Ingredients</td>
-                        </tr>
-                        <tr>
-                            <th>How to Use</th>
-                            <td th:text="${product.how_to_use}">How to Use</td>
-                        </tr>
-                        <tr>
-                            <th>Volume</th>
-                            <td th:text="${product.volume}">Volume</td>
-                        </tr>
-                        <tr>
-                            <th>Origin</th>
-                            <td th:text="${product.origin}">Origin</td>
-                        </tr>
-                        </tbody>
-                    </table>
+<!--                <p class="text-muted mb-2">Đánh giá vào <span th:text="${feedback.feedbackDate}">Date goes here</span>-->
+<!--                </p>-->
+                <p class="text-muted mb-2" th:text="${'Đánh giá vào '+#temporals.format(feedback.feedbackDate, 'dd MMMM yyyy HH:mm:ss')}">May 21, 2023</p>
+                <p th:text="${feedback.comment}">This cream has done wonders for my skin! Highly recommend.</p>
+                <div th:if="${feedback.image != null and feedback.image != ''}">
+
+                    <img th:src="@{/api/images(imageName=${feedback.image})}" alt="Review Image"
+                         class="review-image mb-2">
                 </div>
-                <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
-                    <div class="mt-3" th:each="feedback : ${product.productFeedbacks}">
-                        <div class="feedback-item">
-                            <p th:text="${feedback.customerName}">Customer name goes here</p>
-                            <p>Đánh giá cho sản phẩm: <span th:text="${feedback.productSnapshotName}">productSnapshotName name goes here</span>
-                            </p>
-
-                            <p th:text="${feedback.comment}">Comment goes here</p>
-                            <!--         image-->
-                            <!--         if not null or empty-->
-                            <div th:if="${feedback.image != null and feedback.image != ''}">
-                                <img th:src="@{/api/images(imageName=${feedback.image})}" style="height: 200px"
-                                     alt="Feedback Image" class="img-fluid rounded">
-                            </div>
-                            <p>
-                                <span th:text="${feedback.feedbackDate}">Date goes here</span> |
-                                <span class="rating" th:text="${feedback.rating}">Rating goes here</span>
-                            </p>
-                            <div class="rating-stars">
-                                <span class="star"
-                                      th:classappend="${feedback.rating >= 1 ? 'filled' : ''}">&#9733;</span>
-                                <span class="star"
-                                      th:classappend="${feedback.rating >= 2 ? 'filled' : ''}">&#9733;</span>
-                                <span class="star"
-                                      th:classappend="${feedback.rating >= 3 ? 'filled' : ''}">&#9733;</span>
-                                <span class="star"
-                                      th:classappend="${feedback.rating >= 4 ? 'filled' : ''}">&#9733;</span>
-                                <span class="star"
-                                      th:classappend="${feedback.rating >= 5 ? 'filled' : ''}">&#9733;</span>
-                            </div>
-
-
-                            <div class="staff-response" th:if="${feedback.feedbackResponse != null}">
-                                <p class="response-header">Phản hồi từ shop:</p>
-                                <p class="response-date" th:text="${feedback.feedbackResponse.responseDate}">Ngày phản
-                                    hồi</p>
-                                <p class="response-content" th:text="${feedback.feedbackResponse.comment}">Nội dung phản
-                                    hồi</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="shop-response" th:if="${feedback.feedbackResponse != null}">
+                    <p><strong>Phản hồi từ Shop:</strong></p>
+                    <p class="text-muted mb-2" th:text="${#temporals.format(feedback.feedbackResponse.responseDate, 'dd MMMM yyyy HH:mm:ss')}">May 21, 2023</p>
+                    <p th:text="${feedback.feedbackResponse.comment}">Thank you for your feedback! We're glad you're
+                        enjoying our product.</p>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
+
+<footer th:replace="~{/user/fragments/footer :: footer}"></footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script th:inline="javascript">
+    const productCode = [[${product.productCode}]];
+    document.addEventListener('DOMContentLoaded', function () {
+        const addToCartButton = document.getElementById('add-cart');
+        addToCartButton.addEventListener('click', function () {
+            $.ajax({
+                url: '/customer/cart/add-to-cart',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    productCode: productCode,
+                    quantity: document.getElementById('inputQuantity').value
+                }),
+                success: function (response,status,xhr) {
+                    // Check for a redirect in the response headers
+                    if (response.indexOf('loginForm')>0) {
+                        // Chuyển hướng đến trang đăng nhập
+                        window.location.href = '/auth/login';}
+                    else {
+                        alert(response);
+                    }
+                    // alert(response)
+                },
+                error: function (xhr, status, error) {
+                    alert(xhr.responseText); // Handle other errors
+                }
+            });
+        });
+    });
+
+    function buySingleProduct (productCode) {
+        //tạo form ẩn
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/customer/order/preview-checkout';
+        //tạo input ẩn
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'productCode';
+        input.value = productCode;
+        //thêm input vào form
+        form.appendChild(input);
+        // quantity
+        const quantity = document.getElementById('inputQuantity').value;
+        var inputQuantity = document.createElement('input');
+        inputQuantity.type = 'hidden';
+        inputQuantity.name = 'quantity';
+        inputQuantity.value = quantity;
+        form.appendChild(inputQuantity);
+        //thêm form vào body
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
 </body>
 </html>

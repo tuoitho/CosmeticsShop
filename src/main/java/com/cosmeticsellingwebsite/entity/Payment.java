@@ -2,6 +2,7 @@ package com.cosmeticsellingwebsite.entity;
 
 import com.cosmeticsellingwebsite.enums.PaymentMethod;
 import com.cosmeticsellingwebsite.enums.PaymentStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,6 +27,7 @@ public class Payment implements Serializable {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @JsonBackReference
     @OneToOne
     @JoinColumn(name = "orderId", referencedColumnName = "orderId")
     private Order order;

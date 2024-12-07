@@ -1,8 +1,10 @@
 package com.cosmeticsellingwebsite.repository;
 
+import com.cosmeticsellingwebsite.dto.ProductSearchDTO;
 import com.cosmeticsellingwebsite.entity.Product;
 import com.cosmeticsellingwebsite.entity.ProductFeedback;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -64,6 +66,18 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             """,nativeQuery = true)
     Integer countSoldLast30DaysByProductId(Long productId);
 
+    //lay top 20 san pham rating cao nhat
+    @Query(value = """
+            SELECT p.*
+            FROM product p
+            JOIN ProductFeedback pf ON p.productId = pf.productId
+            GROUP BY p.productId , p.productName
+            ORDER BY AVG(pf.rating) DESC
+            LIMIT 20
+            """,nativeQuery = true)
+    List<Product> findTop20HighestRatedProducts();
+
+
     Optional<Product> findByProductCode(String productCode);
 
     boolean existsByProductCode(String productCode);
@@ -77,5 +91,35 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByActiveTrue();
 
 
+    boolean existsByCategory_CategoryId(Long id);
 
+    Page<Product> findByProductNameContaining(String productName, Pageable pageable);
+    Page<Product> findByProductNameContainingAndActive(String productName, Boolean active, Pageable pageable);
+
+
+    @Query("""
+            SELECT p
+            FROM Product p
+            WHERE p.productName LIKE %:keywords%
+            AND p.active = true
+            and p.cost >= :minPrice
+            and p.cost <= :maxPrice
+            and p.brand LIKE %:brand%
+            and p.origin LIKE %:origin%
+            and p.category.categoryName LIKE %:category%
+    """)
+    Page<Product> searchProductsWithFilter(String keywords, Double minPrice, Double maxPrice, String brand, String origin, String category, Pageable pageable);
+
+    @Query("""
+            SELECT distinct p.origin
+            FROM Product p
+    """)
+    List<String> findAllOrigins();
+
+
+    @Query("""
+            SELECT distinct p.brand
+            FROM Product p
+    """)
+    List<String> findAllBrands();
 }

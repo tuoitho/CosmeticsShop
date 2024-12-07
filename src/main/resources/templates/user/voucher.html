@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voucher Display</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .voucher-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .voucher-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .voucher-image {
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .voucher-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .voucher-code {
+            background-color: #e9ecef;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-family: monospace;
+            font-size: 1rem;
+        }
+
+        .copy-btn {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            color: #007bff;
+        }
+
+        .voucher-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .voucher-dates {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .voucher-quantity {
+            font-size: 0.9rem;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<header th:replace="~{user/fragments/header::header}"></header>
+<div id="voucherContainer" class="container my-5">
+    <h2 class="text-center mb-4">Available Vouchers</h2>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        <!-- Voucher cards will be dynamically inserted here -->
+    </div>
+</div>
+
+
+<footer th:replace="~{user/fragments/footer::footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script>
+    //lazy loading
+
+    function createVoucherCard(voucher) {
+
+        return `
+
+<div class="col">
+
+<div class="card voucher-card">
+
+<img src="https://cdn.chanhtuoi.com/uploads/2021/09/e-voucher-shopee3-1.jpg.webp" class="card-img-top voucher-image" alt="Voucher Image">
+
+<div class="card-body">
+
+<h5 class="card-title voucher-title">Mã giảm giá</h5>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+
+<span class="voucher-code">${voucher.voucherCode}</span>
+
+<i class="fas fa-copy copy-btn" onclick="copyVoucherCode('${voucher.voucherCode}')" title="Copy code"></i>
+
+</div>
+
+<p class="card-text voucher-value">Giảm ${voucher.voucherValue}đ</p>
+
+<p class="card-text voucher-dates">
+
+<small>
+
+<i class="far fa-calendar-alt"></i>
+${voucher.startDate} - ${voucher.endDate}
+</small>
+
+</p>
+<p class="card-text voucher-quantity">
+
+<i class="fas fa-ticket-alt"></i> Tổng số: ${voucher.quantity}
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+    }
+
+
+    // Sample voucher data (replace with your actual data)
+    let x = 0; // Use let instead of const as you'll be incrementing this
+    let size=8
+    let vouchers = []; // Initialize vouchers as an empty array
+
+    function fetchVouchers(page,size) {
+        return $.ajax({  // Return the AJAX promise
+            url: "/browser/getVouchers",
+            type: "GET",
+            data: {
+                page: page,
+                size: size
+            }
+        });
+    }
+
+    function renderVouchers(vouchers) {
+        const container = document.querySelector('#voucherContainer .row');
+        vouchers.forEach(voucher => {
+            container.innerHTML += createVoucherCard(voucher);
+        });
+    }
+
+    function copyVoucherCode(code) {
+        navigator.clipboard.writeText(code).then(() => {
+            alert('Voucher code copied to clipboard!');
+        });
+    }
+
+    // Initial fetch on page load
+    fetchVouchers(x)
+        .done(data => {
+            vouchers = data;
+            renderVouchers(vouchers);
+        })
+        .fail(error => {
+            console.log(error);
+        });
+    x=2;
+
+    // Event lazy loading
+    window.addEventListener('scroll', () => {
+        const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
+        if (scrollTop + clientHeight >= scrollHeight - 2) {
+            x++; // Increment the page number
+            fetchVouchers(x,4)
+                .done(data => {
+                    vouchers = vouchers.concat(data); // Add new vouchers to the existing array
+                    renderVouchers(data); // Render only the new vouchers
+                })
+                .fail(error => {
+                    console.log(error);
+                });
+        }
+    });
+
+    // ... (rest of your code)
+</script>
+</body>
+</html>
