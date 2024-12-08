@@ -152,4 +152,10 @@ public class UserService implements IUserService, UserDetailsService {
         return userRepository.findByRole_RoleNameIn(List.of(RoleEnum.MANAGER, RoleEnum.CUSTOMER), pageable);
     }
 
+    public String getExistingImage(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+        return user.getImage(); 
+    }
+
 }

@@ -95,17 +95,26 @@ public class UserController {
     }
 
     @PostMapping("/edit/{id}")
-    public String editUser(@PathVariable Long id, @ModelAttribute @Valid AddUserDTO userDTO, @RequestParam("imagePath") MultipartFile imageFile,
-                           BindingResult result, Model model) throws IOException {
+    public String editUser(@PathVariable Long id, @ModelAttribute @Valid AddUserDTO userDTO,
+                           @RequestParam("imagePath") MultipartFile imageFile, BindingResult result, Model model) throws IOException {
         if (result.hasErrors()) {
             model.addAttribute("roles", roleService.findAll());
             return "admin/user/editUser";
         }
-        String image=imageService.saveImage(imageFile);
-        userDTO.setImage(image);
+
+        if (imageFile == null || imageFile.isEmpty()) {
+            String existingImage = userService.getExistingImage(id);
+            userDTO.setImage(existingImage);
+        } else {
+            // Save new image
+            String newImageUrl = imageService.saveImage(imageFile);
+            userDTO.setImage(newImageUrl);
+        }
+
         userService.saveUser(userDTO);
         return "redirect:/admin/user";
     }
+
 
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id, Model model) {
