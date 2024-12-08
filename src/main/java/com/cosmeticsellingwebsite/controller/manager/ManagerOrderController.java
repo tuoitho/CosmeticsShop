@@ -4,6 +4,7 @@ import com.cosmeticsellingwebsite.dto.OrderHistoryDetailDTO;
 import com.cosmeticsellingwebsite.dto.ProductSnapshotDTO;
 import com.cosmeticsellingwebsite.entity.Order;
 import com.cosmeticsellingwebsite.enums.OrderStatus;
+import com.cosmeticsellingwebsite.exception.EntityNotFoundException;
 import com.cosmeticsellingwebsite.service.impl.OrderService;
 import com.cosmeticsellingwebsite.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,19 @@ public class ManagerOrderController {
         ProductSnapshotDTO productSnapshot = orderService.getProductSnapshot(orderId, productId);
         model.addAttribute("productSnapshot", productSnapshot);
         return "customer/product-snapshot";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteOrder(@PathVariable("id") Long orderId, RedirectAttributes redirectAttributes) {
+        try {
+            orderService.deleteOrderById(orderId);
+            redirectAttributes.addFlashAttribute("successMessage", "Đơn hàng đã được xóa thành công!");
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy đơn hàng cần xóa!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Đã xảy ra lỗi khi xóa đơn hàng!");
+        }
+        return "redirect:/admin/orders";
     }
 
 }

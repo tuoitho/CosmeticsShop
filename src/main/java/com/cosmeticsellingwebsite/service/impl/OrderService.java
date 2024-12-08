@@ -6,6 +6,7 @@ import com.cosmeticsellingwebsite.enums.OrderStatus;
 import com.cosmeticsellingwebsite.enums.PaymentMethod;
 import com.cosmeticsellingwebsite.enums.PaymentStatus;
 import com.cosmeticsellingwebsite.exception.CustomException;
+import com.cosmeticsellingwebsite.exception.EntityNotFoundException;
 import com.cosmeticsellingwebsite.payload.request.CreateOrderRequest;
 import com.cosmeticsellingwebsite.payload.response.OrderResponse;
 import com.cosmeticsellingwebsite.repository.*;
@@ -550,5 +551,12 @@ public class OrderService implements IOrderService {
                 order.getPayment().setPaymentStatus(PaymentStatus.PAID);
         }
         orderRepository.save(order);
+    }
+
+    public void deleteOrderById(Long orderId) {
+        if (!orderRepository.existsById(orderId)) {
+            throw new EntityNotFoundException("Đơn hàng không tồn tại " + orderId);
+        }
+        orderRepository.deleteById(orderId);
     }
 }
