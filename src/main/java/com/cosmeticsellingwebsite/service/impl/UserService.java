@@ -130,6 +130,13 @@ public class UserService implements IUserService, UserDetailsService {
         userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(userEntity);
     }
+    public void createUser(AddUserDTO user) {
+        User userEntity = new User();
+        BeanUtils.copyProperties(user, userEntity);
+        userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(userEntity);
+    }
+
 
     public List<User> searchUsers(String keyword) {
         return userRepository.findByFullnameContainingOrUsernameContainingOrEmailContaining(keyword, keyword, keyword);
