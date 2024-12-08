@@ -6,6 +6,24 @@ Cosmetics Shop is a modern e-commerce platform built with cutting-edge technolog
 
 The **Cosmetics Shop** aims to provide an online platform where users can browse, review, and purchase a wide range of cosmetic products with ease. The platform prioritizes security and user experience, offering a secure environment for transactions, flexible payment options, and intuitive browsing features. Whether you are looking for skincare, makeup, or beauty accessories, this platform ensures a seamless shopping experience, backed by powerful technology.
 
+## Highlights 🌟  
+
+#### 🚀 Functions as a real-world e-commerce website with well-defined business logic.
+
+#### 🎯 Strong adherence to Object-Oriented Programming principles, with relationships and attributes accurately established. For example, a product does not have a quantity property,...
+
+#### 🔐 Advanced Security Features  
+- ##### Defined a method to retrieve logged-in user information via the SecurityContextHolder class (the class responsible for storing security information of the current user).
+
+- ##### Implemented a check for locked user accounts during login using a custom class.
+
+- ##### Customized classes to handle successful and failed login authentication attempts.
+
+- ##### Established user roles upon login using OAuth2.
+
+
+
+
 ## Technologies Used 🛠️
 
 - **Backend**: Java 21, Spring Boot 3, Spring Security 6.1
