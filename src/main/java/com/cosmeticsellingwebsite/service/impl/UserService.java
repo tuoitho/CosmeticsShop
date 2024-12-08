@@ -157,13 +157,13 @@ public class UserService implements IUserService, UserDetailsService {
     public Page<User> searchUsers(String keyword, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
         return userRepository.findByRole_RoleNameInAndUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-                List.of(RoleEnum.MANAGER, RoleEnum.CUSTOMER), keyword, keyword, pageable);
+                List.of(RoleEnum.MANAGER, RoleEnum.CUSTOMER, RoleEnum.SHIPPER), keyword, keyword, pageable);
     }
 
     @Override
     public Page<User> getUsers(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        return userRepository.findByRole_RoleNameIn(List.of(RoleEnum.MANAGER, RoleEnum.CUSTOMER), pageable);
+        return userRepository.findByRole_RoleNameIn(List.of(RoleEnum.MANAGER, RoleEnum.CUSTOMER, RoleEnum.SHIPPER), pageable);
     }
 
     public String getExistingImage(Long userId) {
