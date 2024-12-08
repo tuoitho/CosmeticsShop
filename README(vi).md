@@ -14,7 +14,7 @@
 - 🎯 Quán triệt mạnh mẽ các nguyên tắc của Lập trình hướng đối tượng, các mối quan hệ và thuộc tính được thiết lập một cách chính xác, chẳng hạn sản phẩm thì không có tính chất số lượng,...
 
 - 🔐 Tính năng bảo mật tiên tiến*:  
-  - Định nghĩa phương thức lấy thông tin người dùng đăng nhập thông qua lớp `SecurityContextHolder`.  
+  - Định nghĩa phương thức lấy thông tin người dùng đăng nhập thông qua lớp `SecurityContextHolder`độc lập sư phụ thuộc vào các cách lấy thông tin khác như seesion.  
   - Thực hiện kiểm tra tài khoản bị khóa khi đăng nhập bằng một lớp tùy chỉnh.  
   - Tùy chỉnh các lớp để xử lý đăng nhập thành công và thất bại.  
   - Gán được vai trò cho người dùng khi đăng nhập bằng OAuth2.  
