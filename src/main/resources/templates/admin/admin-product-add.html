@@ -219,17 +219,6 @@
             }, 0); // Đảm bảo thực hiện sau khi sự kiện click hoàn thành
         });
 
-        function validateForm() {
-            const manufactureDate = new Date(document.getElementById('manufactureDate').value);
-            const expirationDate = new Date(document.getElementById('expirationDate').value);
-
-            if (manufactureDate >= expirationDate) {
-                alert('Ngày sản xuất phải nhỏ hơn ngày hết hạn.');
-                return false;
-            }
-
-            return true;
-        }
     </script>
 </section>
 </body>

@@ -82,12 +82,6 @@ public class AdminProductController {
             return "redirect:/admin/products?error=duplicate_product_code";
         }
 
-        // Kiểm tra ngày sản xuất và ngày hết hạn
-        if (product.getManufactureDate().isBefore(product.getExpirationDate())) {
-            redirectAttributes.addFlashAttribute("error", "Ngày sản xuất phải nhỏ hơn ngày hết hạn.");
-            return "redirect:/admin/products/new";
-        }
-
         // Kiểm tra mã sản phẩm đã tồn tại
         if (productService.existsByProductCode(product.getProductCode())) {
             redirectAttributes.addFlashAttribute("error", "Mã sản phẩm đã tồn tại.");

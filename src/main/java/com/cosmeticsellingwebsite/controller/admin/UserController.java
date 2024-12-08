@@ -58,7 +58,7 @@ public class UserController {
     @GetMapping("/create")
     public String createUserForm(Model model) {
         model.addAttribute("user", new User());
-        model.addAttribute("roles", roleService.findByRoleNames(List.of("MANAGER", "CUSTOMER")));
+        model.addAttribute("roles", roleService.findByRoleNames(List.of("MANAGER", "CUSTOMER", "SHIPPER")));
         return "admin/user/createUser";
     }
 
@@ -90,7 +90,7 @@ public class UserController {
         AddUserDTO userDTO = new AddUserDTO();
         BeanUtils.copyProperties(user, userDTO);
         model.addAttribute("user", userDTO);
-        model.addAttribute("roles", roleService.findByRoleNames(List.of("MANAGER", "CUSTOMER")));
+        model.addAttribute("roles", roleService.findByRoleNames(List.of("MANAGER", "CUSTOMER", "SHIPPER")));
         return "admin/user/editUser";
     }
 
