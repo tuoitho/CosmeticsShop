@@ -41,7 +41,7 @@
         </div>
 
 <!--        search-->
-        <form class="d-flex mb-4" th:action="@{/manager/customers}" method="get">
+        <form class="d-flex mb-4" th:action="@{/admin/customers}" method="get">
             <input class="form-control me-2" type="search" placeholder="Tìm kiếm khách hàng" aria-label="Search" name="keyword" th:value="${keyword}">
             <button class="btn btn-outline-success" type="submit">Tìm kiếm</button>
         </form>
@@ -69,12 +69,12 @@
                     </td>
                     <td class="text-center table-actions">
                         <!-- Xem chi tiết -->
-                        <a th:href="@{/manager/customers/{id}(id=${customer.userId})}" class="btn btn-info btn-sm">
+                        <a th:href="@{/admin/customers/{id}(id=${customer.userId})}" class="btn btn-info btn-sm">
                             <i class="bi bi-eye"></i> Chi tiết
                         </a>
 
                         <!-- Kích hoạt/Vô hiệu hóa -->
-                        <form th:action="@{/manager/customers/{id}/toggle-active(id=${customer.userId})}" method="post" class="d-inline">
+                        <form th:action="@{/admin/customers/{id}/toggle-active(id=${customer.userId})}" method="post" class="d-inline">
                             <button type="submit"
                                     th:classappend="'btn btn-sm ' + (customer.active ? 'btn-warning' : 'btn-success')"
                                     th:text="${customer.active ? 'Vô hiệu hoá' : 'Kích hoạt'}">
@@ -82,7 +82,7 @@
                         </form>
 
                         <!-- Xoá tài khoản -->
-                        <form th:action="@{/manager/customers/{id}/delete(id=${customer.userId})}" method="post" class="d-inline"
+                        <form th:action="@{/admin/customers/{id}/delete(id=${customer.userId})}" method="post" class="d-inline"
                               id="deleteForm_${customer.userId}">
                             <button type="submit" class="btn btn-danger btn-sm"
                                     onclick="event.preventDefault(); checkCartEmpty([[${customer.userId}]], function(isEmpty) {
@@ -105,14 +105,14 @@
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" th:classappend="${customerPage.hasPrevious() ? '' : 'disabled'}">
-                            <a class="page-link" th:href="@{/manager/customers(page=${customerPage.number - 1}, keyword=${keyword})}">Previous</a>
+                            <a class="page-link" th:href="@{/admin/customers(page=${customerPage.number - 1}, keyword=${keyword})}">Previous</a>
                         </li>
                         <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, customerPage.totalPages - 1)}"
                             th:classappend="${pageNum == customerPage.number ? 'active' : ''}">
-                            <a class="page-link" th:href="@{/manager/customers(page=${pageNum}, keyword=${keyword})}" th:text="${pageNum + 1}"></a>
+                            <a class="page-link" th:href="@{/admin/customers(page=${pageNum}, keyword=${keyword})}" th:text="${pageNum + 1}"></a>
                         </li>
                         <li class="page-item" th:classappend="${customerPage.hasNext() ? '' : 'disabled'}">
-                            <a class="page-link" th:href="@{/manager/customers(page=${customerPage.number + 1}, keyword=${keyword})}">Next</a>
+                            <a class="page-link" th:href="@{/admin/customers(page=${customerPage.number + 1}, keyword=${keyword})}">Next</a>
                         </li>
                     </ul>
                 </nav>
@@ -121,7 +121,7 @@
 
     <script>
         function checkCartEmpty(customerId, callback) {
-            fetch(`/manager/customers/check-cart-empty?customerId=${customerId}`, {method: 'POST'})
+            fetch(`/admin/customers/check-cart-empty?customerId=${customerId}`, {method: 'POST'})
                 .then(response => response.json())
                 .then(data => callback(data));
         }

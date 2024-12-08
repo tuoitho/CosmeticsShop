@@ -106,10 +106,11 @@ public class SecurityConfig {
                                 "/admin/categories/**",
                                 "/admin/vouchers/**",
                                 "/admin/stock/**",
-                                "/admin/feedbacks/**"
-                                ).hasAnyRole("ADMIN", "MANAGER")
+                                "/admin/feedbacks/**",
+                                "/admin/customers/**"
+
+                        ).hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers("/admin/user/**").hasRole("ADMIN")
-                        .requestMatchers("/manager/customers/**").hasRole("MANAGER")
                         .anyRequest().authenticated()) // Require authentication for all other requests
                 .formLogin(f -> f.loginPage("/auth/login").permitAll()
                         .loginProcessingUrl("/login")

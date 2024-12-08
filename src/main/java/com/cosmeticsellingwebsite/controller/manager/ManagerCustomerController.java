@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/manager/customers")
+@RequestMapping("/admin/customers")
 public class ManagerCustomerController {
     @Autowired
     private CustomerService customerService;
@@ -38,7 +38,7 @@ public class ManagerCustomerController {
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-        return "redirect:/manager/customers";
+        return "redirect:/admin/customers";
     }
 
 //    @GetMapping("/search")
@@ -67,7 +67,7 @@ public class ManagerCustomerController {
     public String toggleCustomerActive(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         customerService.toggleActiveStatus(id);
         redirectAttributes.addFlashAttribute("success", "Thay đổi trạng thái thành công.");
-        return "redirect:/manager/customers";
+        return "redirect:/admin/customers";
     }
 
     @GetMapping("/{id}")

@@ -81,7 +81,7 @@
 							</option>
 						</select>
 					</div>
-					<input type="hidden" name="keyword" value="${keyword}">
+					<input type="hidden" name="keyword" th:value="${keyword}">
 					<button type="submit" class="btn btn-primary w-100">Áp dụng</button>
 				</form>
 			</div>
@@ -91,8 +91,7 @@
 				<div class="row mb-4">
 					<div class="col-md-6 offset-md-6">
 						<form class="d-flex" action="/browser/search" method="get">
-							<input th:value="${keyword}" class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm" aria-label="Search" name="keyword">
-							<input hidden="hidden" name="minPrice" type="number" th:value="${minPrice}">
+							<input th:value="${keyword == null ? '' : keyword}" class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm" aria-label="Search" name="keyword">							<input hidden="hidden" name="minPrice" type="number" th:value="${minPrice}">
 							<input hidden="hidden" name="maxPrice" type="number"  th:value="${maxPrice}">
 							<input hidden="hidden" name="category" th:value="${category}">
 							<input hidden="hidden" name="origin" th:value="${origin}">
@@ -160,6 +159,8 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 	<script>
+
+
 	const addToCartButtons = document.querySelectorAll(".add-to-cart");
 
 	addToCartButtons.forEach(button => {
@@ -189,6 +190,17 @@
 			});
 		});
 	});
+
+	document.querySelectorAll('.card .card-text strong').forEach(function (priceElement) {
+		var priceText = priceElement.innerText.replace('đ', '').trim(); // Loại bỏ 'đ' nếu có
+		var price = parseInt(priceText.replace(/,/g, '')); // Chuyển giá về dạng số nguyên
+		if (!isNaN(price)) {
+			priceElement.innerText = formatPrice(price) + ' đ'; // Định dạng giá và thêm 'đ'
+		}
+	});
+	function formatPrice(price) {
+		return price.toLocaleString('vi-VN'); // Định dạng theo kiểu Việt Nam
+	}
 </script>
 </body>
 
