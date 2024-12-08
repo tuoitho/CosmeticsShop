@@ -94,7 +94,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     """)
     Page<Order> findAllPaginatedByOrderStatus(Long customerId, OrderStatus orderStatus, Pageable pageable);
 
-
     @Query("""
         SELECT o
         FROM Order o
