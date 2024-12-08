@@ -14,9 +14,9 @@ public class VoucherDTO {
     private Long voucherId;
     private String voucherCode;
     private Double voucherValue;
-    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+//    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime startDate;
-    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+//    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime endDate;
 
     private Long quantity;
