@@ -334,7 +334,13 @@
                     // Tính lại tổng tiền
                     const subtotal = parseFloat($("#subtotal").text());
                     const discount = data.voucherValue ;
-                    const total = subtotal - discount;
+                    let total = subtotal - discount;
+
+                    // Nếu tổng tiền nhỏ hơn 0 thì đặt subtotal bằng 0
+                    if (total < 0) {
+                        total = 0;
+                    }
+
                     $("#discount").text(discount);
                     $("#total").text(total);
                 },
