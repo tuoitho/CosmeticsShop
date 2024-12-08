@@ -96,7 +96,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}" class="nav-link" th:href="@{/admin/products}">
+                        <a class="nav-link" th:href="@{/admin/products}">
                             <i class="fas fa-box me-2"></i> Products
                         </a>
                     </li>
@@ -121,12 +121,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}" class="nav-link" th:href="@{/admin/vouchers}">
+                        <a class="nav-link" th:href="@{/admin/vouchers}">
                             <i class="fas fa-gift me-2"></i> Vouchers
                         </a>
                     </li>
                     <li class="nav-item" >
-                        <a class="nav-link" th:href="@{/admin/customers}">
+                        <a th:if="${#authorization.expression('hasRole(''ROLE_MANAGER'')')}" class="nav-link" th:href="@{/admin/customers}">
                             <i class="fas fa-people-arrows me-2"></i> Customers
                         </a>
                     </li>
