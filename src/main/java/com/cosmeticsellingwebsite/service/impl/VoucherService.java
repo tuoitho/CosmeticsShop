@@ -6,6 +6,7 @@ import com.cosmeticsellingwebsite.exception.CustomException;
 import com.cosmeticsellingwebsite.repository.VoucherRepository;
 import com.cosmeticsellingwebsite.service.interfaces.IVoucherService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -81,16 +82,16 @@ public class VoucherService implements IVoucherService {
         return voucherRepository.save(voucher);
     }
 
+    //cần thiết vì là phuonương thức deleteAll
+    @Transactional
     @Override
     public void deleteVoucher(Long id) {
+        //lấy ra mã voucher
         Voucher voucher = voucherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy voucher"));
-
-        if (voucher.getUsed()) {
-            throw new IllegalStateException("Không thể xoá voucher do đã được áp dụng cho đơn hàng hệ thống.");
-        }
-
-        voucherRepository.delete(voucher);
+        String voucherCode = voucher.getVoucherCode();
+        // chỉ xóa những voucher chưa được sử dụng
+        voucherRepository.deleteAllByVoucherCodeAndUsedFalse(voucherCode);
     }
 
     @Override

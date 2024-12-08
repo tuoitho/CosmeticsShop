@@ -44,4 +44,5 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
     Page<Voucher> findDistinctVouchersWithSearch(@Param("searchTerm") String searchTerm, Pageable pageable);
 
 
+    void deleteAllByVoucherCodeAndUsedFalse(String voucherCode);
 }
