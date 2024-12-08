@@ -1,10 +1,31 @@
+## [Vietnamese version](https://github.com/PhatBee/Cosmetics_Shop/blob/master/README(vi).md)
+
+
 # Cosmetics Shop 💄
 
-Cosmetics Shop is a modern e-commerce platform built with cutting-edge technologies like Java 21, Spring Boot 3, and Thymeleaf for Java template engine. It leverages JPA for ORM, employs Spring Security 6.1 for robust authentication and authorization, integrates Google login for user convenience, and utilizes reCAPTCHA for enhanced security. The platform relies on MySQL for reliable data storage and Redis for efficient OTP management. Payment options include PayPal and VNPay, ensuring a smooth and flexible shopping experience.
+Cosmetics Shop is a modern e-commerce platform built with cutting-edge technologies like Java 21, Spring Boot 3, and Thymeleaf for Java template engine. It leverages JPA for ORM, employs Spring Security 6.1 for robust authentication and authorization, integrates Google login for user convenience, and utilizes reCAPTCHA for enhanced security. The platform relies on MySQL for reliable data storage and Redis for efficient OTP management.Supporting flexible payments via PayPal and VNPay, the platform also utilizes AJAX for a smooth user experience with real-time interactions, and Cloudinary for fast, scalable cloud-based image storage and optimization.
 
 ## Purpose 🎯
 
 The **Cosmetics Shop** aims to provide an online platform where users can browse, review, and purchase a wide range of cosmetic products with ease. The platform prioritizes security and user experience, offering a secure environment for transactions, flexible payment options, and intuitive browsing features. Whether you are looking for skincare, makeup, or beauty accessories, this platform ensures a seamless shopping experience, backed by powerful technology.
+
+## Highlights 🌟  
+
+#### 🚀 Functions as a real-world e-commerce website with well-defined business logic.
+
+#### 🎯 Strong adherence to Object-Oriented Programming principles, with relationships and attributes accurately established. For example, a product does not have a quantity property,...
+
+#### 🔐 Advanced Security Features  
+- ##### Define a method to retrieve logged-in user information through the SecurityContextHolder class, independent of other methods like session-based retrieval.
+
+- ##### Implemented a check for locked user accounts during login using a custom class.
+
+- ##### Customized classes to handle successful and failed login authentication attempts.
+
+- ##### Established user roles upon login using OAuth2.
+
+
+
 
 ## Technologies Used 🛠️
 

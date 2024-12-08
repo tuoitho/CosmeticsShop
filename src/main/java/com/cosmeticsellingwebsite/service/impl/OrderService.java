@@ -48,6 +48,7 @@ public class OrderService implements IOrderService {
     private CartRepository cartRepository;
 
     @Transactional
+    @Override
     public OrderResponse createOrder(Long customerId, CreateOrderRequest createOrderRequest) {
         // TODO: chưa xử lý trường hợp tranh nhau đặt hàng
         // Tìm người dùng
@@ -124,6 +125,16 @@ public class OrderService implements IOrderService {
         order.setCustomerId(user.getUserId());
         order.setOrderDate(LocalDateTime.ofInstant(new Date().toInstant(), TimeZone.getDefault().toZoneId()));
         order.setOrderStatus(OrderStatus.PENDING);
+
+        //thêm lịch sử đơn hàng
+        List<OrderStatusHistory> orderStatusHistories = new ArrayList<>();
+        OrderStatusHistory orderStatusHistory = new OrderStatusHistory();
+        orderStatusHistory.setOrder(order);
+        orderStatusHistory.setStatus(OrderStatus.PENDING);
+        orderStatusHistory.setDescription("Đơn hàng đã được tạo");
+        orderStatusHistories.add(orderStatusHistory);
+        order.setOrderStatusHistories(orderStatusHistories);
+
 
         // Cập nhật địa chỉ giao hàng
         ShippingAddress shippingAddress = new ShippingAddress();
@@ -241,6 +252,17 @@ public class OrderService implements IOrderService {
         order.setCustomerId(user.getUserId());
         order.setOrderDate(LocalDateTime.ofInstant(new Date().toInstant(), TimeZone.getDefault().toZoneId()));
         order.setOrderStatus(OrderStatus.PENDING);
+
+
+        //thêm lịch sử đơn hàng
+        List<OrderStatusHistory> orderStatusHistories = new ArrayList<>();
+        OrderStatusHistory orderStatusHistory = new OrderStatusHistory();
+        orderStatusHistory.setOrder(order);
+        orderStatusHistory.setStatus(OrderStatus.PENDING);
+        orderStatusHistory.setDescription("Đơn hàng đã được tạo");
+        orderStatusHistories.add(orderStatusHistory);
+        order.setOrderStatusHistories(orderStatusHistories);
+
 
         // Cập nhật địa chỉ giao hàng
         ShippingAddress shippingAddress = new ShippingAddress();

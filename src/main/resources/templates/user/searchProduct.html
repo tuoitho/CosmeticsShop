@@ -51,37 +51,39 @@
 				<form id="filterForm" action="/browser/search" >
 					<div class="mb-3">
 						<label for="minPrice" class="form-label">Giá tối thiểu</label>
-						<input type="number" class="form-control" id="minPrice" name="minPrice" placeholder="0" th:value="${minPrice}">
+						<input type="number" class="form-control" id="minPrice" name="minPrice" placeholder="0">
 					</div>
 					<div class="mb-3">
 						<label for="maxPrice" class="form-label">Giá tối đa</label>
-						<input type="number" class="form-control" id="maxPrice" name="maxPrice" placeholder="1000000" th:value="${maxPrice}">
+						<input type="number" class="form-control" id="maxPrice" name="maxPrice" placeholder="1000000">
 					</div>
 					<div class="mb-3">
 						<label for="category" class="form-label">Danh mục</label>
-						<select class="form-select" id="category" name="category" th:value="${category}">
+						<select class="form-select" id="category" name="category">
 							<option value="">Tất cả</option>
-							<option th:each="category : ${categories}" th:value="${category}" th:text="${category}" th:selected="${category == selectedCategory}"></option>
+							<option  th:each="category : ${categories}" th:value="${category}" th:text="${category}" th:selected="${category == selectedCategory}">
+							</option>
 						</select>
 					</div>
 					<div class="mb-3">
 						<label for="origin" class="form-label">Xuất xứ</label>
-						<select class="form-select" id="origin" name="origin" th:value="${origin}">
+						<select class="form-select" id="origin" name="origin">
 							<option value="">Tất cả</option>
-							<option th:each="origin : ${origins}" th:value="${origin}" th:text="${origin}" th:selected="${origin == selectedOrigin}"></option>
+							<option th:each="origin : ${origins}" th:value="${origin}" th:text="${origin}" th:selected="${origin == selectedOrigin}">
+							</option>
 						</select>
 					</div>
 					<div class="mb-3">
 						<label for="brand" class="form-label">Thương hiệu</label>
-						<select class="form-select" id="brand" name="brand" th:value="${brand}">
+						<select class="form-select" id="brand" name="brand">
 							<option value="">Tất cả</option>
-							<option th:each="brand : ${brands}" th:value="${brand}" th:text="${brand}" th:selected="${brand == selectedBrand}"></option>
+							<option th:each="brand : ${brands}" th:value="${brand}" th:text="${brand}" th:selected="${brand == selectedBrand}">
+							</option>
 						</select>
 					</div>
-					<input type="hidden" name="keyword" th:value="${keyword}">
+					<input type="hidden" name="keyword" value="${keyword}">
 					<button type="submit" class="btn btn-primary w-100">Áp dụng</button>
 				</form>
-
 			</div>
 
 			<!-- Main content area -->
@@ -89,15 +91,14 @@
 				<div class="row mb-4">
 					<div class="col-md-6 offset-md-6">
 						<form class="d-flex" action="/browser/search" method="get">
-							<input th:value="${keyword == null ? '' : keyword}" class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm" aria-label="Search" name="keyword">
+							<input th:value="${keyword}" class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm" aria-label="Search" name="keyword">
 							<input hidden="hidden" name="minPrice" type="number" th:value="${minPrice}">
-							<input hidden="hidden" name="maxPrice" type="number" th:value="${maxPrice}">
+							<input hidden="hidden" name="maxPrice" type="number"  th:value="${maxPrice}">
 							<input hidden="hidden" name="category" th:value="${category}">
 							<input hidden="hidden" name="origin" th:value="${origin}">
 							<input hidden="hidden" name="brand" th:value="${brand}">
 							<button class="btn btn-outline-primary" type="submit">Tìm</button>
 						</form>
-
 					</div>
 				</div>
 				<h2 class="mb-4">Sản phẩm</h2>
@@ -188,18 +189,6 @@
 			});
 		});
 	});
-
-	document.querySelectorAll('.card .card-text strong').forEach(function (priceElement) {
-		var priceText = priceElement.innerText.replace('đ', '').trim(); // Loại bỏ 'đ' nếu có
-		var price = parseInt(priceText.replace(/,/g, '')); // Chuyển giá về dạng số nguyên
-		if (!isNaN(price)) {
-			priceElement.innerText = formatPrice(price) + ' đ'; // Định dạng giá và thêm 'đ'
-		}
-	});
-
-	function formatPrice(price) {
-		return price.toLocaleString('vi-VN'); // Định dạng theo kiểu Việt Nam
-	}
 </script>
 </body>
 

@@ -18,6 +18,9 @@ import java.util.Set;
 
 public interface IOrderService{
     @Transactional
+    OrderResponse createOrder(Long customerId, CreateOrderRequest createOrderRequest);
+
+    @Transactional
     OrderResponse createOrderForSingleProduct(Long userId, CreateOrderRequest createOrderRequest);
 
     void cancelOrder(Long orderId);
