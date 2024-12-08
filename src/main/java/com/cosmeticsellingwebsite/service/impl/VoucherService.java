@@ -36,6 +36,7 @@ public class VoucherService implements IVoucherService {
         return voucherRepository.save(voucher);
     }
 
+    @Override
     public void addVoucher(VoucherDTO voucher) {
         Long quantity = voucher.getQuantity();
         for (int i = 0; i < quantity; i++) {
@@ -64,6 +65,7 @@ public class VoucherService implements IVoucherService {
         return voucherRepository.save(voucher);
     }
 
+    @Override
     public Voucher updateVoucher(Voucher updatedVoucher) {
         Voucher voucher = voucherRepository.findById(updatedVoucher.getVoucherId())
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy voucher"));
@@ -109,18 +111,22 @@ public class VoucherService implements IVoucherService {
         return voucherRepository.findDistinctVouchers(pageable);
     }
 
+    @Override
     public Long countByVoucherCode(String voucherCode) {
         return voucherRepository.countByVoucherCode(voucherCode);
     }
 
+    @Override
     public Long countByUsedTrueAndVoucherCode(String voucherCode) {
         return voucherRepository.countByUsedTrueAndVoucherCode(voucherCode);
     }
 
+    @Override
     public Long countByUsedFalseAndVoucherCode(String voucherCode) {
         return voucherRepository.countByUsedFalseAndVoucherCode(voucherCode);
     }
 
+    @Override
     public void updateVoucher(@Valid VoucherDTO voucher) {
         Voucher voucherEntity = voucherRepository.findById(voucher.getVoucherId())
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy voucher"));
@@ -149,6 +155,7 @@ public class VoucherService implements IVoucherService {
         }
     }
 
+    @Override
     public Page<Voucher> getVouchersWithSearch(String searchTerm, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("startDate").descending());
         return voucherRepository.findDistinctVouchersWithSearch(searchTerm, pageable);

@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -174,6 +173,7 @@ public class OrderService implements IOrderService {
 
 
     @Transactional
+    @Override
     public OrderResponse createOrderForSingleProduct(Long userId, CreateOrderRequest createOrderRequest) {
         // TODO: chưa xử lý trường hợp tranh nhau đặt hàng
         // Tìm người dùng
@@ -269,7 +269,8 @@ public class OrderService implements IOrderService {
         return orderResponse;
     }
 
-    public void cancelOrder( Long orderId) {
+    @Override
+    public void cancelOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomException("Order not found"));
 //        if order is not pending, throw exception
         if ((order.getOrderStatus() != OrderStatus.PENDING) && (order.getOrderStatus() != OrderStatus.CONFIRMED))
@@ -284,6 +285,7 @@ public class OrderService implements IOrderService {
         orderRepository.save(order);
     }
 
+    @Override
     public OrderResponse updateOrderStatus(@Valid Long orderId, @Valid String status) {
 //        TODO: khi thanh toan truoc va khi nhan hang can xu ly khac nhau
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomException("Order not found"));
@@ -308,6 +310,7 @@ public class OrderService implements IOrderService {
     }
 
 
+    @Override
     public void updateOrderStatus(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
         order.setOrderStatus(OrderStatus.CONFIRMED);
@@ -319,12 +322,14 @@ public class OrderService implements IOrderService {
         orderRepository.save(order);
     }
 
+    @Override
     public Double getOrderTotal(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new CustomException("Order not found"));
         return order.getTotal();
     }
 
+    @Override
     public void updateOrderStatusPaymentTime(Long orderId, String paymentTime) {
         Logger.log("updating order status");
         Order order = orderRepository.findById(orderId)
@@ -340,6 +345,7 @@ public class OrderService implements IOrderService {
 
     }
 
+    @Override
     public void updateOrderPaymentCOD(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new CustomException("Order not found"));
@@ -352,25 +358,30 @@ public class OrderService implements IOrderService {
         orderRepository.save(order);
     }
 
+    @Override
     public Order getOrderById(Long orderId) {
         return orderRepository.findById(orderId)
                 .orElse(null);
     }
 
+    @Override
     public Set<Order> getAllOrders(Long customerId) {
         return orderRepository.findAllByCustomerId(customerId);
     }
 
-    public Page<Order> getAllOrders(Long customerId,Pageable pageable) {
+    @Override
+    public Page<Order> getAllOrders(Long customerId, Pageable pageable) {
 
         return orderRepository.findAllPaginated(customerId,pageable);
     }
 
+    @Override
     public Set<Order> getOrdersByOrderStatus(Long customerId, OrderStatus orderStatus) {
         return orderRepository.findAllByCustomerIdAndOrderStatus(customerId, orderStatus);
     }
 
 
+    @Override
     public List<Order> searchOrders(Long customerId, String keyword, Pageable pageable) {
         Page<Order> page=orderRepository.searchOrdersByCustomerIdAndProductName(customerId, keyword, pageable);
         if (page != null) {
@@ -379,6 +390,7 @@ public class OrderService implements IOrderService {
         return new ArrayList<>();
     }
 
+    @Override
     public OrderHistoryDetailDTO getOrderHistoryDetailById(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomException("Order not found"));
         OrderHistoryDetailDTO orderHistoryDetailDTO = new OrderHistoryDetailDTO();
@@ -420,6 +432,7 @@ public class OrderService implements IOrderService {
         return orderHistoryDetailDTO;
     }
 
+    @Override
     public ProductSnapshotDTO getProductSnapshot(Long orderId, Long productId) {
         OrderLine orderLine = orderRepository.findById(orderId).orElseThrow(() -> new CustomException("Order not found"))
                 .getOrderLines().stream().filter(x -> x.getProduct().getProductId().equals(productId)).findFirst()
@@ -443,17 +456,21 @@ public class OrderService implements IOrderService {
         return productSnapshotDTO;
     }
 
+    @Override
     public List<Order> getTop5OrdersRecently() {
         return orderRepository.findTop5ByOrderByOrderDateDesc();
     }
 
+    @Override
     public Long countPendingOrders() {
         return orderRepository.countByOrderStatus(OrderStatus.PENDING);
     }
+    @Override
     public List<Order> findByCustomerId(Long customerId) {
         return orderRepository.findByCustomerId(customerId);
     }
 
+    @Override
     public List<Order> getOrdersByStatus(OrderStatus status) {
         if (status == null) {
             return orderRepository.findAll();
@@ -461,6 +478,7 @@ public class OrderService implements IOrderService {
         return orderRepository.findByOrderStatus(status);
     }
 
+    @Override
     public Order updateOrderStatus(Long orderId, OrderStatus newStatus) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng với ID: " + orderId));
@@ -468,6 +486,7 @@ public class OrderService implements IOrderService {
         return orderRepository.save(order);
     }
 
+    @Override
     public Page<Order> getPaginatedOrders(int page, int size, String searchKeyword, OrderStatus selectedStatus) {
         Pageable pageable = PageRequest.of(page, size);
 
@@ -484,10 +503,12 @@ public class OrderService implements IOrderService {
     }
 
 
+    @Override
     public Page<Order> getOrdersByOrderStatus(Long customerId, OrderStatus orderStatus, Pageable pageable) {
         return orderRepository.findAllPaginatedByOrderStatus(customerId, orderStatus, pageable);
     }
 
+    @Override
     public void updateOrderStatusWithContent(Long id, OrderStatus newStatus, String content) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng với ID: " + id));
