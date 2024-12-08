@@ -1,4 +1,4 @@
- [Vietnamese version](https://github.com/PhatBee/Cosmetics_Shop/blob/master/README(vi).md)
+## [Vietnamese version](https://github.com/PhatBee/Cosmetics_Shop/blob/master/README(vi).md)
 
 
 # Cosmetics Shop 💄
