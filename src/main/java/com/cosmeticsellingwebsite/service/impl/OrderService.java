@@ -126,6 +126,16 @@ public class OrderService implements IOrderService {
         order.setOrderDate(LocalDateTime.ofInstant(new Date().toInstant(), TimeZone.getDefault().toZoneId()));
         order.setOrderStatus(OrderStatus.PENDING);
 
+        //thêm lịch sử đơn hàng
+        List<OrderStatusHistory> orderStatusHistories = new ArrayList<>();
+        OrderStatusHistory orderStatusHistory = new OrderStatusHistory();
+        orderStatusHistory.setOrder(order);
+        orderStatusHistory.setStatus(OrderStatus.PENDING);
+        orderStatusHistory.setDescription("Đơn hàng đã được tạo");
+        orderStatusHistories.add(orderStatusHistory);
+        order.setOrderStatusHistories(orderStatusHistories);
+
+
         // Cập nhật địa chỉ giao hàng
         ShippingAddress shippingAddress = new ShippingAddress();
         shippingAddress.setOrder(order);
@@ -243,6 +253,17 @@ public class OrderService implements IOrderService {
         order.setOrderDate(LocalDateTime.ofInstant(new Date().toInstant(), TimeZone.getDefault().toZoneId()));
         order.setOrderStatus(OrderStatus.PENDING);
 
+
+        //thêm lịch sử đơn hàng
+        List<OrderStatusHistory> orderStatusHistories = new ArrayList<>();
+        OrderStatusHistory orderStatusHistory = new OrderStatusHistory();
+        orderStatusHistory.setOrder(order);
+        orderStatusHistory.setStatus(OrderStatus.PENDING);
+        orderStatusHistory.setDescription("Đơn hàng đã được tạo");
+        orderStatusHistories.add(orderStatusHistory);
+        order.setOrderStatusHistories(orderStatusHistories);
+
+        
         // Cập nhật địa chỉ giao hàng
         ShippingAddress shippingAddress = new ShippingAddress();
         shippingAddress.setOrder(order);
