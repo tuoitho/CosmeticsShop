@@ -1,3 +1,6 @@
+ [Vietnamese version](https://github.com/PhatBee/Cosmetics_Shop/blob/master/README(vi).md)
+
+
 # Cosmetics Shop 💄
 
 Cosmetics Shop is a modern e-commerce platform built with cutting-edge technologies like Java 21, Spring Boot 3, and Thymeleaf for Java template engine. It leverages JPA for ORM, employs Spring Security 6.1 for robust authentication and authorization, integrates Google login for user convenience, and utilizes reCAPTCHA for enhanced security. The platform relies on MySQL for reliable data storage and Redis for efficient OTP management.Supporting flexible payments via PayPal and VNPay, the platform also utilizes AJAX for a smooth user experience with real-time interactions, and Cloudinary for fast, scalable cloud-based image storage and optimization.
