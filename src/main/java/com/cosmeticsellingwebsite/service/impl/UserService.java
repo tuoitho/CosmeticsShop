@@ -51,6 +51,7 @@ public class UserService implements IUserService, UserDetailsService {
 //        addressRepository.save(address);
 //    }
 
+    @Override
     public List<Address> getAddresses(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new CustomException("User not found");
@@ -58,10 +59,12 @@ public class UserService implements IUserService, UserDetailsService {
         return addressRepository.findByCustomer_UserId(userId);
     }
 
+    @Override
     public List<User> list() {
         return userRepository.findAll();
     }
 
+    @Override
     public User findById(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
@@ -70,6 +73,7 @@ public class UserService implements IUserService, UserDetailsService {
         return userOptional.get();
     }
 
+    @Override
     public void delete(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
@@ -85,6 +89,7 @@ public class UserService implements IUserService, UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("UserName not found: " + username));
     }
 
+    @Override
     public void registerUser(@Valid RegisterReq registerRequest) {
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
             throw new CustomException("Username already exists");
@@ -105,44 +110,66 @@ public class UserService implements IUserService, UserDetailsService {
         userRepository.save(customer);
     }
 
+    @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }
 
+    @Override
     public void resetPassword(String email, String newPassword) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException("Email not found"));
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 
+    @Override
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
 
+    @Override
     public void save(User user) {
         userRepository.save(user);
     }
 
+    @Override
     public void saveUser(AddUserDTO user) {
         User userEntity = userRepository.findById(user.getUserId()).orElseThrow(() -> new CustomException("User not found"));
         BeanUtils.copyProperties(user, userEntity);
         userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(userEntity);
     }
+    @Override
+    public void createUser(AddUserDTO user) {
+        User userEntity = new User();
+        BeanUtils.copyProperties(user, userEntity);
+        userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(userEntity);
+    }
 
+
+    @Override
     public List<User> searchUsers(String keyword) {
         return userRepository.findByFullnameContainingOrUsernameContainingOrEmailContaining(keyword, keyword, keyword);
     }
+    @Override
     public Page<User> searchUsers(String keyword, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
         return userRepository.findByRole_RoleNameInAndUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
                 List.of(RoleEnum.MANAGER, RoleEnum.CUSTOMER), keyword, keyword, pageable);
     }
 
+    @Override
     public Page<User> getUsers(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
         return userRepository.findByRole_RoleNameIn(List.of(RoleEnum.MANAGER, RoleEnum.CUSTOMER), pageable);
+    }
+
+    public String getExistingImage(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+        return user.getImage(); 
     }
 
 }

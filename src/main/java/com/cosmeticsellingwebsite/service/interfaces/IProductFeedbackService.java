@@ -9,7 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 
+@Service
 public interface IProductFeedbackService {
+
+    boolean canUserReviewOrder(Long customerId, Long orderId);
 
     // Phương thức getAllFeedbacks trả về danh sách tất cả các feedback
     List<ProductFeedback> getAllFeedbacks();

@@ -9,6 +9,7 @@ import com.cosmeticsellingwebsite.exception.CustomException;
 import com.cosmeticsellingwebsite.payload.response.PaymentResponse;
 import com.cosmeticsellingwebsite.repository.OrderRepository;
 import com.cosmeticsellingwebsite.repository.PaymentRepository;
+import com.cosmeticsellingwebsite.service.interfaces.IPaymentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
-public class PaymentService {
+public class PaymentService implements IPaymentService {
     @Autowired
     PaymentRepository paymentRepository;
     @Autowired
     OrderRepository orderRepository;
     @Transactional
+    @Override
     public PaymentResponse updatePaymentStatus(@Valid Long orderId, @Valid String status) {
         Payment payment = paymentRepository.findByOrder_OrderId(orderId).orElseThrow(() -> new CustomException("Order not found"));
         PaymentStatus paymentStatus = PaymentStatus.valueOf(status);
@@ -43,10 +45,12 @@ public class PaymentService {
         return paymentResponse;
     }
 
+    @Override
     public void updatePayment(String orderInfo, String paymentTime) {
 
     }
 
+    @Override
     public PaymentMethod getPaymentMethodByOrder(Order order) {
         Payment payment = paymentRepository.findByOrder(order).orElseThrow(() -> new CustomException("Payment not found"));
         return payment.getPaymentMethod();

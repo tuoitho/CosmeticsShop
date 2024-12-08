@@ -30,13 +30,15 @@ public class CartService implements ICartService {
     @Autowired
     AuthenticationHelper authenticationHelper;
     @Autowired
-    private ProductService productService;
+    ProductService productService;
     @Autowired
-    private CartItemRepository cartItemRepository;
+    CartItemRepository cartItemRepository;
 
+    @Override
     public CartItem getCartItemById(Long id) {
         return cartItemRepository.findById(id).orElseThrow(() -> new RuntimeException("Cart item not found"));
     }
+    @Override
     public void addProductToCart(AddProductToCartRequest addProductToCartRequest) {
         Customer customer = (Customer) userRepository.findById(authenticationHelper.getUserId()).orElseThrow(() -> new CustomException("User not found"));
 
@@ -79,6 +81,7 @@ public class CartService implements ICartService {
         cartRepository.save(cart);
     }
 
+    @Override
     public Cart getCartByUserId(Long userId) {
         Logger.log(userId);
         Logger.log(cartRepository.findByCustomer_UserId(userId).toString());
@@ -90,6 +93,7 @@ public class CartService implements ICartService {
         });
     }
 
+    @Override
     public void addToCart(Long userId, AddProductToCartRequest addProductToCartRequest) {
         Product product = productRepository.findByProductCode(addProductToCartRequest.getProductCode()).orElseThrow(() -> new RuntimeException("Product not found"));
         //check if product is active
@@ -133,6 +137,7 @@ public class CartService implements ICartService {
     }
 
 
+    @Override
     public void updateProductQuantityInCart(Long userId, UpdateCartReq updateCartReq) {
         Cart cart = cartRepository.findByCustomer_UserId(userId).orElseGet(() -> {
             Cart newCart = new Cart();
@@ -152,6 +157,7 @@ public class CartService implements ICartService {
         cartRepository.save(cart);
     }
 
+    @Override
     public void removeFromCart(Long userId, Long cartItemId) {
         Cart cart = cartRepository.findByCustomer_UserId(userId).orElseGet(() -> {
             Cart newCart = new Cart();
@@ -165,6 +171,7 @@ public class CartService implements ICartService {
     }
 
 
+    @Override
     public Long countProductInCart(){
         return cartItemRepository.count();
     }

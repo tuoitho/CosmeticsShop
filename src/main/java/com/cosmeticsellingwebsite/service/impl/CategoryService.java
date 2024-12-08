@@ -2,7 +2,6 @@ package com.cosmeticsellingwebsite.service.impl;
 
 import com.cosmeticsellingwebsite.dto.ProductSummaryDTO;
 import com.cosmeticsellingwebsite.entity.Category;
-import com.cosmeticsellingwebsite.entity.Order;
 import com.cosmeticsellingwebsite.entity.ProductFeedback;
 import com.cosmeticsellingwebsite.exception.CustomException;
 import com.cosmeticsellingwebsite.payload.response.CategoryProductPagingResponse;
@@ -20,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -37,12 +35,14 @@ public class CategoryService implements ICategoryService {
     @Autowired
     OrderLineRepository orderLineRepository;
 
+    @Override
     public List<CategoryResponse> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
         return categories.stream().map(category -> new CategoryResponse(category.getCategoryId(), category.getCategoryName())).toList();
     }
 
     // lấy doanh số của từng category trong năm
+    @Override
     public List<CategorySalesResp> getCategoryTotalSold() {
         // Lấy thời điểm đầu năm
         LocalDateTime startOfYear = LocalDateTime.now()
@@ -87,6 +87,7 @@ public class CategoryService implements ICategoryService {
 
     }
 
+    @Override
     public CategoryProductResponse getCategoryWithProducts(Long categoryId) {
         CategoryProductResponse categoryWithProducts = new CategoryProductResponse();
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CustomException("Category not found"));
@@ -105,6 +106,7 @@ public class CategoryService implements ICategoryService {
         return categoryWithProducts;
     }
 
+    @Override
     public CategoryProductPagingResponse getCategoryWithProductsPaging(Long categoryId, Pageable pageable) {
         CategoryProductPagingResponse categoryWithProductsPaging = new CategoryProductPagingResponse();
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CustomException("Category not found"));
@@ -132,11 +134,13 @@ public class CategoryService implements ICategoryService {
         return categoryWithProductsPaging;
     }
 
+    @Override
     public Integer countProducts(Long categoryId) {
         return productRepository.countByCategory_CategoryId(categoryId);
     }
 
 
+    @Override
     public void deleteCategory(Long id) {
         //neu ton tai sp thuoc category nay thi disable category
         if (productRepository.existsByCategory_CategoryId(id)) {
@@ -148,10 +152,12 @@ public class CategoryService implements ICategoryService {
         categoryRepository.deleteById(id);
     }
 
+    @Override
     public Page<Category> searchCategory(String search, Pageable pageable) {
         return categoryRepository.findByCategoryNameContaining(search, pageable);
     }
 
+    @Override
     public Page<Category> findAll(Pageable pageable) {
         return categoryRepository.findAll(pageable);
     }
