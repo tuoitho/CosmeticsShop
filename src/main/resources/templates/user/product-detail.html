@@ -65,7 +65,7 @@
                                                                                        th:classappend="${i <= product.averageRating ? 'text-warning' : 'text-secondary'}"></i> </span>
                 <span th:text="${'(' + product.averageRating + ' / 5) ' + product.totalFeedback + ' đánh giá'}"></span>
             </div>
-            <h2 class="text-primary mb-3" th:text="${#numbers.formatDecimal(product.cost, 1, 2)+' đ'}"></h2>
+            <h2 class="text-primary mb-3" id="product-price" th:text="${#numbers.formatDecimal(product.cost, 1, 2)}">0 đ</h2>
             <p><strong th:text="${'Thương hiệu: ' + product.brand}">Brand:</strong> </p>
             <p><strong th:text="${'Danh mục sản phẩm: ' + product.category}"></strong></p>
             <p><strong th:text="${'Số lượng trong kho: ' + product.stock}">Stock:</strong> </p>
@@ -108,8 +108,8 @@
                     <td th:text="${#temporals.format(product.manufactureDate, 'dd MMMM yyyy')}">January 15, 2023</td>
                 </tr>
                 <tr>
-                    <th th:text="${#temporals.format(product.expirationDate, 'dd MMMM yyyy')}">Hạn sử dụng</th>
-                    <td>January 15, 2025</td>
+                    <th>Hạn sử dụng </th>
+                    <td th:text="${#temporals.format(product.expirationDate, 'dd MMMM yyyy')}">Hạn sử dụng</td>
                 </tr>
                 <tr>
                     <th>Thành phần</th>
@@ -227,6 +227,18 @@
         document.body.appendChild(form);
         form.submit();
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const priceElement = document.getElementById('product-price');
+
+        // Lấy giá trị từ th: text để format
+        const rawPrice = [[${product.cost}]];  // Lấy giá từ server
+        const formattedPrice = new Intl.NumberFormat('vi-VN').format(rawPrice); // Định dạng với phân cách hàng nghìn
+
+
+        // Cập nhật giá hiển thị
+        priceElement.innerText = formattedPrice + ' đ';  // Hiển thị giá đã định dạng
+    });
 </script>
 </body>
 </html>
