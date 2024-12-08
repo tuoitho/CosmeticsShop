@@ -1,5 +1,7 @@
 package com.cosmeticsellingwebsite.controller.manager;
 
+import com.cosmeticsellingwebsite.dto.OrderHistoryDetailDTO;
+import com.cosmeticsellingwebsite.dto.ProductSnapshotDTO;
 import com.cosmeticsellingwebsite.entity.Order;
 import com.cosmeticsellingwebsite.enums.OrderStatus;
 import com.cosmeticsellingwebsite.service.impl.OrderService;
@@ -56,9 +58,17 @@ public class ManagerOrderController {
     // Xem chi tiết đơn hàng
     @GetMapping("/{id}/details")
     public String viewOrderDetails(@PathVariable("id") Long orderId, Model model) {
-        Order order = orderService.getOrderById(orderId);
-        model.addAttribute("order", order);
+        OrderHistoryDetailDTO order = orderService.getOrderHistoryDetailById(orderId);
+        model.addAttribute("orderDetail", order);
         return "manager/order-details";
+    }
+
+
+    @GetMapping("/{orderId}/product-detail-snapshot/{productId}")
+    public String productDetailSnapshot(@PathVariable("orderId") Long orderId, @PathVariable("productId") Long productId, Model model) {
+        ProductSnapshotDTO productSnapshot = orderService.getProductSnapshot(orderId, productId);
+        model.addAttribute("productSnapshot", productSnapshot);
+        return "customer/product-snapshot";
     }
 
 }
