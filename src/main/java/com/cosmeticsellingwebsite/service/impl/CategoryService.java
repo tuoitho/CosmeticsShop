@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -161,4 +162,19 @@ public class CategoryService implements ICategoryService {
     public Page<Category> findAll(Pageable pageable) {
         return categoryRepository.findAll(pageable);
     }
+
+    public void disableCategory(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Danh mục không tồn tại với ID: " + id));
+        category.setActive(false);
+        categoryRepository.save(category);
+    }
+
+    public void activateCategory(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Danh mục không tồn tại với ID: " + id));
+        category.setActive(true);
+        categoryRepository.save(category);
+    }
+
 }

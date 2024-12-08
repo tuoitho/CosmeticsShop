@@ -169,7 +169,7 @@ public class UserService implements IUserService, UserDetailsService {
     public String getExistingImage(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
-        return user.getImage(); 
+        return user.getImage();
     }
 
 }
