@@ -63,4 +63,17 @@ public class CategoryController {
         categoryService.deleteCategory(id);
         return "redirect:/admin/categories";
     }
+
+    @GetMapping("/disable/{id}")
+    public String disableCategory(@PathVariable Long id) {
+        categoryService.disableCategory(id); // Gọi service để vô hiệu danh mục
+        return "redirect:/admin/categories"; // Redirect về danh sách
+    }
+
+    // Kích hoạt danh mục
+    @GetMapping("/activate/{id}")
+    public String activateCategory(@PathVariable Long id) {
+        categoryService.activateCategory(id); // Gọi service để kích hoạt danh mục
+        return "redirect:/admin/categories"; // Redirect về danh sách
+    }
 }
