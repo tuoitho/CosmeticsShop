@@ -1,5 +1,7 @@
 package com.cosmeticsellingwebsite.service.image;
 
+import com.cloudinary.Cloudinary;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -17,7 +20,17 @@ public class ImageService {
     // Đường dẫn thư mục lưu ảnh, bạn có thể cấu hình đường dẫn này trong file application.properties
     @Value("${image.upload-dir}")
     private String uploadDir;
+    @Autowired
+    Cloudinary cloudinary;
 
+    public String uploadCloudinary(MultipartFile file) {
+        try {
+            var uploadResult = cloudinary.uploader().upload(file.getBytes(), Map.of());
+            return uploadResult.get("url") != null ? (String)uploadResult.get("url") : null;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload image to Cloudinary", e);
+        }
+    }
     public String saveImage(MultipartFile imageFile) throws IOException {
         // Kiểm tra thư mục đã tồn tại chưa, nếu chưa thì tạo mới
         File directory = new File(uploadDir);

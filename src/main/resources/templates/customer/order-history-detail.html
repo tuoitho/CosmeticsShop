@@ -14,7 +14,67 @@
           integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
           crossorigin="anonymous" referrerpolicy="no-referrer">
     <style>
+        /* ... Other styles ... */
 
+        .history-timeline {
+            display: flex;                 /* Arrange items horizontally */
+            overflow-x: auto;             /* Enable horizontal scrolling if needed */
+            padding-bottom: 20px;          /* Add space for step connector*/
+        }
+
+
+        .history-item {
+            position: relative;
+            flex: 0 0 auto;          /* Prevent items from shrinking */
+            width: 150px;            /* Adjust width as needed */
+            margin-right: 30px;      /* Add spacing between items */
+            text-align: center;      /* Center text within each item */
+
+        }
+
+        .history-step {
+            width: 30px;              /* Adjust size as needed */
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e2e8f0; /* Light gray background */
+            color: #4a5568; /* Dark gray text */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;     /* Center and add bottom margin */
+
+        }
+
+        .step-number {
+            font-weight: bold;
+        }
+
+        .history-details { /* Style the details below the circle */
+            margin-top: 10px; /* Space between the circle and the details */
+        }
+        .status {
+            font-weight: 600;       /* Semibold or bold font-weight */
+            margin-bottom: 5px;    /* Space between status and description*/
+        }
+
+
+        .description, .timestamp {
+            font-size: 0.9em; /* Slightly smaller font size for these elements */
+            color: #718096; /* Gray color */
+
+        }
+
+        .timestamp {
+            display: block; /* Place timestamp on its own line */
+        }
+
+        /* Styles for the connector lines between the steps (optional) */
+
+        /* This part is more complex and depends on your layout requirements.
+         If the steps should always be connected by a single line, you can achieve
+         this with ::before pseudo-elements and positioning.
+         If the number of steps is dynamic and the timeline scrolls, you will probably
+         need JavaScript to calculate the connector lengths dynamically. */
         .mb-4 {
             margin-bottom: 1rem;
         }
@@ -86,7 +146,7 @@
             style="margin: 0 auto; display: block;"
             onclick="cancelOrder()"
             class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"    >
-        Cancel Order
+        Hủy đơn hàng
     </button>
     <!--		button thanh toán lại, chỉ hiện khi orderstatus is pending-->
     <div th:if = "${orderDetail.orderStatus.toString() == 'PENDING'}">
@@ -95,22 +155,34 @@
     <div class="bg-white shadow-lg rounded-lg">
         <div class="border border-neutral-300 rounded-lg">
             <div class="bg-neutral-100 p-4 border-b-2 border-primary-500">
-                <h2 class="font-title text-neutral-950 text-lg mb-2">Order Detail</h2>
-                <span class="block text-neutral-700 mb-1">Order ID: <span
+                <h2 class="font-title text-neutral-950 text-lg mb-2">Chi tiết đơn hàng</h2>
+                <span class="block text-neutral-700 mb-1">Mã đơn hàng: <span
                         th:text="${orderDetail.orderId}"></span></span>
-                <span class="block text-neutral-700 mb-1">Order Date: <span
+                <span class="block text-neutral-700 mb-1">Ngày đặt hàng: <span
                         th:text="${orderDetail.orderDate}"></span></span>
-                <span class="block text-neutral-700">Total: <span th:text="${orderDetail.total}"></span>VND</span>
+                <span class="block text-neutral-700">Tổng cộng: <span th:text="${orderDetail.total}"></span>VND</span>
             </div>
             <div class="p-4">
-                <h3 class="text-center text-xl font-title mb-4">Order Lines</h3>
+                <div class="p-4">
+                    <h3 class="font-title text-neutral-950 text-lg mb-4">Lịch sử đơn hàng</h3>
+                    <div class="history-timeline">
+                        <ul class="list-none flex"> <li th:each="history, iterStat : ${orderDetail.orderStatusHistories}" class="history-item flex-shrink-0">
+                            <div class="history-step">
+                                <span class="step-number" th:text="${iterStat.count}"></span> </div> <div class="history-details"> <h4 class="status" th:text="${history.status}"></h4> <p class="description" th:text="${history.description}"></p> <span class="timestamp" th:text="${#temporals.format(history.updateAt, 'dd-MM-yyyy HH:mm')}"></span> </div> <div class="connector" th:if="${!iterStat.last}"></div> </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4">
+                <h3 class="text-center text-xl font-title mb-4">Danh sách sản phẩm của đơn hàng</h3>
                 <table class="w-full table-auto border-collapse border border-neutral-300">
                     <thead>
                     <tr class="bg-primary-500 text-primary-50">
-                        <th class="border border-neutral-300 py-2 px-4">Image</th>
-                        <th class="border border-neutral-300 py-2 px-4">Product Name</th>
-                        <th class="border border-neutral-300 py-2 px-4">Quantity</th>
-                        <th class="border border-neutral-300 py-2 px-4">Cost</th>
+                        <th class="border border-neutral-300 py-2 px-4">Ảnh</th>
+                        <th class="border border-neutral-300 py-2 px-4">Tên sản phẩm</th>
+                        <th class="border border-neutral-300 py-2 px-4">Số lượng</th>
+                        <th class="border border-neutral-300 py-2 px-4">Giá sản phẩm</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -151,11 +223,11 @@
                     </p>
                 </div>
                 <!-- Payment-->
-                <h3 class="text-xl font-title mt-6">Payment Detail</h3>
+                <h3 class="text-xl font-title mt-6">Thông tin thanh toán Detail</h3>
                 <div class="border border-neutral-300 rounded-lg p-4">
                     <div class="flex flex-row gap-4">
                         <div>
-                            <span class="block text-neutral-950 font-semibold">Payment Method:</span>
+                            <span class="block text-neutral-950 font-semibold">Phương thức thanh toán:</span>
                             <p class="text-neutral-700" th:text="${orderDetail.payment.paymentMethod}"></p>
                         </div>
                         <div>
@@ -174,9 +246,9 @@
 
         <div class="border border-neutral-300 rounded-lg p-4" id="reviewContainer">
             <div class="mb-4">
-                <label for="productSelect" class="block font-semibold mb-2">Select Product:</label>
+                <label for="productSelect" class="block font-semibold mb-2">Chọn sản phẩm để đánh giá:</label>
                 <select id="productSelect" name="productId" class="w-full border rounded p-2">
-                    <option value="" disabled selected>Select a product</option>
+                    <option value="" disabled selected>Chọn</option>
                     <option th:each="orderline : ${orderDetail.orderLines}"
                             th:value="${orderline.productSnapshot.productId}"
                             th:text="${orderline.productSnapshot.productName}"></option>
@@ -184,7 +256,7 @@
             </div>
 
             <div class="mb-4">
-                <label class="block font-semibold mb-2">Rating:</label>
+                <label class="block font-semibold mb-2">Đánh giá:</label>
                 <div class="star-rating" id="starRating">
                     <i class="fas fa-star" data-rating="1"></i>
                     <i class="fas fa-star" data-rating="2"></i>
@@ -196,12 +268,12 @@
             </div>
 
             <div class="mb-4">
-                <label for="review" class="block font-semibold mb-2">Your Review:</label>
+                <label for="review" class="block font-semibold mb-2">Đánh giá của bạn:</label>
                 <textarea id="review" name="review" class="w-full border rounded p-2" rows="4"
                           placeholder="Write your review here..."></textarea>
             </div>
             <div class="mb-4">
-                <label class="block font-semibold mb-2">Add Image:</label>
+                <label class="block font-semibold mb-2">Thêm ảnh:</label>
                 <div class="flex items-center gap-2">
                     <button id="customButton" type="button" class="px-4 py-2 bg-blue-500 text-white rounded">Choose
                         File
@@ -214,7 +286,7 @@
             </div>
             <div>
                 <button type="button" id="submitReview" class="w-full">
-                    Submit Review
+                    Gửi đánh giá
                 </button>
             </div>
         </div>

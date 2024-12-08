@@ -23,11 +23,16 @@ public class AdminProductStockController {
     private ProductService productService;
 
     @GetMapping
-    public String listProductStocks(Model model, @PageableDefault(size = 5) Pageable pageable) {
-        Page<ProductStock> productStockPage = productStockService.getPaginatedProductStocks(pageable);
+    public String listProductStocks(
+            Model model,
+            @RequestParam(required = false) String searchTerm,
+            @PageableDefault(size = 5) Pageable pageable) {
+        Page<ProductStock> productStockPage = productStockService.searchProductStocks(searchTerm, pageable);
         model.addAttribute("productStockPage", productStockPage);
-        return "admin/admin-stock-list"; // View hiển thị danh sách kho
+        model.addAttribute("searchTerm", searchTerm); // Gửi từ khóa tìm kiếm về view
+        return "admin/admin-stock-list";
     }
+
 
     @PostMapping("/update/{productId}")
     public String updateProductStock(

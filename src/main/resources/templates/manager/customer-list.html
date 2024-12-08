@@ -25,6 +25,7 @@
             background-color: #dc3545;
             color: white;
         }
+
     </style>
 </head>
 <body>
@@ -39,10 +40,15 @@
             <h2>Quản lý khách hàng</h2>
         </div>
 
+<!--        search-->
+        <form class="d-flex mb-4" th:action="@{/manager/customers}" method="get">
+            <input class="form-control me-2" type="search" placeholder="Tìm kiếm khách hàng" aria-label="Search" name="keyword" th:value="${keyword}">
+            <button class="btn btn-outline-success" type="submit">Tìm kiếm</button>
+        </form>
         <!-- Bảng quản lý khách hàng -->
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-dark text-center">
+        <div class="text-center table-responsive">
+            <table class="table table-bordered table-striped text-center">
+                <thead style="background-color: var(--primary-color); color: white;">
                 <tr>
                     <th>STT</th>
                     <th>Họ và tên</th>
@@ -100,14 +106,14 @@
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" th:classappend="${customerPage.hasPrevious() ? '' : 'disabled'}">
-                            <a class="page-link" th:href="@{/manager/customers(page=${customerPage.number - 1})}" tabindex="-1">Previous</a>
+                            <a class="page-link" th:href="@{/manager/customers(page=${customerPage.number - 1}, keyword=${keyword})}">Previous</a>
                         </li>
                         <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, customerPage.totalPages - 1)}"
                             th:classappend="${pageNum == customerPage.number ? 'active' : ''}">
-                            <a class="page-link" th:href="@{/manager/customers(page=${pageNum})}" th:text="${pageNum + 1}"></a>
+                            <a class="page-link" th:href="@{/manager/customers(page=${pageNum}, keyword=${keyword})}" th:text="${pageNum + 1}"></a>
                         </li>
                         <li class="page-item" th:classappend="${customerPage.hasNext() ? '' : 'disabled'}">
-                            <a class="page-link" th:href="@{/manager/customers(page=${customerPage.number + 1})}">Next</a>
+                            <a class="page-link" th:href="@{/manager/customers(page=${customerPage.number + 1}, keyword=${keyword})}">Next</a>
                         </li>
                     </ul>
                 </nav>
@@ -115,14 +121,16 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function checkCartEmpty(customerId, callback) {
-            fetch(`manager/customers/check-cart-empty?customerId=${customerId}`, {method: 'POST'})
+            fetch(`/manager/customers/check-cart-empty?customerId=${customerId}`, {method: 'POST'})
                 .then(response => response.json())
                 .then(data => callback(data));
         }
     </script>
 </section>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -60,8 +60,8 @@ public class CustomerService implements ICustomerService {
     }
 
     @Override
-    public List<Customer> searchByKeyword(String keyword) {
-        return customerRepository.findByFullnameContainingOrEmailContaining(keyword, keyword);
+    public Page<Customer> searchByKeyword(String keyword,Pageable pageable) {
+        return customerRepository.findByFullnameContainingOrEmailContaining(keyword, keyword,pageable);
     }
 
     @Override

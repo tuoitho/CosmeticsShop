@@ -59,12 +59,15 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Set<Order> findAllByCustomerIdAndOrderStatus(Long customerId, OrderStatus orderStatus);
 
     List<Order> findByOrderStatus(OrderStatus status);
+    List<Order> findByOrderStatusOrderByOrderDateDesc(OrderStatus status);
 
 
     @Query("SELECT o FROM Order o WHERE CAST(o.orderId AS string) LIKE CONCAT('%', :searchKeyword, '%')")
     Page<Order> findByOrderIdContaining(@Param("searchKeyword") String searchKeyword, Pageable pageable);
     Page<Order> findByOrderStatus(OrderStatus status, Pageable pageable);
-    @Query("SELECT o FROM Order o WHERE CAST(o.orderId AS string) LIKE CONCAT('%', :searchKeyword, '%') AND o.orderStatus = :status")
+    Page<Order> findByOrderStatusOrderByOrderDateDesc(OrderStatus status, Pageable pageable);
+
+    @Query("SELECT o FROM Order o WHERE CAST(o.orderId AS string) LIKE CONCAT('%', :searchKeyword, '%') AND o.orderStatus = :status order by o.orderDate desc")
     Page<Order> findByOrderIdContainingAndOrderStatus(@Param("searchKeyword") String searchKeyword,
                                                       @Param("status") OrderStatus status,
                                                       Pageable pageable);
@@ -87,6 +90,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         FROM Order o
         WHERE o.customerId = :customerId
             and o.orderStatus = :orderStatus
+               ORDER BY o.orderDate
     """)
     Page<Order> findAllPaginatedByOrderStatus(Long customerId, OrderStatus orderStatus, Pageable pageable);
+
+    @Query("""
+        SELECT o
+        FROM Order o
+        ORDER BY o.orderDate DESC
+    """)
+    Page<Order> findAllDesc(Pageable pageable);
 }

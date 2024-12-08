@@ -1,34 +1,21 @@
 package com.cosmeticsellingwebsite.controller;
 
 import com.cosmeticsellingwebsite.dto.mail.MailDTO;
-import com.cosmeticsellingwebsite.entity.User;
 import com.cosmeticsellingwebsite.payload.request.RegisterReq;
 import com.cosmeticsellingwebsite.service.captcha.CaptchaService;
-import com.cosmeticsellingwebsite.service.google.GoogleService;
 import com.cosmeticsellingwebsite.service.impl.UserService;
 import com.cosmeticsellingwebsite.service.mail.MailService;
 import com.cosmeticsellingwebsite.util.Logger;
-import com.cosmeticsellingwebsite.dto.gooogle.GooglePojo;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -51,11 +38,6 @@ public class AuthController {
         if (error != null) {
             model.addAttribute("messageLogin", error);
         }
-        return "user/login-register";
-    }
-    @GetMapping({"/login-failure"})
-    public String loginFailureHander(Model model) {
-        model.addAttribute("messageLogin", "Sai tên đăng nhập hoặc mật khẩu");
         return "user/login-register";
     }
     @GetMapping("/alogin")

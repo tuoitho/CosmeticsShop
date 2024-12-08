@@ -41,22 +41,24 @@ public class ManagerCustomerController {
         return "redirect:/manager/customers";
     }
 
-    @GetMapping("/search")
-    public String searchCustomersFilter(@RequestParam String keyword, Model model) {
-        List<Customer> customers = customerService.searchByKeyword(keyword);
-        model.addAttribute("customers", customers);
-        model.addAttribute("keyword", keyword);
-        return "manager/customer-list"; // Tên file HTML
-    }
+//    @GetMapping("/search")
+//    public String searchCustomersFilter(@RequestParam String keyword, Model model) {
+//        Page<Customer> customers = customerService.searchByKeyword(keyword);
+//        model.addAttribute("customers", customers);
+//        model.addAttribute("keyword", keyword);
+//        return "manager/customer-list"; // Tên file HTML
+//    }
 
     @GetMapping("")
-    public String getAllOfCustomers(@RequestParam(defaultValue = "0") int page, Model model) {
+    public String getAllOfCustomers(@RequestParam(defaultValue = "", required = false) String keyword, @RequestParam(defaultValue = "0") int page, Model model) {
         // Tạo Pageable với trang hiện tại và số lượng khách hàng mỗi trang
         Pageable pageable = PageRequest.of(page, 5); // 5 khách hàng mỗi trang
-        Page<Customer> customerPage = customerService.findAll(pageable);
+//        Page<Customer> customerPage = customerService.findAll(pageable);
+        Page<Customer> customerPage = customerService.searchByKeyword(keyword, pageable);
 
         // Thêm dữ liệu vào model
         model.addAttribute("customerPage", customerPage);
+        model.addAttribute("keyword", keyword);
 
         return "manager/customer-list"; // Tên file HTML
     }

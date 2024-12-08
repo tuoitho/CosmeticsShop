@@ -20,6 +20,16 @@
         Không có mã giảm giá nào để hiển thị.
     </div>
 
+    <form method="get" th:action="@{/admin/vouchers}" class="mb-3">
+        <div class="input-group">
+            <input type="text" class="form-control" name="searchTerm"
+                   placeholder="Tìm kiếm mã giảm giá..." th:value="${searchTerm}">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+            </div>
+        </div>
+    </form>
+
     <!-- Bảng danh sách mã giảm giá -->
     <table class="table table-striped">
         <thead>
@@ -73,14 +83,14 @@
     <nav th:if="${voucherPage.content.size() > 0}">
         <ul class="pagination">
             <li class="page-item" th:classappend="${voucherPage.first} ? 'disabled'">
-                <a class="page-link" th:href="@{/admin/vouchers(page=${voucherPage.number - 1}, size=${voucherPage.size})}">Trước</a>
+                <a class="page-link" th:href="@{/admin/vouchers(page=${voucherPage.number - 1}, size=${voucherPage.size}, searchTerm=${searchTerm})}">Trước</a>
             </li>
             <li class="page-item" th:each="i : ${#numbers.sequence(0, voucherPage.totalPages - 1)}"
                 th:classappend="${i == voucherPage.number} ? 'active'">
-                <a class="page-link" th:href="@{/admin/vouchers(page=${i}, size=${voucherPage.size})}" th:text="${i + 1}"></a>
+                <a class="page-link" th:href="@{/admin/vouchers(page=${i}, size=${voucherPage.size}, searchTerm=${searchTerm})}" th:text="${i + 1}"></a>
             </li>
             <li class="page-item" th:classappend="${voucherPage.last} ? 'disabled'">
-                <a class="page-link" th:href="@{/admin/vouchers(page=${voucherPage.number + 1}, size=${voucherPage.size})}">Sau</a>
+                <a class="page-link" th:href="@{/admin/vouchers(page=${voucherPage.number + 1}, size=${voucherPage.size}, searchTerm=${searchTerm})}">Sau</a>
             </li>
         </ul>
     </nav>

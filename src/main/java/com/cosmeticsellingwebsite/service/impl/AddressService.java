@@ -5,8 +5,8 @@ import com.cosmeticsellingwebsite.entity.Address;
 import com.cosmeticsellingwebsite.entity.Customer;
 import com.cosmeticsellingwebsite.entity.User;
 import com.cosmeticsellingwebsite.repository.AddressRepository;
-import com.cosmeticsellingwebsite.repository.UserRepositoty;
 import com.cosmeticsellingwebsite.repository.UserRepository;
+import com.cosmeticsellingwebsite.service.interfaces.IAddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +14,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class AddressService {
+public class AddressService implements IAddressService {
     @Autowired
     private AddressRepository addressRepository;
     @Autowired
     private UserRepository userRepository;
 
+    @Override
     public boolean updateAddressForUser(AddressForOrderDTO addressModel, Long addressID) {
         try {
             // Tìm AddressEntity trong database theo AddressID
@@ -44,6 +45,7 @@ public class AddressService {
         }
     }
     // Lấy danh sách địa chỉ của người dùng
+    @Override
     public List<AddressForOrderDTO> getAddressesForUser(Long userId) {
         List<Address> addresses = addressRepository.findByCustomer_UserId(userId);
         return addresses.stream().map(address -> new AddressForOrderDTO(
@@ -58,6 +60,7 @@ public class AddressService {
     }
 
     // Lấy thông tin địa chỉ cụ thể
+    @Override
     public AddressForOrderDTO getAddressById(Long addressId) {
         Optional<Address> addressOpt = addressRepository.findById(addressId);
         if (addressOpt.isPresent()) {
@@ -76,6 +79,7 @@ public class AddressService {
     }
 
     // Lưu địa chỉ (thêm hoặc cập nhật)
+    @Override
     public boolean saveAddressForUser(AddressForOrderDTO addressDTO, Long userId) {
         try {
             Optional<User> userOpt = userRepository.findById(userId);
@@ -102,10 +106,12 @@ public class AddressService {
             return false;
         }
     }
+    @Override
     public void deleteAddressById(Long id) {
         addressRepository.deleteById(id); // Gọi repository để xóa
     }
 
+    @Override
     public boolean checkAddressBelongToUser(Long id, Long userID) {
         Customer customer = (Customer) userRepository.findById(userID).get();
         Address address = addressRepository.findById(id).get();

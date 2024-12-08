@@ -82,6 +82,16 @@
         Hiện chưa có sản phẩm nào trong kho.
     </div>
 
+    <form method="get" th:action="@{/admin/stock}" class="mb-3">
+        <div class="input-group">
+            <input type="text" class="form-control" name="searchTerm" placeholder="Tìm kiếm sản phẩm..." th:value="${searchTerm}">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+            </div>
+        </div>
+    </form>
+
+
     <table class="table table-striped">
         <thead>
         <tr>
@@ -114,15 +124,16 @@
     <div class="d-flex justify-content-center mt-3" th:if="${productStockPage.content.size() > 0}">
         <ul class="pagination">
             <li class="page-item" th:classappend="${productStockPage.hasPrevious()} ? '' : 'disabled'">
-                <a class="page-link" th:href="@{/admin/stock(page=${productStockPage.number - 1})}">Trước</a>
+                <a class="page-link" th:href="@{/admin/stock(page=${productStockPage.number - 1}, searchTerm=${searchTerm})}">Trước</a>
             </li>
             <li class="page-item" th:each="i : ${#numbers.sequence(0, productStockPage.totalPages - 1)}" th:classappend="${i == productStockPage.number} ? 'active'">
-                <a class="page-link" th:href="@{/admin/stock(page=${i})}" th:text="${i + 1}"></a>
+                <a class="page-link" th:href="@{/admin/stock(page=${i}, searchTerm=${searchTerm})}" th:text="${i + 1}"></a>
             </li>
             <li class="page-item" th:classappend="${productStockPage.hasNext()} ? '' : 'disabled'">
-                <a class="page-link" th:href="@{/admin/stock(page=${productStockPage.number + 1})}">Sau</a>
+                <a class="page-link" th:href="@{/admin/stock(page=${productStockPage.number + 1}, searchTerm=${searchTerm})}">Sau</a>
             </li>
         </ul>
+
     </div>
 </section>
 <!-- Bootstrap JS và Popper.js -->
