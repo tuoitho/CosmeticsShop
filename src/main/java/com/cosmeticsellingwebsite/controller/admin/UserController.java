@@ -74,7 +74,7 @@ public class UserController {
         }
         String image = imageFile != null && !imageFile.isEmpty() ? imageService.saveImage(imageFile) : null;
         userDTO.setImage(image);
-        userService.saveUser(userDTO);
+        userService.createUser(userDTO);
         return "redirect:/admin/user";
     }
 
