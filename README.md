@@ -16,7 +16,7 @@ The **Cosmetics Shop** aims to provide an online platform where users can browse
 #### 🎯 Strong adherence to Object-Oriented Programming principles, with relationships and attributes accurately established. For example, a product does not have a quantity property,...
 
 #### 🔐 Advanced Security Features  
-- ##### Defined a method to retrieve logged-in user information via the SecurityContextHolder class (the class responsible for storing security information of the current user).
+- ##### Define a method to retrieve logged-in user information through the SecurityContextHolder class, independent of other methods like session-based retrieval.
 
 - ##### Implemented a check for locked user accounts during login using a custom class.
 
