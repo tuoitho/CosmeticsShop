@@ -83,6 +83,7 @@ public class ProductService implements IProductService {
                 })
                 .collect(Collectors.toList());
     }
+
     public List<ProductHomeDTO> getTop20BestSellingProducts() {
         return productRepository.findTop20BestSellingProducts().stream()
                 .map(product -> {
@@ -93,6 +94,7 @@ public class ProductService implements IProductService {
                 })
                 .collect(Collectors.toList());
     }
+
     public List<ProductHomeDTO> getTop20HighestRatedProducts() {
         return productRepository.findTop20HighestRatedProducts().stream()
                 .map(product -> {
@@ -103,6 +105,19 @@ public class ProductService implements IProductService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public Page<Product> getTop20NewestProductsPage(Pageable pageable) {
+        return productRepository.findAllNewest(pageable);
+    }
+
+    public Page<Product> getTop20BestSellingProductsPage(Pageable pageable) {
+        return productRepository.findTop20BestSellingProducts(pageable, LocalDateTime.now().minusDays(30));
+    }
+
+    public Page<Product> getTop20HighestRatedProductsPage(Pageable pageable) {
+        return productRepository.findTop20HighestRatedProducts(pageable);
+    }
+
     public ProductDetailResponse getProductDetail(String productCdoe) {
         Product product = productRepository.findByProductCode(productCdoe)
                 .orElseThrow(() -> new CustomException("Product not found"));
@@ -329,4 +344,16 @@ public class ProductService implements IProductService {
     public List<String> getAllBrands() {
         return productRepository.findAllBrands();
     }
+
+
+
+    public Integer countSoldLast30DaysByProductId(Long productId){
+        return productRepository.countSoldLast30DaysByProductId(productId);
+    }
+
+    public Double getAverageRatingByProductId(Long productId){
+        return productFeedbackRepository.findAverageRatingByProduct_ProductId(productId);
+    }
+
+
 }

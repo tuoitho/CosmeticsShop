@@ -5,9 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-<!--    <link rel="stylesheet" href="/assets/css/grid.css">-->
-<!--    <link rel="stylesheet" href="/assets/css/main.css">-->
-<!--    <link rel="stylesheet" href="/assets/css/responsive.css">-->
+    <!--    <link rel="stylesheet" href="/assets/css/grid.css">-->
+    <!--    <link rel="stylesheet" href="/assets/css/main.css">-->
+    <!--    <link rel="stylesheet" href="/assets/css/responsive.css">-->
     <link href="https://fonts.googleapis.com/css2?family=Comforter+Brush&family=Estonia&family=Kaushan+Script&family=Marck+Script&family=Nothing+You+Could+Do&family=Patrick+Hand&family=Roboto&family=Satisfy&family=Sawarabi+Gothic&family=Tangerine:wght@700&display=swap" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -146,26 +146,7 @@
             <div class="product-slider" id="bestSellersSlider">
                 <button class="slider-button prev" onclick="slide('bestSellersSlider', -1)"><i class="fas fa-chevron-left"></i></button>
                 <div class="product-container">
-                    <div th:each="product : ${top20BestSellingProducts}" class="product-card">
-                        <img th:src="@{/api/images(imageName=${product.image})}" th:alt="${product.productId}" class="product-image">
-                        <div class="product-info">
-                            <a th:text="${product.productName}" th:href="@{'/browser/product/' + ${product.productId}}"
-                               class="product-title" style="
-                           color: #fd7e14;
-                            overflow: hidden;
-                            display: -webkit-box;
-                            -webkit-line-clamp: 2;
-                            -webkit-box-orient: vertical;
-                            width: 100%;
-                            font-weight: bold;
-                            "></a>
-                            <p class="product-price">Giá: <span th:text="${#numbers.formatDecimal(product.cost, 0, 'COMMA', 2, 'POINT')}"></span> đ</p>
-                            <p class="numsold">Đã mua trong 30 ngày: <span th:text="${product.totalSoldLast30Days}"></span></p>
-                            <a href="javascript:void(0)"
-                               class="btn btn-custom add-to-cart"
-                               th:data-product-code="${product.productCode}">Thêm vào giỏ hàng</a>
-                        </div>
-                    </div>
+
                 </div>
                 <button class="slider-button next" onclick="slide('bestSellersSlider', 1)"><i class="fas fa-chevron-right"></i></button>
             </div>
@@ -176,68 +157,26 @@
             <div class="product-slider" id="newArrivalsSlider">
                 <button class="slider-button prev" onclick="slide('newArrivalsSlider', -1)"><i class="fas fa-chevron-left"></i></button>
                 <div class="product-container">
-                    <!-- New Arrivals Products -->
-                    <div th:each="product : ${top20NewestProducts}" class="product-card">
-                        <img th:src="@{/api/images(imageName=${product.image})}" th:alt="${product.productId}" class="product-image">
-                        <div class="product-info">
-                            <a th:text="${product.productName}" th:href="@{'/browser/product/' + ${product.productId}}"
-                               class="product-title" style="
-                           color: #da7079;
-                            overflow: hidden;
-                            display: -webkit-box;
-                            -webkit-line-clamp: 2;
-                            -webkit-box-orient: vertical;
-                            width: 100%;
-                            font-weight: bold;
-                            "></a>
-                            <p class="product-price">Giá: <span th:text="${#numbers.formatDecimal(product.cost, 0, 'COMMA', 2, 'POINT')}"></span> đ</p>
-                            <p class="fas " style="color: red">New ! ! !</p>
-                            <br>
 
-                            <a href="javascript:void(0)"
-                               class="btn btn-custom add-to-cart"
-                               th:data-product-code="${product.productCode}">Thêm vào giỏ hàng</a>
-                        </div>
-                    </div>
                 </div>
                 <button class="slider-button next" onclick="slide('newArrivalsSlider', 1)"><i class="fas fa-chevron-right"></i></button>
             </div>
         </section>
 
-    <section>
-        <br>
-        <br>
-        <br>
-        <h2 class="section-title">Top Sản Phẩm Đánh Giá Cao Nhât</h2>
-        <div class="product-slider" id="top20RatedProductsSlider">
-            <button class="slider-button prev" onclick="slide('top20RatedProductsSlider', -1)"><i class="fas fa-chevron-left"></i></button>
-            <div class="product-container">
-                <!-- Top 20 Rated Products -->
-                <div th:each="product : ${top20HighestRatingProducts}" class="product-card">
-                    <img th:src="@{/api/images(imageName=${product.image})}" th:alt="${product.productId}" class="product-image">
-                    <div class="product-info">
-                        <a th:text="${product.productName}" th:href="@{'/browser/product/' + ${product.productId}}"
-                           class="product-title" style="
-                           color: #4CAF50;
-                            overflow: hidden;
-                            display: -webkit-box;
-                            -webkit-line-clamp: 2;
-                            -webkit-box-orient: vertical;
-                            width: 100%;
-                            font-weight: bold;
-                            "></a>
-                        <p class="product-price">Giá: <span th:text="${#numbers.formatDecimal(product.cost, 0, 'COMMA', 2, 'POINT')}"></span> đ</p>
-<!--                        đánh giá-->
-                        <p class="numsold">Đánh giá: <i class="fas fa-star gold" style="color: gold"></i> <span th:text="${product.averageRating}"></span></p>
-                        <a href="javascript:void(0)"
-                           class="btn btn-custom add-to-cart"
-                           th:data-product-code="${product.productCode}">Thêm vào giỏ hàng</a>
-                    </div>
+        <section>
+            <br>
+            <br>
+            <br>
+            <h2 class="section-title">Top Sản Phẩm Đánh Giá Cao Nhât</h2>
+            <div class="product-slider" id="top20RatedProductsSlider">
+                <button class="slider-button prev" onclick="slide('top20RatedProductsSlider', -1)"><i class="fas fa-chevron-left"></i></button>
+                <div class="product-container">
+                    <!-- Top 20 Rated Products -->
+
                 </div>
+                <button class="slider-button next" onclick="slide('top20RatedProductsSlider', 1)"><i class="fas fa-chevron-right"></i></button>
             </div>
-            <button class="slider-button next" onclick="slide('top20RatedProductsSlider', 1)"><i class="fas fa-chevron-right"></i></button>
-        </div>
-    </section>
+        </section>
     </main>
 
     <div class="footer" th:replace="~{user/fragments/footer::footer}">
@@ -251,6 +190,15 @@
 <script>
     function slide(sliderId, direction) {
         const slider = document.getElementById(sliderId);
+        if (slider===bestSellersSlider){
+            renderBestSellers();
+        }
+        if (slider===newArrivalsSlider){
+            renderNewestProduct();
+        }
+        if (slider===top20RatedProductsSlider){
+            renderTopRating();
+        }
         const container = slider.querySelector('.product-container');
         const cardWidth = 270; // 250px width + 20px margin
         const visibleCards = Math.floor(slider.offsetWidth / cardWidth);
@@ -301,6 +249,176 @@
 
 </script>
 <script>
+    let currentPage = {
+        bestSellers: 0,
+        newArrivals: 0,
+        topRated: 0
+    };
+    const size = 5;
+
+
+        // Send AJAX request to load data
+    function renderBestSellers() {
+        if (currentPage["bestSellers"] === 4) {
+            return;
+        }
+        $.ajax({
+            url: `/topSellingProducts`,
+            method: "GET",
+            data: {
+                page: currentPage["bestSellers"]++,
+                size: 5 // Adjust size if needed
+            },
+            success: function (data) {
+                // Update slider with new products
+                const sliderContainer = document.getElementById("bestSellersSlider").querySelector(".product-container");
+                data.forEach(product => {
+                    const productCard = `
+                <div class="product-card">
+                    <img src="/api/images?imageName=${product.image}" alt="${product.productId}" class="product-image">
+                    <div class="product-info">
+                        <a href="/browser/product/${product.productId}" class="product-title" style="
+                            color: #fd7e14;
+                            overflow: hidden;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;
+                            width: 100%;
+                            font-weight: bold;
+                        ">${product.productName}</a>
+                        <p class="product-price">Giá: ${new Intl.NumberFormat().format(product.cost)} đ</p>
+                        <p class="numsold">Đã mua trong 30 ngày: ${product.totalSoldLast30Days}</p>
+                        <button onclick="addToCart('${product.productCode}')" class="btn btn-custom add-to-cart" >Thêm vào giỏ hàng</button>
+                    </div>
+                </div>
+            `;
+                    sliderContainer.innerHTML += productCard;
+                });
+            },
+            error: function (err) {
+                console.error("Error loading products:", err);
+            }
+        });
+    }
+
+    function renderNewestProduct(){
+        if (currentPage["newArrivals"] === 4) {
+            return;
+        }
+        $.ajax({
+            url: `/topNewestProducts`,
+            method: "GET",
+            data: {
+                page: currentPage["newArrivals"]++,
+                size: 5 // Adjust size if needed
+            },
+            success: function (data) {
+                // Update slider with new products
+                const sliderContainer = document.getElementById("newArrivalsSlider").querySelector(".product-container");
+                data.forEach(product => {
+                    const productCard = `
+                <div class="product-card">
+                    <img src="/api/images?imageName=${product.image}" alt="${product.productId}" class="product-image">
+                    <div class="product-info">
+                        <a href="/browser/product/${product.productId}" class="product-title" style="
+                            color: #fd7e14;
+                            overflow: hidden;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;
+                            width: 100%;
+                            font-weight: bold;
+                        ">${product.productName}</a>
+                        <p class="product-price">Giá: ${new Intl.NumberFormat().format(product.cost)} đ</p>
+                        <button onclick="addToCart('${product.productCode}')" class="btn btn-custom add-to-cart" >Thêm vào giỏ hàng</button>
+                    </div>
+                </div>
+            `;
+                    sliderContainer.innerHTML += productCard;
+                });
+            },
+            error: function (err) {
+                console.error("Error loading products:", err);
+            }
+        });
+    }
+
+    function renderTopRating(){
+        if (currentPage["topRated"] === 4) {
+            return;
+        }
+        $.ajax({
+            url: `/topHighestRatingProducts`,
+            method: "GET",
+            data: {
+                page: currentPage["topRated"]++,
+                size: 5 // Adjust size if needed
+            },
+            success: function (data) {
+                // Update slider with new products
+                const sliderContainer = document.getElementById("top20RatedProductsSlider").querySelector(".product-container");
+                data.forEach(product => {
+                    const productCard = `
+                <div class="product-card">
+                    <img src="/api/images?imageName=${product.image}" alt="${product.productId}" class="product-image">
+                    <div class="product-info">
+                        <a href="/browser/product/${product.productId}" class="product-title" style="
+                            color: #fd7e14;
+                            overflow: hidden;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;
+                            width: 100%;
+                            font-weight: bold;
+                        ">${product.productName}</a>
+                        <p class="product-price">Giá: ${new Intl.NumberFormat().format(product.cost)} đ</p>
+                        <p class = "rating"> Đánh giá: ${product.averageRating} <span class="star gold"><i class="fas fa-star"></i></span> </p>
+                        <button onclick="addToCart('${product.productCode}')" class="btn btn-custom add-to-cart" >Thêm vào giỏ hàng</button>
+                    </div>
+                </div>
+            `;
+                    sliderContainer.innerHTML += productCard;
+                });
+            },
+            error: function (err) {
+                console.error("Error loading products:", err);
+            }
+        });
+    }
+
+    renderBestSellers();
+
+    renderNewestProduct();
+
+    renderTopRating();
+
+</script>
+
+<script>
+    function  addToCart(productCode){
+        // Gửi yêu cầu AJAX đến API thêm vào giỏ hàng
+        // Gửi yêu cầu AJAX đến API thêm vào giỏ hàng
+        $.ajax({
+            url: '/customer/cart/add-to-cart',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                productCode: productCode,
+                quantity: 1
+            }),
+            success: function (response) {
+                if (response.indexOf('loginForm')>0) {
+                    // Chuyển hướng đến trang đăng nhập
+                    window.location.href = '/auth/login';}
+                else {
+                    alert(response);
+                }
+            },
+            error: function (xhr, status, error) {
+                alert("Error: " + xhr.responseText);
+            }
+        });
+    }
     document.addEventListener("DOMContentLoaded", function () {
         const addToCartButtons = document.querySelectorAll(".add-to-cart");
 
@@ -333,74 +451,6 @@
         });
     });
 </script>
-<script>
-    let currentPage = {
-        bestSellers: 0,
-        newArrivals: 0,
-        topRated: 0
-    };
 
-    function slide(sliderId, direction) {
-        const sliderMap = {
-            bestSellersSlider: "bestSellers",
-            newArrivalsSlider: "newArrivals",
-            top20RatedProductsSlider: "topRated"
-        };
-
-        const category = sliderMap[sliderId];
-        if (!category) return;
-
-        currentPage[category] += direction;
-
-        // Ensure page index is not negative
-        if (currentPage[category] < 0) {
-            currentPage[category] = 0;
-            return;
-        }
-
-        // Send AJAX request to load data
-        $.ajax({
-            url: `/topSellingProducts`,
-            method: "GET",
-            data: {
-                page: currentPage[category],
-                size: 5 // Adjust size if needed
-            },
-            success: function (data) {
-                // Update slider with new products
-                const sliderContainer = document.querySelector(`#${sliderId} .product-container`);
-                sliderContainer.innerHTML = ""; // Clear old products
-
-                data.forEach(product => {
-                    const productCard = `
-                    <div class="product-card">
-                        <img src="/api/images?imageName=${product.image}" alt="${product.productId}" class="product-image">
-                        <div class="product-info">
-                            <a href="/browser/product/${product.productId}" class="product-title" style="
-                                color: #fd7e14;
-                                overflow: hidden;
-                                display: -webkit-box;
-                                -webkit-line-clamp: 2;
-                                -webkit-box-orient: vertical;
-                                width: 100%;
-                                font-weight: bold;
-                            ">${product.productName}</a>
-                            <p class="product-price">Giá: ${new Intl.NumberFormat().format(product.cost)} đ</p>
-                            <p class="numsold">Đã mua trong 30 ngày: ${product.totalSoldLast30Days}</p>
-                            <a href="javascript:void(0)" class="btn btn-custom add-to-cart" data-product-code="${product.productCode}">Thêm vào giỏ hàng</a>
-                        </div>
-                    </div>
-                `;
-                    sliderContainer.innerHTML += productCard;
-                });
-            },
-            error: function (err) {
-                console.error("Error loading products:", err);
-            }
-        });
-    }
-
-
-</script>
 </body>
 </html>

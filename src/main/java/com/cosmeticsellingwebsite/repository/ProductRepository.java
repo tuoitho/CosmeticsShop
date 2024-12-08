@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -122,4 +123,34 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             FROM Product p
     """)
     List<String> findAllBrands();
+
+
+    @Query(value = """
+             SELECT p
+              FROM OrderLine ol
+              JOIN Order o ON ol.order.orderId = o.orderId
+              JOIN Product p ON ol.product.productId = p.productId
+              WHERE o.orderDate >= :startDate
+              GROUP BY p.productId , p.productName
+              ORDER BY SUM(ol.quantity) DESC
+            """)
+    Page<Product> findTop20BestSellingProducts(Pageable pageable, @NotNull LocalDateTime startDate);
+
+    //top 20 sản phẩm mới nhất
+
+    @Query(value = """
+            SELECT *
+            FROM Product p
+            ORDER BY p.createdDate DESC
+            """,nativeQuery = true)
+    Page<Product> findAllNewest(Pageable pageable);
+
+    @Query(value = """
+            SELECT product.*
+            FROM product
+            JOIN ProductFeedback pf ON product.productId = pf.productId
+            GROUP BY product.productId , product.productName
+            ORDER BY AVG(pf.rating) DESC
+            """,nativeQuery = true)
+    Page<Product> findTop20HighestRatedProducts(Pageable pageable);
 }
