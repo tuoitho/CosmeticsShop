@@ -19,7 +19,7 @@ public interface ICustomerService {
 
     List<Customer> findAll();
 
-    List<Customer> searchByKeyword(String keyword);
+    Page<Customer> searchByKeyword(String keyword,Pageable pageable);
 
     void lockAccount(Long customerId);
 

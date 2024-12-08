@@ -263,7 +263,7 @@ public class OrderService implements IOrderService {
         orderStatusHistories.add(orderStatusHistory);
         order.setOrderStatusHistories(orderStatusHistories);
 
-        
+
         // Cập nhật địa chỉ giao hàng
         ShippingAddress shippingAddress = new ShippingAddress();
         shippingAddress.setOrder(order);

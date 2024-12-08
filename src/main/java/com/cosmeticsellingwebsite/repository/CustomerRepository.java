@@ -22,7 +22,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Query("SELECT c FROM Customer c")
     List<Customer> findAllCustomers();
 
-    List<Customer> findByFullnameContainingOrEmailContaining(String fullname, String email);
+//    List<Customer> findByFullnameContainingOrEmailContaining(String fullname, String email);
+    Page<Customer> findByFullnameContainingOrEmailContaining(String fullname, String email,Pageable pageable);
 
     Page<Customer> findByFullnameContainingIgnoreCaseOrEmailContainingIgnoreCase(
             String fullName, String email, Pageable pageable);
