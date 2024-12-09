@@ -28,7 +28,7 @@
 - **Cơ sở dữ liệu**: MySQL 🗄️  
 - **ORM**: JPA (Java Persistence API) 🔄  
 - **Quản lý phiên bản**: Git, GitHub 🌐
-  **Tools**: Dbeaver, Mysql Workbench 8.0, Github desktop, Intellij Idea
+- **Tools**: Dbeaver, Mysql Workbench 8.0, Github desktop, Intellij Idea
 - **Khác**: Cloudinary, JWT, Redis, Captcha, Oauth2, ...
 ### 🔐 **Hỗ trợ nhiều loại xác thực**  
 - Đăng nhập mặc định của Spring Security  
