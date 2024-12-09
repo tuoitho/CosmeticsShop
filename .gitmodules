@@ -1,3 +1,6 @@
 [submodule "comesticdata"]
 	path = comesticdata
 	url = https://github.com/tuoitho/comesticdata
+[submodule "Cosmetics_Shop_SHIPPER_JWT"]
+	path = Cosmetics_Shop_SHIPPER_JWT
+	url = https://github.com/PhatBee/Cosmetics_Shop_SHIPPER_JWT
