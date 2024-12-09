@@ -34,6 +34,8 @@ The **Cosmetics Shop** aims to provide an online platform where users can browse
 - **Database**: MySQL 🗄️
 - **ORM**: JPA (Java Persistence API) 🔄
 - **Version Control**: Git, GitHub 🌐
+- **Other**: Cloudinary, JWT, Redis, Captcha, Oauth2, ...
+
 ### 🔐 **Supports Multiple Authentication Types**  
 - **Default Spring Security login**  
 - **OAuth2 login** (e.g., Google login)  
