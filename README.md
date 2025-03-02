@@ -52,6 +52,99 @@ After running the application, open your browser and visit:
 - **Home Page:** [http://localhost:8081](http://localhost:8081)
 
 ---
+### 🚀 Running the Project with Docker (not recommended)
+
+#### 1️⃣ Install Docker and Docker Compose
+Make sure you have **Docker** and **Docker Compose** installed.
+- [Download Docker](https://www.docker.com/get-started)
+
+Verify installation:
+```sh
+docker -v
+```
+```sh
+docker-compose -v
+```
+
+---
+
+#### 2️⃣ Prepare the `docker-compose.yml` File
+Create a `docker-compose.yml` file in your project directory with the following content:
+
+```yaml
+version: '3.8'
+
+services:
+  app:
+    image: tuoitho/cosmetics-shop-bmw:latest
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_URL=jdbc:mysql://db:3306/cosmeticsshop
+      - DB_USER=root
+      - DB_PASS=123456
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: cosmeticsshop
+    ports:
+      - "3399:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+```
+
+---
+
+#### 3️⃣ Run the Project
+Navigate to the directory containing `docker-compose.yml` and execute:
+```sh
+docker-compose up -d
+```
+
+This will:
+- Pull the latest MySQL and application images
+- Start both containers in detached mode (`-d` means detached)
+
+To check running containers:
+```sh
+docker ps
+```
+
+---
+
+#### 4️⃣ Verify the Application
+After running the containers, open your browser and visit:
+- **Home Page:** [http://localhost:8081](http://localhost:8081)
+
+If you want to check the database:
+```sh
+docker exec -it <mysql_container_id> mysql -u root -p123456
+```
+Replace `<mysql_container_id>` with the actual container ID of MySQL (`docker ps` to get it).
+
+---
+
+#### 5️⃣ Stop and Remove Containers
+To stop the project:
+```sh
+docker-compose down
+```
+To remove all containers and volumes (reset data):
+```sh
+docker-compose down -v
+```
+
+---
+
+✅ Now your project is running successfully with Docker! 🚀
+
 
 #### 🎯 Contact & Contribution
 If you encounter any issues or want to contribute, feel free to open an **Issue** or submit a **Pull Request** at:
