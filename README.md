@@ -69,7 +69,7 @@ docker-compose -v
 ---
 
 #### 2️⃣ Prepare the `docker-compose.yml` File
-Create a `docker-compose.yml` file in your project directory with the following content:
+Create a `docker-compose.yml` file in any directory
 
 ```yaml
 version: '3.8'
