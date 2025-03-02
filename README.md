@@ -25,13 +25,7 @@ CREATE DATABASE cosmeticsshop;
 ```
 
 ##### 🔹 **Import Sample Data**
-Run the provided **database dump file**:
-```bash
-mysql -u root -p cosmeticsshop < dump-cosmeticsshop-202503021651.sql
-```
-💡 *Note:* Replace `root` with your MySQL username.
-
----
+https://github.com/PhatBee/Cosmetics_Shop/blob/master/dump-cosmeticsshop-202503021651.sql
 
 #### 3️⃣ Run the JAR File with Database Configuration
 
