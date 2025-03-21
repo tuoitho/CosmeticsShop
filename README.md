@@ -8,7 +8,7 @@ Cosmetics Shop is a modern e-commerce platform built with cutting-edge technolog
 To set up the **Cosmetics Shop** locally, follow these steps:
 
 ### 🏆 Visiting online:
-Go to http://20.2.154.12:8081/
+Go to http://20.2.154.12:8081/  (username: customer1   ;  password:123)
 
 ### 🏆 Running from JAR File (GitHub Release)
 
