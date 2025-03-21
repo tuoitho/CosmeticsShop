@@ -1,7 +1,6 @@
 package com.cosmeticsellingwebsite.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,26 +10,22 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "cartitem")
 public class CartItem implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cartItemId")
     private Long cartItemId;
 
-
     @ManyToOne
-    @JsonManagedReference
     @JoinColumn(name = "productId", referencedColumnName = "productId")
     private Product product;
 
+    @Column(name = "quantity")
     private Long quantity;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "cartId", referencedColumnName = "cartId")
     private Cart cart;
-
-
-
 }

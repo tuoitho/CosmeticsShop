@@ -2,19 +2,20 @@ package com.cosmeticsellingwebsite.entity;
 
 import com.cosmeticsellingwebsite.enums.RoleEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "role")
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "roleId")
     private Long roleId;
-    @Column(columnDefinition = "text")
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "roleName", columnDefinition = "text")
     private RoleEnum roleName;
 }

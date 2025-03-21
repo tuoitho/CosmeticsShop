@@ -2,7 +2,6 @@ package com.cosmeticsellingwebsite.entity;
 
 import com.cosmeticsellingwebsite.util.JsonToMapConverter;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,27 +12,26 @@ import java.util.Map;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "orderline")
 public class OrderLine implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "orderLineId")
     private Long orderLineId;
-
 
     @ManyToOne
     @JoinColumn(name = "productId", referencedColumnName = "productId")
-    @JsonManagedReference
     private Product product;
 
-
     @Convert(converter = JsonToMapConverter.class)
-    @Column(columnDefinition = "TEXT")
-    private Map<String, Object> productSnapshot;  // Metadata stored as JSON map
+    @Column(name = "productSnapshot", columnDefinition = "TEXT")
+    private Map<String, Object> productSnapshot;
 
-
+    @Column(name = "quantity")
     private Long quantity;
 
     @ManyToOne
-    @JoinColumn(name = "orderId", referencedColumnName = "orderId")
     @JsonBackReference
+    @JoinColumn(name = "orderId", referencedColumnName = "orderId")
     private Order order;
 }

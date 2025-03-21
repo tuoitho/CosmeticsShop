@@ -1,6 +1,6 @@
 package com.cosmeticsellingwebsite.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,18 +10,20 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "feedbackresponse")
 public class FeedbackResponse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "feedbackResponseId")
     private Long feedbackResponseId;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "comment", columnDefinition = "text")
     private String comment;
+
+    @Column(name = "responseDate")
     private LocalDateTime responseDate;
 
-    @OneToOne
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonBackReference
-    @JoinColumn(name = "productFeedbackId", referencedColumnName = "productFeedbackId")
+    @OneToOne(mappedBy = "feedbackResponse")
+    @JsonManagedReference
     private ProductFeedback productFeedback;
 }

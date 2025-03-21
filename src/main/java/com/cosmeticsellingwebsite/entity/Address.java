@@ -8,20 +8,29 @@ import lombok.*;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "address")
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "addressId")
     private Long addressId;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "receiverName", columnDefinition = "text")
     private String receiverName;
+
+    @Column(name = "receiverPhone", length = 255)
     private String receiverPhone;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "address", columnDefinition = "text")
     private String address;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "province", columnDefinition = "text")
     private String province;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "district", columnDefinition = "text")
     private String district;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "ward", columnDefinition = "text")
     private String ward;
 
     @ToString.Exclude
@@ -29,6 +38,5 @@ public class Address {
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "customerId", referencedColumnName = "userId")
-    private Customer customer;
-
+    private User customer;
 }

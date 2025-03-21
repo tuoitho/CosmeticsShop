@@ -8,26 +8,35 @@ import lombok.*;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "shippingaddress")
 public class ShippingAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "shippingAddressId")
     private Long shippingAddressId;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "receiverName", columnDefinition = "text")
     private String receiverName;
+
+    @Column(name = "receiverPhone", length = 255)
     private String receiverPhone;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "address", columnDefinition = "text")
     private String address;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "province", columnDefinition = "text")
     private String province;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "district", columnDefinition = "text")
     private String district;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "ward", columnDefinition = "text")
     private String ward;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @OneToOne
     @JsonBackReference
-    @JoinColumn(name = "orderId", referencedColumnName = "orderId")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "orderId", referencedColumnName = "orderId", unique = true)
     private Order order;
 }

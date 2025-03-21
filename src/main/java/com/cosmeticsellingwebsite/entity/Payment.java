@@ -7,28 +7,35 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "payment")
 public class Payment implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "paymentId")
     private Long paymentId;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "paymentMethod")
     private PaymentMethod paymentMethod;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "paymentStatus")
     private PaymentStatus paymentStatus;
+
+    @Column(name = "paymentDate")
     private LocalDateTime paymentDate;
+
+    @Column(name = "total")
     private Double total;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @JsonBackReference
     @OneToOne
+    @JsonBackReference
     @JoinColumn(name = "orderId", referencedColumnName = "orderId")
     private Order order;
 }

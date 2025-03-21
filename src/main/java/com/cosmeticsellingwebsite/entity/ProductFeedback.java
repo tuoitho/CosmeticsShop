@@ -1,47 +1,52 @@
 package com.cosmeticsellingwebsite.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "productfeedback")
 public class ProductFeedback implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "productFeedbackId")
     private Long productFeedbackId;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "comment", columnDefinition = "text")
     private String comment;
+
+    @Column(name = "image")
     private String image;
+
+    @Column(name = "feedbackDate")
     private LocalDateTime feedbackDate;
-    // đây là thuộc tính của ProductFeedback, không phải của Customer
+
+    @JoinColumn(name = "customerId", referencedColumnName = "userId")
     private Long customerId;
-    // đây là thuộc tính của ProductFeedback, không phải của Order
+
+    @JoinColumn(name = "orderId", referencedColumnName = "orderId")
     private Long orderId;
 
+    @Column(name = "productSnapshotName")
     private String productSnapshotName;
 
+    @Column(name = "rating")
     private Double rating;
 
-//    @ToString.Exclude
-//    @EqualsAndHashCode.Exclude
     @ManyToOne
-    @JsonIgnore
+    @JsonBackReference
     @JoinColumn(name = "productId", referencedColumnName = "productId")
     private Product product;
 
-    @OneToOne(mappedBy = "productFeedback")
+    @OneToOne
     @JsonManagedReference
+    @JoinColumn(name = "productFeedbackId", referencedColumnName = "productFeedbackId")
     private FeedbackResponse feedbackResponse;
-
-
 }

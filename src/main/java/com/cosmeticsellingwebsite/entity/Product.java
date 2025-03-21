@@ -1,11 +1,9 @@
 package com.cosmeticsellingwebsite.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -15,39 +13,55 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "product")
 public class Product implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "productId")
     private Long productId;
-    @Column(unique = true)
+
+    @Column(name = "productCode", unique = true)
     private String productCode;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "productName", columnDefinition = "text")
     private String productName;
+
+    @Column(name = "cost")
     private Double cost;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "description", columnDefinition = "text")
     private String description;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "brand", columnDefinition = "text")
     private String brand;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+
+    @Column(name = "manufactureDate")
     private LocalDate manufactureDate;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+
+    @Column(name = "expirationDate")
     private LocalDate expirationDate;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "ingredient", columnDefinition = "text")
     private String ingredient;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "how_to_use", columnDefinition = "text")
     private String how_to_use;
+
+    @Column(name = "volume")
     private String volume;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "origin", columnDefinition = "text")
     private String origin;
-    @Column(columnDefinition = "text")
+
+    @Column(name = "image", columnDefinition = "text")
     private String image;
 
-    // phục vụ cho việc hiển thị sản phẩm mới ở trang chủ
+    @Column(name = "createdDate")
     private LocalDateTime createdDate = LocalDateTime.now();
-    private Boolean active=true;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @Column(name = "active")
+    private Boolean active = true;
+
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "categoryId", referencedColumnName = "categoryId")
@@ -56,5 +70,4 @@ public class Product implements Serializable {
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonManagedReference
     private ProductStock productStock;
-
 }
