@@ -12,10 +12,9 @@ import lombok.*;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "roleId")
     private Long roleId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "roleName", columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private RoleEnum roleName;
 }

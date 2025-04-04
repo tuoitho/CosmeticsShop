@@ -15,7 +15,6 @@ import java.util.*;
 @Entity
 
 public class Customer extends User implements Serializable {
-    @Column(name = "birthDate")
     private LocalDate birthDate;
     //    muốn mqh 2 chiều nên vầy có lẽ đc
 

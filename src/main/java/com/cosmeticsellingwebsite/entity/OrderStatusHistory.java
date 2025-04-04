@@ -15,21 +15,21 @@ import java.time.LocalDateTime;
 public class OrderStatusHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "orderStatusHistoryId")
     private Long orderStatusHistoryId;
 
+    @ToString.Exclude
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
     private OrderStatus status;
 
-    @Column(name = "updateAt")
     private LocalDateTime updateAt = LocalDateTime.now();
 
-    @Column(name = "description")
     private String description;
 
+    @ToString.Exclude
     @ManyToOne
+    @EqualsAndHashCode.Exclude
+
     @JsonBackReference
-    @JoinColumn(name = "orderId", referencedColumnName = "orderId")
+    @JoinColumn(name = "orderId")
     private Order order;
 }

@@ -17,25 +17,24 @@ import java.time.LocalDateTime;
 public class Payment implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "paymentId")
     private Long paymentId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "paymentMethod")
+    @ToString.Exclude
     private PaymentMethod paymentMethod;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "paymentStatus")
+    @ToString.Exclude
     private PaymentStatus paymentStatus;
 
-    @Column(name = "paymentDate")
     private LocalDateTime paymentDate;
 
-    @Column(name = "total")
     private Double total;
 
     @OneToOne
     @JsonBackReference
-    @JoinColumn(name = "orderId", referencedColumnName = "orderId")
+    @JoinColumn(name = "orderId")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Order order;
 }

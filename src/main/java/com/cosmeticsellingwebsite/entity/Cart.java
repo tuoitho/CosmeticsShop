@@ -17,15 +17,20 @@ import java.util.Set;
 public class Cart implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cartId")
     private Long cartId;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     @JsonManagedReference
+    @EqualsAndHashCode.Exclude
+
     private Set<CartItem> cartItems = new HashSet<>();
 
     @OneToOne
     @JsonBackReference
-    @JoinColumn(name = "customerId", referencedColumnName = "userId", unique = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+
+    @JoinColumn( unique = true,name = "customerId")
     private User customer;
 }

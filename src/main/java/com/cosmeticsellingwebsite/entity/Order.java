@@ -20,38 +20,43 @@ import java.util.Set;
 public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "orderId")
     private Long orderId;
 
-    @JoinColumn(name = "customerId", referencedColumnName = "userId")
+    @JoinColumn(name = "userId")
     private Long customerId;
 
-    @Column(name = "orderDate")
     private LocalDateTime orderDate;
 
-    @Column(name = "total")
     private Double total;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "orderStatus")
+    @ToString.Exclude
     private OrderStatus orderStatus;
 
-    @Column(name = "deliveryDate")
     private LocalDateTime deliveryDate;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @ToString.Exclude     @EqualsAndHashCode.Exclude
+
     private Set<OrderLine> orderLines = new HashSet<>();
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     @JsonManagedReference
+    @ToString.Exclude     @EqualsAndHashCode.Exclude
+
     private ShippingAddress shippingAddress;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+
     private List<OrderStatusHistory> orderStatusHistories = new ArrayList<>();
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     @JsonManagedReference
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Payment payment;
 }

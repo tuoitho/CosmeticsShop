@@ -71,7 +71,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = """
             SELECT p.*
             FROM product p
-            JOIN ProductFeedback pf ON p.productId = pf.productId
+            JOIN productfeedback pf ON p.productId = pf.productId
             GROUP BY p.productId , p.productName
             ORDER BY AVG(pf.rating) DESC
             LIMIT 20
@@ -140,7 +140,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = """
             SELECT *
-            FROM Product p
+            FROM product p
             ORDER BY p.createdDate DESC
             """,nativeQuery = true)
     Page<Product> findAllNewest(Pageable pageable);
@@ -148,7 +148,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = """
             SELECT product.*
             FROM product
-            JOIN ProductFeedback pf ON product.productId = pf.productId
+            JOIN productfeedback pf ON product.productId = pf.productId
             GROUP BY product.productId , product.productName
             ORDER BY AVG(pf.rating) DESC
             """,nativeQuery = true)

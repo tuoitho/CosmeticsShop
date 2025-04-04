@@ -16,37 +16,36 @@ import java.time.LocalDateTime;
 public class ProductFeedback implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "productFeedbackId")
     private Long productFeedbackId;
 
-    @Column(name = "comment", columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private String comment;
 
-    @Column(name = "image")
     private String image;
 
-    @Column(name = "feedbackDate")
     private LocalDateTime feedbackDate;
 
-    @JoinColumn(name = "customerId", referencedColumnName = "userId")
+    @JoinColumn(name = "userId")
     private Long customerId;
 
-    @JoinColumn(name = "orderId", referencedColumnName = "orderId")
+    @JoinColumn(name = "orderId")
     private Long orderId;
 
-    @Column(name = "productSnapshotName")
     private String productSnapshotName;
 
-    @Column(name = "rating")
     private Double rating;
 
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "productId", referencedColumnName = "productId")
+    @JoinColumn(name = "productId")
+    @ToString.Exclude     @EqualsAndHashCode.Exclude
+
     private Product product;
 
-    @OneToOne
+    @OneToOne(mappedBy = "productFeedback")
     @JsonManagedReference
-    @JoinColumn(name = "productFeedbackId", referencedColumnName = "productFeedbackId")
+//    @JoinColumn(name = "feedbackResponseId")
+    @ToString.Exclude     @EqualsAndHashCode.Exclude
+
     private FeedbackResponse feedbackResponse;
 }

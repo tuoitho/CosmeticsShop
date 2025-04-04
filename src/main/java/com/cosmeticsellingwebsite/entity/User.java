@@ -17,35 +17,30 @@ import java.io.Serializable;
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userId")
     protected Long userId;
 
-    @Column(name = "username", unique = true)
+    @Column(unique = true)
     protected String username;
 
-    @Column(name = "password")
     protected String password;
 
-    @Column(name = "email", unique = true)
+    @Column( unique = true)
     protected String email;
 
-    @Column(name = "fullname")
     protected String fullname;
 
-    @Column(name = "phone")
     protected String phone;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "gender")
     protected Gender gender;
 
-    @Column(name = "image")
     protected String image;
 
-    @Column(name = "active")
     protected Boolean active = true;
 
     @ManyToOne
-    @JoinColumn(name = "roleId", referencedColumnName = "roleId")
+    @ToString.Exclude     @EqualsAndHashCode.Exclude
+
+    @JoinColumn(name = "roleId")
     protected Role role;
 }

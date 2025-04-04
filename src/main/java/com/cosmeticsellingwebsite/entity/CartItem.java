@@ -14,18 +14,20 @@ import java.io.Serializable;
 public class CartItem implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cartItemId")
     private Long cartItemId;
 
     @ManyToOne
-    @JoinColumn(name = "productId", referencedColumnName = "productId")
+    @JoinColumn(name = "productId")
+    @ToString.Exclude     @EqualsAndHashCode.Exclude
+
     private Product product;
 
-    @Column(name = "quantity")
     private Long quantity;
 
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "cartId", referencedColumnName = "cartId")
+    @ToString.Exclude     @EqualsAndHashCode.Exclude
+
+    @JoinColumn(name = "cartId")
     private Cart cart;
 }

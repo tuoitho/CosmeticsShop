@@ -15,16 +15,15 @@ import java.util.Set;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "categoryId")
     private Long categoryId;
 
-    @Column(name = "categoryName")
     private String categoryName;
 
-    @Column(name = "active")
     private Boolean active = true;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
+    @ToString.Exclude     @EqualsAndHashCode.Exclude
+
     private Set<Product> products = new HashSet<>();
 }

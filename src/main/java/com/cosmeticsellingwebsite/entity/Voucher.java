@@ -14,25 +14,21 @@ import java.time.LocalDateTime;
 public class Voucher implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "voucherId")
     private Long voucherId;
 
-    @Column(name = "voucherCode")
     private String voucherCode;
 
-    @Column(name = "voucherValue")
     private Double voucherValue;
 
-    @Column(name = "startDate")
     private LocalDateTime startDate;
 
-    @Column(name = "endDate")
     private LocalDateTime endDate;
 
-    @Column(name = "used")
     private Boolean used = false;
 
     @OneToOne
-    @JoinColumn(name = "orderId", referencedColumnName = "orderId", unique = true)
+    @JoinColumn(unique = true, name = "orderId")
+    @ToString.Exclude     @EqualsAndHashCode.Exclude
+
     private Order order;
 }

@@ -8,6 +8,7 @@ import lombok.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,57 +18,60 @@ import java.time.LocalDateTime;
 public class Product implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "productId")
     private Long productId;
 
-    @Column(name = "productCode", unique = true)
+    @Column(unique = true)
     private String productCode;
 
-    @Column(name = "productName", columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private String productName;
 
     @Column(name = "cost")
     private Double cost;
 
-    @Column(name = "description", columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private String description;
 
-    @Column(name = "brand", columnDefinition = "text")
+    @Column( columnDefinition = "text")
     private String brand;
 
-    @Column(name = "manufactureDate")
     private LocalDate manufactureDate;
 
-    @Column(name = "expirationDate")
     private LocalDate expirationDate;
 
-    @Column(name = "ingredient", columnDefinition = "text")
+    @Column( columnDefinition = "text")
     private String ingredient;
 
-    @Column(name = "how_to_use", columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private String how_to_use;
 
-    @Column(name = "volume")
     private String volume;
 
-    @Column(name = "origin", columnDefinition = "text")
+    @Column( columnDefinition = "text")
     private String origin;
 
-    @Column(name = "image", columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private String image;
 
-    @Column(name = "createdDate")
     private LocalDateTime createdDate = LocalDateTime.now();
 
-    @Column(name = "active")
     private Boolean active = true;
 
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "categoryId", referencedColumnName = "categoryId")
+    @JoinColumn(name = "categoryId")
+    @ToString.Exclude  @EqualsAndHashCode.Exclude
     private Category category;
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @ToString.Exclude
+    @JsonManagedReference     @EqualsAndHashCode.Exclude
+
     private ProductStock productStock;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<ProductFeedback> productFeedbacks= Set.of();
 }

@@ -14,16 +14,16 @@ import java.time.LocalDateTime;
 public class FeedbackResponse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "feedbackResponseId")
     private Long feedbackResponseId;
 
-    @Column(name = "comment", columnDefinition = "text")
+    @Column( columnDefinition = "text")
     private String comment;
 
-    @Column(name = "responseDate")
     private LocalDateTime responseDate;
 
-    @OneToOne(mappedBy = "feedbackResponse")
+    @OneToOne()
+    @JoinColumn(name = "productFeedbackId")
     @JsonManagedReference
+    @ToString.Exclude
     private ProductFeedback productFeedback;
 }

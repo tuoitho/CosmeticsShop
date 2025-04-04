@@ -148,12 +148,13 @@ public class ProductService implements IProductService {
         productDetailResponse.setStock(product.getProductStock().getQuantity());
         String category = product.getCategory().getCategoryName();
         productDetailResponse.setCategory(category);
-
         productDetailResponse.setTotalFeedback(productFeedbackRepository.countByProduct(product));
         productDetailResponse.setAverageRating(productFeedbackRepository.findByProduct(product).stream()
                 .mapToDouble(ProductFeedback::getRating)
                 .average()
                 .orElse(0.0));
+        Logger.log("den day");
+
         Long totalSold = orderRepository.findTotalQuantitySoldByProductId(product.getProductId()).orElse(0L);
         //get so luong da ban, don hang da hoan thanh
         productDetailResponse.setTotalSold(totalSold);

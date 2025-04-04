@@ -12,31 +12,30 @@ import lombok.*;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "addressId")
     private Long addressId;
 
-    @Column(name = "receiverName", columnDefinition = "text")
+    @Column( columnDefinition = "text")
     private String receiverName;
 
-    @Column(name = "receiverPhone", length = 255)
+    @Column(length = 255)
     private String receiverPhone;
 
-    @Column(name = "address", columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private String address;
 
-    @Column(name = "province", columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private String province;
 
-    @Column(name = "district", columnDefinition = "text")
+    @Column( columnDefinition = "text")
     private String district;
 
-    @Column(name = "ward", columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private String ward;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "customerId", referencedColumnName = "userId")
+    @JoinColumn(name = "customerId")
     private User customer;
 }
