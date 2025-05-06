@@ -8,19 +8,27 @@ import lombok.*;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "address")
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long addressId;
-    @Column(columnDefinition = "text")
+
+    @Column( columnDefinition = "text")
     private String receiverName;
+
+    @Column(length = 255)
     private String receiverPhone;
+
     @Column(columnDefinition = "text")
     private String address;
+
     @Column(columnDefinition = "text")
     private String province;
-    @Column(columnDefinition = "text")
+
+    @Column( columnDefinition = "text")
     private String district;
+
     @Column(columnDefinition = "text")
     private String ward;
 
@@ -28,7 +36,6 @@ public class Address {
     @EqualsAndHashCode.Exclude
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "customerId", referencedColumnName = "userId")
-    private Customer customer;
-
+    @JoinColumn(name = "customerId")
+    private User customer;
 }

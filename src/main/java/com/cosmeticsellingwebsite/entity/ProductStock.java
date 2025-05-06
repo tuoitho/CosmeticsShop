@@ -8,18 +8,18 @@ import lombok.*;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "productstock")
 public class ProductStock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productStockId;
+
     private Long quantity;
 
     @OneToOne
     @JsonBackReference
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @JoinColumn(name = "productId", referencedColumnName = "productId")
+    @JoinColumn(unique = true, name = "productId")
     private Product product;
-
 }
-

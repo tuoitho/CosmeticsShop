@@ -4,28 +4,32 @@ import com.cosmeticsellingwebsite.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Data
 @Entity
+@Table(name = "orderstatushistory")
 public class OrderStatusHistory {
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderStatusHistoryId;
-    @Enumerated(jakarta.persistence.EnumType.STRING)
+
+    @ToString.Exclude
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    private LocalDateTime updateAt=LocalDateTime.now();
+
+    private LocalDateTime updateAt = LocalDateTime.now();
+
     private String description;
 
+    @ToString.Exclude
     @ManyToOne
     @EqualsAndHashCode.Exclude
-    @ToString.Exclude
+
     @JsonBackReference
-    @JoinColumn(name = "orderId", referencedColumnName = "orderId")
+    @JoinColumn(name = "orderId")
     private Order order;
 }

@@ -6,6 +6,7 @@ import com.cosmeticsellingwebsite.entity.User;
 import com.cosmeticsellingwebsite.enums.RoleEnum;
 import com.cosmeticsellingwebsite.repository.RoleRepository;
 import com.cosmeticsellingwebsite.repository.UserRepository;
+import com.cosmeticsellingwebsite.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -29,6 +30,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService{
 	RoleRepository roleRepository;
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+
+		Logger.log("display loadUser");
 		OAuth2User oauth2User = new DefaultOAuth2UserService().loadUser(userRequest);
 
 

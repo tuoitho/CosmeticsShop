@@ -6,10 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -17,36 +16,47 @@ import java.util.Set;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "[Order]")
+@Table(name = "`order`")
 public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
-    // customerId trong trường hợp này là thuộc tính của Order, không phải của Customer
+
+    @JoinColumn(name = "userId")
     private Long customerId;
+
     private LocalDateTime orderDate;
+
     private Double total;
+
     @Enumerated(EnumType.STRING)
+    @ToString.Exclude
     private OrderStatus orderStatus;
 
     private LocalDateTime deliveryDate;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private Set<OrderLine> orderLines;
+    @ToString.Exclude     @EqualsAndHashCode.Exclude
+
+    private Set<OrderLine> orderLines = new HashSet<>();
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     @JsonManagedReference
+    @ToString.Exclude     @EqualsAndHashCode.Exclude
+
     private ShippingAddress shippingAddress;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<OrderStatusHistory> orderStatusHistories;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+
+    private List<OrderStatusHistory> orderStatusHistories = new ArrayList<>();
+
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     @JsonManagedReference
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Payment payment;
-
-
 }

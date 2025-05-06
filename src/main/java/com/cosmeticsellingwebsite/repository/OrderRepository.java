@@ -48,12 +48,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query(value = """
                     SELECT sum(ol.quantity)
-                    FROM `Order` o
-                    JOIN `OrderLine` ol ON o.orderId = ol.orderId
-                    JOIN `Product` p ON ol.productId = p.productId
+                    FROM Order o
+                    JOIN OrderLine ol ON o.orderId = ol.order.orderId
+                    JOIN Product p ON ol.product.productId = p.productId
                     WHERE o.orderStatus = 'COMPLETED'
                     AND p.productId = :productId
-            """, nativeQuery = true)
+            """)
     Optional<Long> findTotalQuantitySoldByProductId(Long productId);
 
     Set<Order> findAllByCustomerIdAndOrderStatus(Long customerId, OrderStatus orderStatus);
