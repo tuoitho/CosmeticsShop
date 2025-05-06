@@ -14,17 +14,21 @@ import com.cosmeticsellingwebsite.service.interfaces.IOrderService;
 import com.cosmeticsellingwebsite.util.Logger;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,11 +51,17 @@ public class OrderService implements IOrderService {
     private ProductStockRepository productStockRepository;
     @Autowired
     private CartRepository cartRepository;
-
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    private RedissonClient redissonClient;
+    private static final String STOCK_KEY_PREFIX = "stock:product:";
+    private static final String LOCK_PREFIX = "lock:product:";
     @Transactional
     @Override
     public OrderResponse createOrder(Long customerId, CreateOrderRequest createOrderRequest) {
-        // TODO: chưa xử lý trường hợp tranh nhau đặt hàng
+        // TODO: xử lý trường hợp tranh nhau đặt hàng
+
         // Tìm người dùng
         User user = userRepository.findById(customerId).orElseThrow(() -> new CustomException("User not found"));
         // Khởi tạo đơn hàng và các dòng đơn hàng
@@ -75,40 +85,79 @@ public class OrderService implements IOrderService {
                 throw new CustomException("Product " + product.getProductCode() + " is not active");
             }
 //check quantity
-            if (productService.getStockByProductCode(product.getProductCode()) < cartItem.getQuantity()) {
-                throw new CustomException("Product " + product.getProductCode() + " out of stock");
+//            if (productService.getStockByProductCode(product.getProductCode()) < cartItem.getQuantity()) {
+//                throw new CustomException("Product " + product.getProductCode() + " out of stock");
+//            }
+            String stockKey = STOCK_KEY_PREFIX + product.getProductCode();
+            String lockKey = LOCK_PREFIX + product.getProductCode();
+            RLock lock = redissonClient.getLock(lockKey);
+            try {
+                // Thử lấy khóa trong 10 giây, giữ khóa tối đa 30 giây
+                if (lock.tryLock(10, 30, TimeUnit.SECONDS)) {
+                    try {
+                        // Kiểm tra và cập nhật tồn kho trong Redis
+//                        Integer currentStock = (Integer) redisTemplate.opsForValue().get(stockKey);
+                        Long currentStock = (Long) redisTemplate.opsForValue().get(stockKey);
+                        if (currentStock == null) {
+                            // Nếu không có trong Redis, lấy từ DB và lưu vào Redis
+                            Product product1 = productRepository.findById(product.getProductId())
+                                    .orElseThrow(() -> new RuntimeException("Product not found"));
+                            currentStock =product1.getProductStock().getQuantity();
+                            redisTemplate.opsForValue().set(stockKey, currentStock);
+                        }
+
+                        if (currentStock >=cartItem.getQuantity()) {
+                            // Giảm tồn kho trong Redis
+                            Long newStock = redisTemplate.opsForValue().increment(stockKey, -cartItem.getQuantity());
+                            if (newStock < 0) {
+                                // Hoàn tác nếu tồn kho âm
+                                redisTemplate.opsForValue().increment(stockKey, cartItem.getQuantity());
+//                                createFailedOrder(request);
+                                throw new CustomException("Product is out of stock");
+                            }
+
+                            ProductStock productStock = productStockRepository.findByProduct_ProductCode(product.getProductCode()).orElseThrow(() -> new CustomException("Product stock not found"));
+                            productStock.setQuantity(productStock.getQuantity() - cartItem.getQuantity());
+                            productStockRepository.save(productStock);
+
+                            OrderLine orderLine = new OrderLine();
+                            orderLine.setProduct(product);
+                            orderLine.setQuantity(cartItem.getQuantity());
+
+                            // Tạo snapshot cho sản phẩm
+                            Map<String, Object> productSnapshot = new HashMap<>();
+                            productSnapshot.put("productId", product.getProductId());
+                            productSnapshot.put("productCode", product.getProductCode());
+                            productSnapshot.put("productName", product.getProductName());
+                            productSnapshot.put("cost", product.getCost());
+                            productSnapshot.put("description", product.getDescription());
+                            productSnapshot.put("brand", product.getBrand());
+                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                            productSnapshot.put("expirationDate", product.getExpirationDate() != null ? product.getExpirationDate().format(formatter) : null);
+                            productSnapshot.put("manufactureDate", product.getManufactureDate() != null ? product.getManufactureDate().format(formatter) : null);
+                            productSnapshot.put("ingredient", product.getIngredient());
+                            productSnapshot.put("how_to_use", product.getHow_to_use());
+                            productSnapshot.put("volume", product.getVolume());
+                            productSnapshot.put("origin", product.getOrigin());
+                            productSnapshot.put("image", product.getImage());
+                            orderLine.setProductSnapshot(productSnapshot);
+                            orderLine.setOrder(order);
+                            orderLines.add(orderLine);
+
+                            // Cộng dồn tổng giá trị
+                            total += product.getCost() * cartItem.getQuantity();
+                        } else {
+                            throw new CustomException("Product " + product.getProductCode() + " out of stock");
+                        }
+                    } finally {
+                        lock.unlock(); // Giải phóng khóa
+                    }
+                } else {
+                    throw new CustomException("Could not acquire lock for product: " + product.getProductCode());
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-//            tru so luong san pham
-            ProductStock productStock = productStockRepository.findByProduct_ProductCode(product.getProductCode()).orElseThrow(() -> new CustomException("Product stock not found"));
-            productStock.setQuantity(productStock.getQuantity() - cartItem.getQuantity());
-            productStockRepository.save(productStock);
-
-            OrderLine orderLine = new OrderLine();
-            orderLine.setProduct(product);
-            orderLine.setQuantity(cartItem.getQuantity());
-
-            // Tạo snapshot cho sản phẩm
-            Map<String, Object> productSnapshot = new HashMap<>();
-            productSnapshot.put("productId", product.getProductId());
-            productSnapshot.put("productCode", product.getProductCode());
-            productSnapshot.put("productName", product.getProductName());
-            productSnapshot.put("cost", product.getCost());
-            productSnapshot.put("description", product.getDescription());
-            productSnapshot.put("brand", product.getBrand());
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            productSnapshot.put("expirationDate", product.getExpirationDate() != null ? product.getExpirationDate().format(formatter) : null);
-            productSnapshot.put("manufactureDate", product.getManufactureDate() != null ? product.getManufactureDate().format(formatter) : null);
-            productSnapshot.put("ingredient", product.getIngredient());
-            productSnapshot.put("how_to_use", product.getHow_to_use());
-            productSnapshot.put("volume", product.getVolume());
-            productSnapshot.put("origin", product.getOrigin());
-            productSnapshot.put("image", product.getImage());
-            orderLine.setProductSnapshot(productSnapshot);
-            orderLine.setOrder(order);
-            orderLines.add(orderLine);
-
-            // Cộng dồn tổng giá trị
-            total += product.getCost() * cartItem.getQuantity();
         }
         if (createOrderRequest.getVoucherCodes() != null) {
             for (String voucherCode : createOrderRequest.getVoucherCodes()) {
@@ -181,6 +230,7 @@ public class OrderService implements IOrderService {
 
         return createOrderResponse;
     }
+
 
 
 
